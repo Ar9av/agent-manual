@@ -26,7 +26,7 @@ A community reference for AI coding agent configurations — lifecycle hooks (Pr
 | [Trae](tools/trae/) | ByteDance | Markdown rules | ⚠️ Via MCP only | ✅ | [docs.trae.ai](https://docs.trae.ai) |
 | [Trae CN](tools/trae-cn/) | ByteDance | Markdown rules | ⚠️ Via MCP only | ✅ | [docs.trae.ai](https://docs.trae.ai) |
 | [Aider](tools/aider/) | Aider-AI | YAML | ❌ Not shipped | ❌ | [aider.chat/docs](https://aider.chat/docs/) |
-| [Google Antigravity](tools/google-antigravity/) | Google | — | ⚠️ Workflows + Rules (no PreToolUse) | ❓ | Gated / invite-only |
+| [Google Antigravity](tools/google-antigravity/) | Google | JSON / TOML | ✅ Full (5 events) | ✅ | [antigravity.google](https://antigravity.google) |
 
 **Legend:** ✅ Full = shipped, documented hook system with blocking · ⚠️ = partial or workaround · ❌ = not available · ❓ = unknown
 

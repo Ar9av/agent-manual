@@ -1,81 +1,185 @@
 # Google Antigravity
 
-> Google's AI coding agent. Docs at antigravity.google/docs (requires auth/invite access as of May 2026).
+> Google's agent-first software development platform and AI-powered IDE. Docs at antigravity.google/docs.
 
-**Vendor:** Google | **Status:** Limited / invite-only public access
+**Vendor:** Google | **License:** Proprietary (Pre-GA / Preview Terms) | **Runtime:** Go / Native CLI (`agy`)
 
 ## Links
 
-- Docs (auth required): https://antigravity.google/docs/home
+- Docs: https://antigravity.google/docs/home
 - Community forum: https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062
-- Related: [Gemini CLI](../gemini-cli/README.md) — Google's public terminal agent
 
 ---
 
-## Extensibility: Workflows & Rules
+## Installation
 
-Antigravity does **not** have a `PreToolUse`/`PostToolUse` hook system like Claude Code or Copilot. Instead it uses a **workflows + rules** model confirmed via the Google AI developer forum:
-
-- **Workflows** — defined in `.agent/workflows/` directory. Multi-step automated processes (e.g., run tests after refactoring, generate docs after schema changes).
-- **Rules** — defined in `.agent/rules/` directory. Behavioral triggers that fire when specific conditions are met (e.g., validate before modifying a directory).
-
-These are declarative/config-driven rather than imperative shell commands with exit code blocking.
-
-> Source: [Google AI dev forum thread](https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062) — the official reference cited in the forum is `antigravity.google/docs/rules-workflows` (auth required).
-
-### Directory Structure
-
-| Directory | Purpose |
-|-----------|---------|
-| `.agent/workflows/` | Multi-step automated workflows |
-| `.agent/rules/` | Behavioral rules / triggers |
-| `.agents/skills/` | Skills (shared convention with Codex CLI) |
-
-## Skills
-
-From graphify's `_PLATFORM_CONFIG` (a third-party installer that documents confirmed paths):
-
-```python
-"antigravity": {
-    "skill_file": "skill.md",
-    "skill_dst": ".agents/skills/graphify/SKILL.md",
-},
-"antigravity-windows": {
-    "skill_file": "skill-windows.md",   # PowerShell variant
-    "skill_dst": ".agents/skills/graphify/SKILL.md",
-},
+### macOS / Linux
+```sh
+curl -fsSL https://antigravity.google/cli/install.sh | bash
 ```
 
-| Scope | Path |
-|-------|------|
-| Global | `~/.agents/skills/` |
-| Project | `.agents/skills/` |
+### Windows (PowerShell)
+```powershell
+irm https://antigravity.google/cli/install.ps1 | iex
+```
 
-Same `skill.md` format as Claude Code (YAML frontmatter: `name`, `description`, `trigger`). Windows variant uses PowerShell.
+### Windows (CMD)
+```cmd
+curl -fsSL https://antigravity.google/cli/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
 
-## Known Information
+## Configuration Files
 
-| Aspect | Status |
-|--------|--------|
-| Public docs | ❌ Gated — returns empty HTML to unauthenticated requests |
-| Workflows system | ✅ Confirmed — `.agent/workflows/` directory |
-| Rules system | ✅ Confirmed — `.agent/rules/` directory |
-| Skill system | ✅ Confirmed — `.agents/skills/` directory, Markdown format |
-| Native PreToolUse/PostToolUse hooks | ❌ Not present — uses workflows/rules instead |
-| MCP support | ❓ Unknown — docs not publicly accessible |
-| Windows support | ✅ Confirmed — separate PowerShell skill variant |
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.config/antigravity/config.toml` | Global | CLI configurations (model selection, endpoints) |
+| `~/.gemini/antigravity-cli/settings.json` | Global | CLI interface settings & preferences |
+| `~/.gemini/config/hooks.json` | Global | Global lifecycle hook configurations |
+| `.agents/hooks.json` | Project | Project-level lifecycle hook overrides |
+
+## Instruction File
+
+The agent reads declarative, behavioral rules and multi-step automated workflows from the project root:
+- `.agent/rules/` (Project-level behavioral rules/triggers)
+- `.agent/workflows/` (Multi-step automated workflows)
+
+## Hooks
+
+Antigravity supports a standard lifecycle interceptor system. Interceptors are classified into three strict categories based on their function:
+- **Inspect** (Read-Only, Non-Blocking): Used for observability, logging, audit trails, and metrics.
+- **Decide** (Read-Only, Blocking): Used for policy enforcement and security guardrails. Returns a decision (e.g., `allow` or `deny`).
+- **Transform** (Modifying, Blocking): Used for data sanitization, prompt optimization, or error recovery.
+
+The execution order enforces a strict pipeline: **Decide → Transform → Inspect** to prevent Time-of-Check to Time-of-Use (TOCTOU) vulnerabilities.
+
+### Supported Events
+
+| Event | When | Can Block? |
+|-------|------|-----------|
+| `PreToolUse` | Before a tool is executed | ✅ (exit 2 or JSON block) |
+| `PostToolUse` | After a tool completes | ❌ |
+| `PreInvocation` | Before the agent calls the model | ✅ |
+| `PostInvocation` | After model calls finish | ❌ |
+| `Stop` | When the execution loop terminates | ✅ |
+
+### Hook Input (stdin JSON)
+
+```json
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "run_command",
+  "tool_input": { "command": "npm test" },
+  "session_id": "session-12345"
+}
+```
+
+### Hook Output (stdout JSON, optional)
+
+```json
+{
+  "decision": "block",
+  "reason": "Security policy violation"
+}
+```
+
+### Exit Code Behavior
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success, continue |
+| `2` | Block action (blocking events only); stderr/reason sent to LLM |
+| Other | Warning; execution continues |
+
+### Example Config (`hooks.json`)
+
+```json
+{
+  "safety-gate": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/safety-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Built-in Tools
+
+| Tool | Description |
+|------|-------------|
+| `view_file` | Read and retrieve file contents |
+| `replace_file_content` | Targeted contiguous edits within a file |
+| `multi_replace_file_content` | Non-contiguous edits across a single file |
+| `write_to_file` | Create new files and write code contents |
+| `list_dir` | List contents of a directory |
+| `grep_search` | Search exact patterns using ripgrep |
+| `run_command` | Execute bash/shell commands on the host |
+| `search_web` | Perform Google search queries for external information |
+| `read_url_content` | Fetch content from URLs and convert HTML to markdown |
+
+## MCP Support
+
+Antigravity supports the Model Context Protocol (MCP) using a shared configuration file.
+
+Config locations:
+- `~/.gemini/config/mcp_config.json` (Shared configurations)
+- `~/.gemini/antigravity-cli/mcp_config.json` (CLI specific)
+
+Supports both local stdio and remote HTTP/SSE transport modes.
+
+### Local (stdio) and Remote HTTP Configurations
+
+```json
+{
+  "mcpServers": {
+    "my-local-server": {
+      "command": "node",
+      "args": ["./mcp/server.js"],
+      "env": {
+        "API_KEY": "..."
+      }
+    },
+    "my-remote-server": {
+      "serverUrl": "https://mcp.example.com",
+      "headers": {
+        "Authorization": "Bearer ..."
+      }
+    }
+  }
+}
+```
+
+> [!IMPORTANT]
+> For remote servers, the field `serverUrl` is strictly required (`url` or `httpUrl` are not supported).
+
+## Skills / Commands
+
+- Skills location: Global `~/.agents/skills/` or Project `.agents/skills/`
+- Format: Markdown file `SKILL.md` (YAML frontmatter: `name`, `description`, `trigger`, etc.). Windows variant uses PowerShell.
+- Convention shared with Codex CLI.
+
+## Agent / Subagent Configuration
+
+Antigravity CLI and IDE allow spawning and managing background subagents (e.g. `research` and `self`). Subagents can inherit, branch, or share the parent workspace to run concurrent processes.
 
 ## Notes
 
-- `.agents/skills/` is shared with Codex CLI — likely an intentional convergence.
-- The docs site (`antigravity.google/docs/*`) returns only a title tag to unauthenticated requests.
-- If you have invite access, contribute MCP and workflow schema details here.
+- Debugging: Run `agy inspect` via the CLI to check active hooks, settings, and rule configurations.
+- Run `agy plugin import` to migrate existing extensions or configurations from the older Gemini CLI ecosystem.
 
 ## Sources (Official)
 
 | Topic | URL |
 |-------|-----|
-| Docs home (auth required) | https://antigravity.google/docs/home |
-| Rules & workflows (auth required) | https://antigravity.google/docs/rules-workflows |
-| Community forum (hooks discussion) | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 |
-| graphify `_PLATFORM_CONFIG` (source of skill path data) | https://github.com/safishamsi/graphify |
+| Docs home | https://antigravity.google/docs/home |
+| Lifecycle Hooks | https://antigravity.google/docs/hooks |
+| Workflows & Rules | https://antigravity.google/docs/rules-workflows |
+| Community forum | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 |

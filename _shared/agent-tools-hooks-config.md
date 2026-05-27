@@ -840,28 +840,83 @@ watch-files: true
 
 ## Google Antigravity
 
-**Vendor:** Google | **Docs:** Gated (auth required as of May 2026)
-**Sources:** https://antigravity.google/docs/home [official — auth required] · https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 [community forum] · https://github.com/safishamsi/graphify [graphify-src — skill paths]
+**Vendor:** Google | **Config format:** JSON / TOML | **Instruction file:** `.agent/rules/` and `.agent/workflows/`
+**Sources:** https://antigravity.google/docs/home [official — auth required] · https://antigravity.google/docs/hooks [official] · https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 [community forum] · https://github.com/safishamsi/graphify [graphify-src — skill paths]
 
-### Extensibility Model
-Antigravity uses **workflows + rules**, not `PreToolUse`/`PostToolUse` hooks:
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.config/antigravity/config.toml` | Global | Model selection & API endpoints |
+| `~/.gemini/antigravity-cli/settings.json` | Global | CLI interface settings |
+| `~/.gemini/config/hooks.json` | Global | Global hooks configuration |
+| `.agents/hooks.json` | Project | Project-specific hooks |
+| `~/.gemini/config/mcp_config.json` | Global | Shared MCP configurations |
 
-| Directory | Purpose |
-|-----------|---------|
-| `.agent/workflows/` | Declarative multi-step automated workflows |
-| `.agent/rules/` | Behavioral triggers / rules |
-| `.agents/skills/` | Skills (shared convention with Codex CLI) |
+### Built-in Tools
+| Tool | Description |
+|------|-------------|
+| `view_file` | Read and retrieve file contents |
+| `replace_file_content` | Contiguous single-block file edits |
+| `multi_replace_file_content` | Non-contiguous multiple-block file edits |
+| `write_to_file` | Create new files |
+| `list_dir` | List contents of a directory |
+| `grep_search` | Search files for exact patterns |
+| `run_command` | Execute shell/bash commands |
+| `search_web` | Google web search |
+| `read_url_content` | Fetch URL and convert HTML to markdown |
+
+### Hook Events
+Antigravity supports three categories of lifecycle hooks:
+- **Inspect** (Read-Only, Non-Blocking)
+- **Decide** (Read-Only, Blocking)
+- **Transform** (Modifying, Blocking)
+
+Execution order is strictly enforced: **Decide → Transform → Inspect** to prevent TOCTOU vulnerabilities.
+
+| Event | When | Can Block | Notes |
+|-------|------|-----------|-------|
+| `PreToolUse` | Before a tool runs | ✅ | exit 2 or `{"decision":"block"}` |
+| `PostToolUse` | After a tool completes | ❌ | Read-only |
+| `PreInvocation` | Before calling the model | ✅ | For context/instruction injection |
+| `PostInvocation` | After model calls finish | ❌ | |
+| `Stop` | When the execution loop terminates | ✅ | |
+
+**Input format:** JSON via stdin
+**Universal stdin fields:** `hook_event_name`, `tool_name`, `tool_input`, `session_id`
+**Exit codes:** `0` = success | `2` = block (stderr/reason sent to LLM) | other = warning/fails-open
+
+**stdout response:**
+```json
+{
+  "decision": "block",
+  "reason": "Security policy violation"
+}
+```
+
+### Hook Config Format
+```json
+{
+  "safety-gate": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/safety-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
 ### Skills
-- Global: `~/.agents/skills/*/SKILL.md`
-- Project: `.agents/skills/*/SKILL.md`
-- Format: same as Claude Code (`skill.md` — Markdown + YAML frontmatter)
-- Windows: `skill-windows.md` (PowerShell variant)
-
-### Unknown
-- Hook system schema / rules format
-- MCP support
-- Config file locations and format
+- Global: `~/.agents/skills/`
+- Project: `.agents/skills/`
+- Uses standard Markdown format with YAML frontmatter. Windows uses PowerShell.
 
 ---
 

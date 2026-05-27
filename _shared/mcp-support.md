@@ -21,6 +21,7 @@ Which tools support MCP and how to configure it.
 | OpenClaw | ✅ Full | `config.yaml` → `mcpServers` | |
 | Trae | ✅ Full (v1.3.0+) | `.trae/mcp.json` | Added in v1.3.0 |
 | Trae CN | ✅ Full (v1.3.0+) | `.trae/mcp.json` | Same as Trae |
+| Google Antigravity | ✅ Full | `~/.gemini/config/mcp_config.json` | Shared with Gemini CLI, remote requires `serverUrl` |
 | Aider | ❌ None | — | Not supported |
 
 ## Standard MCP Config Format
@@ -63,6 +64,21 @@ args = ["./mcp/server.js"]
   }
 }
 ```
+
+**Google Antigravity (remote HTTP):**
+```json
+{
+  "mcpServers": {
+    "my-remote-server": {
+      "serverUrl": "https://mcp.example.com",
+      "headers": {
+        "Authorization": "Bearer ..."
+      }
+    }
+  }
+}
+```
+Remote connections strictly require `serverUrl` (not `url` or `httpUrl`).
 
 ## Popular MCP Servers
 

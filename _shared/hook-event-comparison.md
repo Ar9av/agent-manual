@@ -39,6 +39,7 @@ A unified view of lifecycle hook events across all major agentic tools.
 | Trae | ❌ No hook system | N/A (use MCP) |
 | OpenCode | Plugin return value | `{ block: true }` |
 | GitHub Copilot | Plugin return value | `{ block: true }` |
+| Google Antigravity | Exit code `2` or `{"decision":"block"}` stdout | `exit 2` or return JSON block |
 
 ## Hook Input Format Comparison
 
@@ -54,6 +55,7 @@ A unified view of lifecycle hook events across all major agentic tools.
 | Pi Agent | JSON context | stdin / template vars |
 | OpenClaw | JSON env vars | `HOOK_TOOL_NAME`, `HOOK_TOOL_INPUT`, `HOOK_EVENT` |
 | Devin CLI | JSON | stdin |
+| Google Antigravity | JSON | stdin |
 
 ## Config File Format Comparison
 
@@ -73,6 +75,7 @@ A unified view of lifecycle hook events across all major agentic tools.
 | Aider | YAML | `.aider.conf.yml` (no hooks) |
 | Trae | Markdown | `project_rules.md` (no hooks) |
 | OpenCode | JSON + JS | `opencode.json` + plugin files |
+| Google Antigravity | JSON | `hooks.json` |
 
 ## Tool Instruction Files
 
@@ -90,6 +93,7 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Gemini CLI | `.gemini/GEMINI.md` |
 | Kiro | `.kiro/agents/*.yaml` (system prompt) |
 | Aider | `CONVENTIONS.md` |
+| Google Antigravity | `.agent/rules/` and `.agent/workflows/` |
 
 ## Sources (Official)
 
@@ -105,3 +109,4 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Cursor | https://cursor.com/docs/hooks |
 | Pi Agent | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md |
 | OpenClaw | https://docs.openclaw.ai/automation/hooks |
+| Google Antigravity | https://antigravity.google/docs/hooks |

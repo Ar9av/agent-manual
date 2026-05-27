@@ -20,6 +20,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Trae | IDE Settings UI |
 | OpenClaw | `~/.openclaw/config.yaml` |
 | GitHub Copilot | `~/.config/gh-copilot/config.json` |
+| Google Antigravity | `~/.config/antigravity/config.toml` |
 
 ## Project-Level Config
 
@@ -39,6 +40,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Trae | `project_rules.md` |
 | OpenClaw | `config.yaml` |
 | Aider | `.aider.conf.yml` |
+| Google Antigravity | `.agents/hooks.json` |
 
 ## MCP Config Locations
 
@@ -53,6 +55,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Trae | `.trae/mcp.json` |
 | GitHub Copilot | `.github/mcp.json` |
 | Kimi Code | `config.json` (`mcpServers` key) |
+| Google Antigravity | `~/.gemini/config/mcp_config.json` or `~/.gemini/antigravity-cli/mcp_config.json` |
 
 ## Skills Directories (confirmed from graphify `_PLATFORM_CONFIG`)
 
@@ -95,6 +98,7 @@ These paths are sourced directly from graphify's installer code — the most rel
 | Factory Droid | `.factory/droids/` | Custom droids |
 | Cursor | `.cursor/rules/` | MDC rule files |
 | OpenClaw | `hooks/` | Shell scripts |
+| Google Antigravity | `.agent/rules/` and `.agent/workflows/` | Declarative Rules/Workflows |
 
 ## Git-Ignored / Personal Override Files
 
