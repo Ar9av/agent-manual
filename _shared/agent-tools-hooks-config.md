@@ -665,11 +665,29 @@ OpenClaw has two distinct hook surfaces:
 ##### Typed Plugin Hooks (Blocking)
 | SDK Hook | When it fires | Can Block? | Notes |
 |----------|---------------|------------|-------|
-| `before_tool_call` | Before any tool runs | ✅ Yes | Can rewrite arguments or deny tool call |
-| `before_agent_reply` | Before final reply delivered | ✅ Yes | Can modify prompt or inject extra context |
-| `before_agent_finalize` | Agent finishes reasoning | ✅ Yes | Can request another reasoning loop |
-| `before_install` | Before plugin installation | ✅ Yes | Prevents untrusted plugin installation |
-| `session_end` | Session finalized/shutdown | ❌ No | Cleanup connections/databases |
+| `before_model_resolve` | Pre-session, before provider resolution | ❌ No | Deterministically override provider/model |
+| `before_prompt_build` | Post-session load, before prompt submission | ❌ No | Inject dynamic `prependContext` or system prompts |
+| `before_tool_call` | Before any agent tool executes | ✅ Yes | Can rewrite arguments or block call (`{ block: true }`) |
+| `after_tool_call` | After tool completes execution | ❌ No | Inspect tool outputs/results |
+| `tool_result_persist` | Before tool result is written to transcript | ❌ No | Synchronously transform outputs before log |
+| `before_agent_reply` | Before the LLM generation call | ✅ Yes | Can return synthetic reply or silence turn entirely |
+| `before_agent_finalize` | Agent finishes reasoning turn | ✅ Yes | Can inspect messages and request extra pass |
+| `agent_end` | Final turn completed | ❌ No | Inspect final message lists and metadata |
+| `before_compaction` | Before context compaction begins | ❌ No | Observe compaction trigger and token counts |
+| `after_compaction` | After compaction completes | ❌ No | Inspect compacted summaries |
+| `before_install` | Before skill or plugin installation | ✅ Yes | Prevent untrusted execution (`{ block: true }`) |
+| `message_received` | Inbound message received | ❌ No | Telemetry/hooks for incoming channels |
+| `message_sending` | Outbound message about to be sent | ✅ Yes | Cancel outbound message via `{ cancel: true }` |
+| `message_sent` | Outbound message delivered | ❌ No | Telemetry for successful deliveries |
+| `session_start` | Session initialized | ❌ No | Setup session boundaries |
+| `session_end` | Session finalized or gateway stopped | ❌ No | Bounded cleanup drain, run on SIGTERM/restart |
+| `gateway_start` | Gateway process starts | ❌ No | Global startup initialization |
+| `gateway_stop` | Gateway process begins shutdown | ❌ No | Global cleanup sequence |
+
+#### Hook Decision Rules
+- **Tool Guard (`before_tool_call`):** Returning `{ block: true }` immediately stops execution of lower-priority handlers and blocks the tool.
+- **Install Guard (`before_install`):** Returning `{ block: true }` immediately cancels the installation.
+- **Message Outbound (`message_sending`):** Returning `{ cancel: true }` immediately suppresses and cancels message delivery.
 
 ### Hook Config Format
 Internal hooks are enabled via YAML config:
@@ -684,6 +702,17 @@ hooks:
         enabled: false
 ```
 Plugin hooks are registered programmatically via the Plugin SDK.
+
+### Concurrency and Locking
+- **Session Lanes:** Execution runs are serialized per session key to avoid race conditions.
+- **Session File Lock:** Workspace transcript writes are guarded by a process-aware, file-based session write lock. Transcript writers wait up to `session.writeLock.acquireTimeoutMs` (default: `60000` ms) before reporting busy.
+- **Reentrancy:** Session locks are non-reentrant by default. Nested lock acquisitions must explicitly pass `allowReentrant: true`.
+
+### Timeouts & Diagnostics
+- **RPC Wait Timeout:** `agent.wait` default wait timeout is `30` seconds (overridable via `timeoutMs`).
+- **Agent Runtime Timeout:** Runtime timeout defaults to `172800` seconds (48 hours) via `agents.defaults.timeoutSeconds` (enforced via abort timer in `runEmbeddedPiAgent`).
+- **Model Idle Timeout:** OpenClaw watchdogs model requests and aborts if no chunks arrive (capped at `120` seconds by default; overridable via `models.providers.<id>.timeoutSeconds`).
+- **Stuck/Stalled Sessions:** The diagnostics engine monitors processing lanes. Session stalls are reported as `session.stalled` after `diagnostics.stuckSessionWarnMs`. Active stale runs are abort-drained and released only after `diagnostics.stuckSessionAbortMs` (default: 5 minutes/3x warning threshold) to prevent stuck lanes.
 
 ### Skills
 - Location: `~/.openclaw/skills/*/SKILL.md`
