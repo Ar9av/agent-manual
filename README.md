@@ -1,8 +1,20 @@
-# Agentic Tools Almanac
+<p align="center">
+  <img src="https://img.shields.io/badge/Agentic%20Tools%20Almanac-%E2%9C%A7-blueviolet?style=for-the-badge" alt="Agentic Tools Almanac">
+  <a href="_shared/agent-tools-hooks-config.md"><img src="https://img.shields.io/badge/Config%20Reference-Shared-FFD700?style=for-the-badge" alt="Config Reference"></a>
+  <a href="_shared/hook-event-comparison.md"><img src="https://img.shields.io/badge/Hooks%20Matrix-Cross%20Tool-5865F2?style=for-the-badge" alt="Hooks Matrix"></a>
+  <a href="https://github.com/Ar9av/agent-manual"><img src="https://img.shields.io/badge/Repo-GitHub-green?style=for-the-badge" alt="GitHub Repo"></a>
+</p>
 
-A community reference for AI coding agent configurations — lifecycle hooks (PreToolUse / PostToolUse), built-in tools, MCP support, config file paths, and skill systems — across every major agent.
+# Agentic Tools Almanac ☤
 
-> **Goal:** Be the single place developers go to understand how to configure, extend, and hook into any agentic coding tool.
+**The ultimate developer's index for AI coding agents.** A community-driven reference for configuring, extending, and intercepting every major agentic development tool. Easily compare lifecycle hooks (e.g., `PreToolUse` and `PostToolUse`), built-in capabilities, Model Context Protocol (MCP) servers, system instruction file paths, and customized skills across 17+ different developer agents.
+
+<table>
+<tr><td><b>Universal Hooks Index</b></td><td>Standardized naming, exit-code blocking rules, and in-depth event execution behaviors for intercepting actions.</td></tr>
+<tr><td><b>Comprehensive Matrix</b></td><td>Side-by-side comparisons of file reads, shell commands, web searches, browser automation, and planning modes.</td></tr>
+<tr><td><b>MCP Config Reference</b></td><td>Direct paths, environment variables, local/remote stdio transports, and tool discovery rules.</td></tr>
+<tr><td><b>Conventions & Rules</b></td><td>Where to write custom instruction files (e.g., <code>CLAUDE.md</code>, <code>CONVENTIONS.md</code>, <code>.cursor/rules/</code>) to customize agent behaviors.</td></tr>
+</table>
 
 ---
 
@@ -32,26 +44,6 @@ A community reference for AI coding agent configurations — lifecycle hooks (Pr
 
 ---
 
-## Repository Structure
-
-```
-agentic-tools-almanac/
-├── README.md                          # This file — master index + comparison tables
-├── tools/
-│   └── <tool-name>/
-│       └── README.md                 # Per-tool: install, config, hooks, tools, MCP, skills
-├── _shared/
-│   ├── activity-agent-matrix.md      # Activity → which agents support it
-│   ├── agent-tools-hooks-config.md   # Agent → complete tools/hooks/config reference
-│   ├── hook-event-comparison.md      # Cross-tool hook event naming matrix
-│   ├── mcp-support.md                # MCP support across tools
-│   └── config-file-locations.md      # Config file + skills directory paths
-└── _templates/
-    └── tool-template.md              # Template for adding a new tool
-```
-
----
-
 ## Quick Navigation
 
 | Question | Go to |
@@ -60,6 +52,26 @@ agentic-tools-almanac/
 | What are all of Agent Y's hooks/tools/config? | [`_shared/agent-tools-hooks-config.md`](_shared/agent-tools-hooks-config.md) |
 | What is PreToolUse called in each tool? | [`_shared/hook-event-comparison.md`](_shared/hook-event-comparison.md) |
 | Where does Tool Y store its config and skills? | [`_shared/config-file-locations.md`](_shared/config-file-locations.md) |
+
+---
+
+## Repository Structure
+
+```
+.
+├── README.md                          # Master index + comparative benchmarks
+├── tools/
+│   └── <tool-name>/
+│       └── README.md                 # Per-tool configuration & command references
+├── _shared/
+│   ├── activity-agent-matrix.md      # Capabilities matrix (natively supported tools)
+│   ├── agent-tools-hooks-config.md   # Unified agent specifications & schemas
+│   ├── hook-event-comparison.md      # Cross-agent hook event name lookup
+│   ├── mcp-support.md                # MCP client capabilities & transport settings
+│   └── config-file-locations.md      # Global/local paths & git-ignored overrides
+└── _templates/
+    └── tool-template.md              # Blueprint for documenting new developer tools
+```
 
 ---
 
