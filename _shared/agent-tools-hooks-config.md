@@ -759,16 +759,16 @@ Also reads: `AGENTS.md`, `AGENT.md`, `CLAUDE.md`, `.cursor/rules/*.md`, `.windsu
 
 ## Aider
 
-**Vendor:** Aider-AI | **Config format:** YAML | No native hook system
+**Vendor:** Aider-AI | **Config format:** YAML | **Instruction file:** `CONVENTIONS.md` (or `.aider.conventions.md`)
 **Sources:** https://aider.chat/docs/config/options.html [official] · https://aider.chat/docs/git.html [official] · https://github.com/Aider-AI/aider/issues/2045 [github — hooks feature request]
 
 ### Config Files
-| File | Scope |
-|------|-------|
-| `~/.aider.conf.yml` | Global |
-| `.aider.conf.yml` | Project |
-| `.env` | Environment variables |
-| `CONVENTIONS.md` | Coding conventions (loaded into context) |
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.aider.conf.yml` | Global | User settings |
+| `.aider.conf.yml` | Project | Project settings |
+| `.env` | Project | Environment variables and API keys |
+| `CONVENTIONS.md` | Project | Standing instructions and coding style conventions |
 
 ### Key Config Options
 ```yaml
@@ -781,9 +781,24 @@ watch-files: true
 ```
 
 ### Hooks
-- **No native pre/post tool use hook system** — tracked in issue #2045
-- **Git hooks available:** standard `pre-commit` (via `--lint-cmd`) and AI commit messages
-- **Workaround:** wrapper shell script around `aider` CLI
+- **No native pre/post tool use hook system** — tracked in issue #2045.
+- **Git hooks integration:** Runs with `--no-verify` by default to skip slow local pre-commit hooks, but auto-generates descriptive commit messages on edits.
+- **Functional quality gates (lint/test hooks):** Triggers `lint-cmd` and `test-cmd` automatically after edits, feeds non-zero exit codes back to LLM context, and prompts self-correction.
+- **Workaround:** Wrapper shell script around `aider` command-line utility.
+
+### Built-in Tools (In-Chat Commands)
+Instead of tool-calling loops, Aider implements terminal slash commands:
+- `/add <file>`: Add files to chat session for editing
+- `/drop <file>`: Remove files from chat session
+- `/read <file>`: Load file as read-only context (uses prompt caching)
+- `/ls`: List repository files
+- `/diff`: Show active changes since last commit
+- `/commit`: Manually commit active changes to Git
+- `/run <cmd>` (alias `!`): Run shell command (can optionally feed stdout to chat)
+- `/test <cmd>`: Run command, add output to chat only if command fails
+- `/lint`: Run linter on active files and self-correct errors
+- `/model <model>`: Switch model
+- `/ask <query>`: Ask questions without editing files
 
 ---
 

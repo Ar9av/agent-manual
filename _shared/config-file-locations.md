@@ -20,6 +20,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Trae | IDE Settings UI |
 | OpenClaw | `~/.openclaw/config.yaml` |
 | GitHub Copilot | `~/.config/gh-copilot/config.json` |
+| Aider | `~/.aider.conf.yml` |
 | Google Antigravity | `~/.config/antigravity/config.toml` |
 
 ## Project-Level Config
