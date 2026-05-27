@@ -34,7 +34,7 @@
 | [Devin CLI](tools/devin-cli/) | Cognition AI | JSON | ✅ Full (7 events) | ✅ | [cli.devin.ai/docs/extensibility/hooks](https://cli.devin.ai/docs/extensibility/hooks/overview) |
 | [Pi Coding Agent](tools/pi-agent/) | earendil-works | JSON + YAML | ✅ Full (7 events) | ✅ | [pi.dev](https://pi.dev) |
 | [OpenCode](tools/opencode/) | OpenCode.ai | JSON | ✅ Via plugins | ✅ | [opencode.ai/docs](https://opencode.ai/docs) |
-| [OpenClaw](tools/openclaw/) | OpenClaw | YAML | ⚠️ Session/message only — PreToolUse not shipped | ✅ | [docs.openclaw.ai](https://docs.openclaw.ai) |
+| [OpenClaw](tools/openclaw/) | OpenClaw | YAML | ✅ Full (18 events via Plugin SDK) | ✅ | [docs.openclaw.ai](https://docs.openclaw.ai) |
 | [Trae](tools/trae/) | ByteDance | Markdown rules | ⚠️ Via MCP only | ✅ | [docs.trae.ai](https://docs.trae.ai) |
 | [Trae CN](tools/trae-cn/) | ByteDance | Markdown rules | ⚠️ Via MCP only | ✅ | [docs.trae.ai](https://docs.trae.ai) |
 | [Aider](tools/aider/) | Aider-AI | YAML | ❌ Not shipped | ❌ | [aider.chat/docs](https://aider.chat/docs/) |
