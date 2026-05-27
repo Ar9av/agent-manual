@@ -123,7 +123,6 @@ Each tool README labels sources:
 | **[official]** | Published by the vendor on their own docs site |
 | **[github]** | Vendor GitHub repo (README, source code) |
 | **[community]** | Community-maintained project (e.g., oh-my-pi) — may diverge from vendor |
-| **[graphify-src]** | Inferred from `github.com/safishamsi/graphify` installer source code |
 
 ---
 
