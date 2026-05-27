@@ -32,7 +32,7 @@ A unified view of lifecycle hook events across all major agentic tools.
 | Factory Droid | Exit code `2` in `PreToolUse` | `exit 2` |
 | Hermes | Return value from `pre_tool_call` | `{ block: true }` |
 | Pi Agent | Exit code `2` in `tool.before.*` | `exit 2` |
-| OpenClaw | Non-zero exit in `preToolUse` | `exit 1` |
+| OpenClaw | Plugin SDK `before_tool_call` return | Synchronous block decision / throw |
 | Devin CLI | Exit code `2` in `PreToolUse` | `exit 2` |
 | Cursor | Non-zero exit in `onPreEdit` | `exit 1` |
 | Aider | ❌ No hook system | N/A |

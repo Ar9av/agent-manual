@@ -600,31 +600,90 @@ hooks_auto_accept: false   # or --accept-hooks flag / HERMES_ACCEPT_HOOKS=1
 
 ## OpenClaw
 
-**Vendor:** OpenClaw (community) | **Config format:** YAML
-**Sources:** https://docs.openclaw.ai/automation/hooks [official] · https://github.com/openclaw/openclaw/issues/60943 [github — PreToolUse feature request, NOT shipped]
+**Vendor:** OpenClaw (community) | **Config format:** YAML | **Instruction file:** `AGENTS.md` (or `.agents/` or `packages/*/AGENTS.md`)
+**Sources:** https://docs.openclaw.ai/automation/hooks [official] · https://docs.openclaw.ai/tools/apply-patch [official] · https://docs.openclaw.ai/plugins/hooks [official]
 
-> ⚠️ **CORRECTION:** PreToolUse/PostToolUse with exit-code blocking are **open feature requests** (issue #60943, #12311), NOT yet shipped as of April 2026. Current hook system is event-based with no blocking mechanism.
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.openclaw/config.yaml` | Global | User settings |
+| `config.yaml` | Project | Project overrides |
+| `~/.openclaw/hooks/` | Global | Managed hook definitions shared across workspaces |
+| `<workspace>/hooks/` | Project | Workspace-level hook overrides |
 
-### Current Hook Events (no blocking)
-| Event | When |
-|-------|------|
-| `command:new` | `/new` command issued |
-| `command:reset` | `/reset` command issued |
-| `command:stop` | `/stop` command issued |
-| `command` | Any command |
-| `session:compact:before` | Before compaction |
-| `session:compact:after` | After compaction |
-| `session:patch` | Session properties modified |
-| `agent:bootstrap` | Before workspace bootstrap |
-| `gateway:startup` | After channels start |
-| `gateway:shutdown` | Gateway shutdown |
-| `gateway:pre-restart` | Before gateway restart |
-| `message:received` | Inbound message |
-| `message:transcribed` | After audio transcription |
-| `message:preprocessed` | After media/link preprocessing |
-| `message:sent` | Outbound message delivered |
+### Built-in Tools
+| Tool | Specification | Description |
+|------|---------------|-------------|
+| `bash` | `command` | Run terminal commands on the host |
+| `read_file` | `path` | Retrieve raw contents of files (text/images) |
+| `write_file` | `path`, `content` | Write or overwrite files in the workspace |
+| `edit_file` | `path`, `edits` | Apply targeted edits to a file |
+| `search` | `query`, `glob` | Find symbols and matches using ripgrep |
+| `web_fetch` | `url` | Retrieve HTML/Markdown from remote pages |
+| `apply_patch` | `input` | Apply multi-file diff patches via unified patch block |
 
-**No blocking mechanism** — handlers execute asynchronously, exit codes not used.
+#### `apply_patch` Format
+Accepts unified patch blocks containing update, add, delete, and move operations inside `*** Begin Patch` and `*** End Patch`:
+```
+*** Begin Patch
+*** Add File: path/to/file
++line 1
+*** Update File: src/app.ts
+@@
+-old line
++new line
+*** End Patch
+```
+
+### Hook Events
+OpenClaw has two distinct hook surfaces:
+
+1. **Internal Event Hooks (Non-blocking):** Asynchronously run side-effects for command and lifecycle events.
+2. **Typed Plugin Hooks (In-process, Blocking):** Run synchronously via the Plugin SDK (`api.on(...)`) for middleware policy gates, canceling actions, or argument mutations.
+
+#### Event Matrices
+
+##### Internal Event Hooks (Non-blocking)
+| Event | When | Context Details |
+|-------|------|-----------------|
+| `command:new` | `/new` command issued | `sessionEntry`, `workspaceDir` |
+| `command:reset` | `/reset` command issued | `sessionEntry`, `previousSessionEntry` |
+| `command:stop` | `/stop` command issued | Termination details |
+| `command` | Any command event | |
+| `session:compact:before` | Before context compaction | `messageCount`, `tokenCount` |
+| `session:compact:after` | After compaction completes | `tokensBefore`, `tokensAfter` |
+| `session:patch` | Session properties modified | Privileged patches |
+| `agent:bootstrap` | Before workspace bootstrap | Mutable `bootstrapFiles` array |
+| `gateway:startup` | Gateway processes start up | |
+| `gateway:shutdown` | Gateway shutdown begins | `reason`, `restartExpectedMs` |
+| `gateway:pre-restart` | Before scheduled restart | Bounded drain budget (10s limit) |
+| `message:received` | Inbound message arrives | `from`, `content`, `channelId`, `metadata` |
+| `message:transcribed` | Audio transcription done | `transcript`, `mediaPath` |
+| `message:preprocessed` | Media/link preprocessed | Final enriched `bodyForAgent` |
+| `message:sent` | Outbound message delivered | `to`, `content`, `success` |
+
+##### Typed Plugin Hooks (Blocking)
+| SDK Hook | When it fires | Can Block? | Notes |
+|----------|---------------|------------|-------|
+| `before_tool_call` | Before any tool runs | ✅ Yes | Can rewrite arguments or deny tool call |
+| `before_agent_reply` | Before final reply delivered | ✅ Yes | Can modify prompt or inject extra context |
+| `before_agent_finalize` | Agent finishes reasoning | ✅ Yes | Can request another reasoning loop |
+| `before_install` | Before plugin installation | ✅ Yes | Prevents untrusted plugin installation |
+| `session_end` | Session finalized/shutdown | ❌ No | Cleanup connections/databases |
+
+### Hook Config Format
+Internal hooks are enabled via YAML config:
+```yaml
+hooks:
+  internal:
+    enabled: true
+    entries:
+      session-memory:
+        enabled: true
+      command-logger:
+        enabled: false
+```
+Plugin hooks are registered programmatically via the Plugin SDK.
 
 ### Skills
 - Location: `~/.openclaw/skills/*/SKILL.md`
