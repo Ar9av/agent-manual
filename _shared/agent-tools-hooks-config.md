@@ -2,7 +2,7 @@
 
 Comprehensive per-agent reference. All data sourced from official documentation or confirmed primary sources. Entries without a source label are inferred or from community docs — see each tool's README for per-topic source table.
 
-> **Source key used inline:** `[official]` = confirmed from vendor docs | `[github]` = confirmed from vendor repo | `[graphify-src]` = confirmed from `github.com/safishamsi/graphify` `__main__.py` `_PLATFORM_CONFIG` dict
+> **Source key used inline:** `[official]` = confirmed from vendor docs | `[github]` = confirmed from vendor repo | `[installer-src]` = confirmed from the installer scripts or directory structures
 
 ---
 
@@ -92,7 +92,7 @@ Comprehensive per-agent reference. All data sourced from official documentation 
 ```
 
 ### Skills (Slash Commands)
-- Location: `~/.claude/skills/graphify/SKILL.md` (global), `.claude/skills/*/SKILL.md` (project)
+- Location: `~/.claude/skills/*/SKILL.md` (global), `.claude/skills/*/SKILL.md` (project)
 - Format: Markdown with YAML frontmatter (`name`, `description`, `trigger`)
 - Registered via `CLAUDE.md` section
 
@@ -944,7 +944,7 @@ Instead of tool-calling loops, Aider implements terminal slash commands:
 ## Google Antigravity
 
 **Vendor:** Google | **Config format:** JSON / TOML | **Instruction file:** `.agent/rules/` and `.agent/workflows/`
-**Sources:** https://antigravity.google/docs/home [official — auth required] · https://antigravity.google/docs/hooks [official] · https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 [community forum] · https://github.com/safishamsi/graphify [graphify-src — skill paths]
+**Sources:** https://antigravity.google/docs/home [official — auth required] · https://antigravity.google/docs/hooks [official] · https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 [community forum] · [installer-src — skill paths]
 
 ### Config Files
 | File | Scope | Purpose |

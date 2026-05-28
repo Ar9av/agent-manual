@@ -58,9 +58,9 @@ Quick reference for where each agentic tool stores its configuration.
 | Kimi Code | `config.json` (`mcpServers` key) |
 | Google Antigravity | `~/.gemini/config/mcp_config.json` or `~/.gemini/antigravity-cli/mcp_config.json` |
 
-## Skills Directories (confirmed from graphify `_PLATFORM_CONFIG`)
+## Skills Directories
 
-These paths are sourced directly from graphify's installer code — the most reliable cross-tool reference for skill file locations.
+These paths are sourced directly from installer scripts and verified directories for skill file locations.
 
 | Tool | Global Skills Path | Project Skills Path |
 |------|-------------------|---------------------|
