@@ -6,18 +6,33 @@
 
 ## Links
 
-- Docs: https://cli.devin.ai/docs
-- Extensibility overview: https://cli.devin.ai/docs/extensibility
-- Hooks overview: https://cli.devin.ai/docs/extensibility/hooks/overview
+- Docs: https://docs.devin.ai/cli
+- Extensibility overview: https://docs.devin.ai/cli/extensibility
+- Hooks overview: https://docs.devin.ai/cli/extensibility/hooks/overview
 
 ---
 
 ## Installation
 
+**macOS / Linux / WSL:**
 ```sh
-pip install devin-cli
-devin
+curl -fsSL https://cli.devin.ai/install.sh | bash
 ```
+
+**macOS (Homebrew):**
+```sh
+brew install --cask devin-cli
+brew upgrade --cask devin-cli  # for upgrades
+```
+
+**Windows (PowerShell only — incompatible with Git Bash or CMD):**
+```powershell
+irm https://static.devin.ai/cli/setup.ps1 | iex
+```
+
+**Devin Desktop (Enterprise):** Command Palette (Cmd+Shift+P / Ctrl+Shift+P) → Install Devin CLI
+
+> ⚠️ `pip install devin-cli` installs an **unofficial third-party PyPI package** (author: Revanth Pobala) that is not affiliated with Cognition AI. Do not use it as the official Devin CLI.
 
 ## Configuration Files
 
@@ -33,6 +48,8 @@ devin
 
 Files containing `.local.` are auto-excluded from git.
 
+> Legacy paths (`~/.config/cognition/`, `.cognition/`) are still read with deprecation warnings; migrate to `.devin/`.
+
 **Also reads** (compatibility): `AGENTS.md`, `AGENT.md`, `CLAUDE.md`, `.cursor/rules/*.md`, `.cursorrules`, `.windsurf/rules/*.md`, `.claude/`
 
 ## Hooks
@@ -43,13 +60,13 @@ Files containing `.local.` are auto-excluded from git.
 
 | Event | When | Can Block? |
 |-------|------|-----------|
-| `PreToolUse` | Before tool call | ✅ (exit 2 or stdout JSON) |
-| `PostToolUse` | After tool completes | ❌ |
-| `PermissionRequest` | Permission decision needed | ✅ |
-| `UserPromptSubmit` | User submits a message | ❌ |
-| `Stop` | Agent wants to stop | ✅ |
-| `SessionStart` | Session begins | ❌ |
-| `SessionEnd` | Session ends | ❌ |
+| `PreToolUse` | Before a tool executes | ✅ (exit 2 or stdout JSON) |
+| `PostToolUse` | After a tool finishes | ❓ (not explicitly stated in docs) |
+| `PermissionRequest` | When a permission decision is needed | ✅ |
+| `UserPromptSubmit` | When the user submits a message | ✅ (exit 2 blocks the prompt) |
+| `Stop` | When the agent wants to stop | ✅ |
+| `SessionStart` | When a session begins | ❓ (not explicitly stated in docs) |
+| `SessionEnd` | When a session ends | ❓ (not explicitly stated in docs) |
 
 ### Configuration Format
 
@@ -121,7 +138,7 @@ Valid `decision` values: `"approve"`, `"block"`, `"deny"`.
 
 ### Environment Variables
 
-`DEVIN_PROJECT_DIR` — set to project root during hook execution.
+`DEVIN_PROJECT_DIR` — automatically set to the project root directory during hook execution.
 
 ### Verification
 
@@ -160,7 +177,7 @@ Run `/hooks` slash command inside Devin CLI to list all active hooks and their s
 
 ## MCP Support
 
-Configure under `mcpServers` in `config.json`. Supports all standard MCP server types.
+Configure under `mcpServers` in `config.json`. Supports all standard MCP server types, including OAuth and legacy SSE protocol.
 
 ## Skills
 
@@ -195,11 +212,14 @@ Custom subagent profiles in `.devin/agents/` with distinct system prompts, tool 
 - `hooks.v1.json` format mirrors Claude Code hooks — hooks from Claude Code projects often work directly.
 - `config.local.json` pattern allows personal overrides without committing credentials.
 - User-level config at `~/.config/devin/` applies across all projects.
+- Background auto-updates on macOS/Linux: new releases download while Devin runs; next invocation picks up the latest version. Homebrew users must upgrade manually via `brew upgrade devin`.
 
-## Sources (Official)
+## Sources
 
-| Topic | URL |
-|-------|-----|
-| Extensibility overview | https://cli.devin.ai/docs/extensibility |
-| Hooks overview | https://cli.devin.ai/docs/extensibility/hooks/overview |
-| Main docs | https://cli.devin.ai/docs |
+| Topic | URL | Label |
+|-------|-----|-------|
+| CLI docs (main) | https://docs.devin.ai/cli | [official] |
+| Hooks overview | https://docs.devin.ai/cli/extensibility/hooks/overview | [official] |
+| Stable changelog | https://docs.devin.ai/cli/changelog/stable | [official] |
+| Unofficial PyPI package (NOT official) | https://pypi.org/project/devin-cli/ | [third-party] |
+| Unofficial PyPI source (NOT official) | https://github.com/revanthpobala/devin-cli | [github] |

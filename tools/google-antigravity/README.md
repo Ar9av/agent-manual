@@ -2,7 +2,7 @@
 
 > Google's agent-first software development platform and AI-powered IDE. Docs at antigravity.google/docs.
 
-**Vendor:** Google | **License:** Proprietary (Pre-GA / Preview Terms) | **Runtime:** Go / Native CLI (`agy`)
+**Vendor:** Google | **License:** Proprietary | **Runtime:** Go / Native CLI (`agy`)
 
 ## Links
 
@@ -40,17 +40,17 @@ curl -fsSL https://antigravity.google/cli/install.cmd -o install.cmd && install.
 ## Instruction File
 
 The agent reads declarative, behavioral rules and multi-step automated workflows from the project root:
-- `.agent/rules/` (Project-level behavioral rules/triggers)
-- `.agent/workflows/` (Multi-step automated workflows)
+- `.agents/rules/` (Project-level behavioral rules/triggers — canonical form; `.agent/rules/` singular is retained for backward compatibility only)
+- `.agents/workflows/` (Multi-step automated workflows)
 
 ## Hooks
 
-Antigravity supports a standard lifecycle interceptor system. Interceptors are classified into three strict categories based on their function:
-- **Inspect** (Read-Only, Non-Blocking): Used for observability, logging, audit trails, and metrics.
-- **Decide** (Read-Only, Blocking): Used for policy enforcement and security guardrails. Returns a decision (e.g., `allow` or `deny`).
-- **Transform** (Modifying, Blocking): Used for data sanitization, prompt optimization, or error recovery.
+Antigravity supports a standard lifecycle interceptor system. Interceptors are classified into three categories based on their function:
+- **Decide** (Read-Only, Blocking): Used for policy enforcement and security guardrails. Returns a decision (`allow` or `deny`). If any Decide hook denies, execution short-circuits.
+- **Inspect** (Read-Only, Non-Blocking): Used for observability, logging, audit trails, and metrics. Runs concurrently after an event (e.g., `PostToolCallHook`).
+- **Transform** (Modifying, Blocking): Used for data sanitization, prompt optimization, or error recovery. Fires on errors and interactions — not as a fixed middle stage.
 
-The execution order enforces a strict pipeline: **Decide → Transform → Inspect** to prevent Time-of-Check to Time-of-Use (TOCTOU) vulnerabilities.
+The execution pipeline runs: **Decide → Execute → Inspect/PostToolCall**. Transform hooks fire conditionally (errors/interactions), not as a fixed middle stage. This ordering prevents Time-of-Check to Time-of-Use (TOCTOU) vulnerabilities.
 
 ### Supported Events
 
@@ -77,10 +77,12 @@ The execution order enforces a strict pipeline: **Decide → Transform → Inspe
 
 ```json
 {
-  "decision": "block",
+  "decision": "deny",
   "reason": "Security policy violation"
 }
 ```
+
+Valid decision values: `"allow"`, `"deny"`. (`"block"` is not a valid value.)
 
 ### Exit Code Behavior
 
@@ -162,7 +164,7 @@ Supports both local stdio and remote HTTP/SSE transport modes.
 
 ## Skills / Commands
 
-- Skills location: Global `~/.agents/skills/` or Project `.agents/skills/`
+- Skills location: Global `~/.gemini/antigravity-cli/skills/` or Project `.agents/skills/`
 - Format: Markdown file `SKILL.md` (YAML frontmatter: `name`, `description`, `trigger`, etc.). Windows variant uses PowerShell.
 - Convention shared with Codex CLI.
 
@@ -175,11 +177,17 @@ Antigravity CLI and IDE allow spawning and managing background subagents (e.g. `
 - Debugging: Run `agy inspect` via the CLI to check active hooks, settings, and rule configurations.
 - Run `agy plugin import` to migrate existing extensions or configurations from the older Gemini CLI ecosystem.
 
-## Sources (Official)
+## Sources
 
-| Topic | URL |
-|-------|-----|
-| Docs home | https://antigravity.google/docs/home |
-| Lifecycle Hooks | https://antigravity.google/docs/hooks |
-| Workflows & Rules | https://antigravity.google/docs/rules-workflows |
-| Community forum | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Docs home | https://antigravity.google/docs/home | 2026-06-13 | [official] |
+| Lifecycle Hooks | https://antigravity.google/docs/hooks | 2026-06-13 | [official] |
+| Workflows & Rules | https://antigravity.google/docs/rules-workflows | 2026-06-13 | [official] |
+| Community forum | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 | 2026-06-13 | [official] |
+| Migrating to Antigravity CLI (hook deny value, skills path) | https://medium.com/google-cloud/migrating-to-antigravity-cli-a841c6964f37 | 2026-06-13 | [community] |
+| Configuring MCP Servers and Skills (skills path) | https://medium.com/google-cloud/configuring-mcp-servers-and-skills-for-antigravity-cli-and-ide-a938c7eebb78 | 2026-06-13 | [community] |
+| Google Antigravity SDK developer guide (hook pipeline, Transform) | https://medium.com/google-cloud/google-antigravity-sdk-the-developer-guide-7770ad8a5f53 | 2026-06-13 | [community] |
+| Transitioning Gemini CLI to Antigravity CLI (GA date) | https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/ | 2026-06-13 | [official] |
+| Antigravity 2.0 at I/O 2026 (GA status) | https://www.marktechpost.com/2026/05/19/google-launches-antigravity-2-0-at-i-o-2026-a-standalone-agent-first-platform-with-cli-sdk-managed-execution-and-enterprise-support/ | 2026-06-13 | [press] |
+| AGENTS.md rules path (.agents/rules canonical) | https://agentpedia.codes/blog/antigravity-agents-md-guide | 2026-06-13 | [community] |

@@ -1,13 +1,14 @@
 # Claude Code
 
-> Anthropic's official AI coding agent for the terminal and IDE.
+> Anthropic's official AI coding agent for the terminal, IDE, desktop app, and browser.
 
-**Vendor:** Anthropic | **License:** Proprietary | **Runtime:** Node.js
+**Vendor:** Anthropic | **License:** Proprietary | **Runtime:** Node.js (CLI); native binary also available
 
 ## Links
 
-- Docs: https://code.claude.com/docs
+- Docs: https://docs.anthropic.com/en/docs/claude-code (redirects to https://code.claude.com/docs)
 - Hooks reference: https://code.claude.com/docs/en/hooks
+- Settings reference: https://code.claude.com/docs/en/settings
 - GitHub (community): https://github.com/anthropics/claude-code
 - Changelog: https://code.claude.com/docs/en/changelog
 
@@ -15,19 +16,62 @@
 
 ## Installation
 
+### Native installer (recommended — auto-updates)
+
+**macOS / Linux / WSL:**
+```sh
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+**Windows PowerShell:**
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+**Windows CMD:**
+```batch
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+### Homebrew
+```sh
+brew install --cask claude-code
+# or for latest channel:
+brew install --cask claude-code@latest
+```
+Note: Homebrew does **not** auto-update. Run `brew upgrade claude-code` manually.
+
+### WinGet
+```powershell
+winget install Anthropic.ClaudeCode
+```
+
+### npm (alternative)
 ```sh
 npm install -g @anthropic-ai/claude-code
 claude
 ```
 
+Linux package managers (apt, dnf, apk) are also supported — see the [setup page](https://code.claude.com/docs/en/setup).
+
+---
+
 ## Configuration Files
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `~/.claude/settings.json` | Global | User-level settings, hooks, permissions |
-| `.claude/settings.json` | Project | Project-level settings |
-| `.claude/settings.local.json` | Project (git-ignored) | Personal project overrides |
+| `~/.claude/settings.json` | Global (user) | User-level settings, hooks, permissions |
+| `.claude/settings.json` | Project (shared) | Project-level settings, committed to git |
+| `.claude/settings.local.json` | Project (personal) | Personal project overrides, git-ignored |
+| `managed-settings.json` / plist / registry | Org (managed) | Admin-controlled, highest precedence |
 | `CLAUDE.md` | Project | Natural-language instructions loaded into context |
+| `~/.claude.json` / `.mcp.json` | User / Project | MCP server configuration |
+
+**Scope precedence (high → low):** Managed → Command line → Local → Project → User
+
+Most settings hot-reload on file change without a session restart (including `permissions` and `hooks`).
+
+---
 
 ## Hooks
 
@@ -35,30 +79,57 @@ Hook events are defined in `settings.json` under the `hooks` key.
 
 ### Supported Events
 
-| Event | When | Can Block? |
-|-------|------|-----------|
-| `PreToolUse` | Before every tool call | ✅ (exit 2) |
-| `PostToolUse` | After every tool call | ❌ |
-| `Notification` | When agent sends a notification | ❌ |
-| `Stop` | When the agent finishes a turn | ❌ |
-| `SubagentStop` | When a subagent finishes | ❌ |
-| `PreCompact` | Before context compaction | ❌ |
+| Event | When it fires | Can Block? | Notes |
+|-------|--------------|-----------|-------|
+| `SessionStart` | Session begins or resumes | ❌ | |
+| `Setup` | `--init-only` / maintenance flag | ❌ | |
+| `UserPromptSubmit` | User submits a prompt, before processing | ✅ (exit 2 erases prompt) | 30 s timeout override |
+| `UserPromptExpansion` | User-typed slash command expands into prompt | ✅ | 30 s timeout override |
+| `PreToolUse` | Before every tool call | ✅ | |
+| `PermissionRequest` | Permission dialog triggered | ✅ (exit 2 denies) | |
+| `PermissionDenied` | Tool denied by auto-mode classifier | ❌ | Use JSON `retry: true` instead |
+| `PostToolUse` | After tool call succeeds | ❌ | Tool already ran |
+| `PostToolUseFailure` | After tool call fails | ❌ | |
+| `PostToolBatch` | After a parallel tool-call batch resolves | ✅ (stops loop) | |
+| `Notification` | Agent sends a notification | ❌ | |
+| `MessageDisplay` | While assistant message text renders | ❌ | 10 s timeout override |
+| `SubagentStart` | Subagent is spawned | ❌ | |
+| `SubagentStop` | Subagent finishes | ✅ | |
+| `TaskCreated` | Task created via `TaskCreate` | ✅ (rolls back) | |
+| `TaskCompleted` | Task marked completed | ✅ | |
+| `Stop` | Claude finishes a turn | ✅ (continues conversation) | |
+| `StopFailure` | Turn ends due to API error | ❌ | Output/exit code ignored |
+| `TeammateIdle` | Agent-team teammate about to go idle | ✅ | |
+| `InstructionsLoaded` | `CLAUDE.md` or `.claude/rules/*.md` loaded | ❌ | Exit code ignored |
+| `ConfigChange` | Config file changes during session | ✅ | Except `policy_settings` |
+| `CwdChanged` | Working directory changes | ❌ | |
+| `FileChanged` | Watched file changes on disk | ❌ | |
+| `WorktreeCreate` | Worktree created | ✅ (any non-zero fails creation) | |
+| `WorktreeRemove` | Worktree removed | ❌ | |
+| `PreCompact` | Before context compaction | ✅ | |
+| `PostCompact` | After context compaction completes | ❌ | |
+| `Elicitation` | MCP server requests user input | ✅ (exit 2 denies) | |
+| `ElicitationResult` | User responds to MCP elicitation | ✅ (becomes decline) | |
+| `SessionEnd` | Session terminates | ❌ | |
 
 ### Hook Types
 
 | Type | Description |
 |------|-------------|
-| `command` | Run a shell command |
-| `http` | HTTP POST to a URL |
-| `prompt` | Single-turn LLM evaluation |
-| `agent` | Spawn a subagent with Read/Grep/Glob tools |
+| `command` | Run a shell command (stdin = hook JSON, exit code drives behavior) |
+| `http` | HTTP POST to a URL (body = hook JSON) |
+| `mcp_tool` | Call a tool on a connected MCP server |
+| `prompt` | Single-turn LLM evaluation (yes/no) — 30 s default timeout |
+| `agent` | Spawn a subagent with Read/Grep/Glob tools (experimental) — 60 s default timeout |
 
 ### Hook Input (stdin JSON)
 
 ```json
 {
   "session_id": "abc123",
-  "transcript_path": "/tmp/transcript.json",
+  "transcript_path": "/path/to/transcript.jsonl",
+  "cwd": "/current/working/directory",
+  "permission_mode": "default|plan|acceptEdits|auto|dontAsk|bypassPermissions",
   "hook_event_name": "PreToolUse",
   "tool_name": "Bash",
   "tool_input": { "command": "rm -rf /tmp/test" }
@@ -69,9 +140,68 @@ Hook events are defined in `settings.json` under the `hooks` key.
 
 | Code | Meaning |
 |------|---------|
-| `0` | Success, continue |
-| `2` | Block tool (PreToolUse only); stderr sent to Claude |
-| Other | Warning shown to user, execution continues |
+| `0` | Success; stdout parsed for optional JSON output fields |
+| `2` | Blocking error on supported events; stderr sent to Claude as error message |
+| Other | Non-blocking warning; first line of stderr shown in transcript |
+
+Exit code 2 is **not** limited to `PreToolUse` — it applies to all events marked ✅ in the table above.
+
+### Command Hook Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `type` | Yes | `"command"`, `"http"`, `"mcp_tool"`, `"prompt"`, or `"agent"` |
+| `command` | Yes (command) | Shell command to execute |
+| `args` | No | Argument list; when present, command is exec'd directly (no shell) |
+| `shell` | No | `"bash"` (default) or `"powershell"`; ignored when `args` is set |
+| `timeout` | No | Seconds before cancellation (see defaults below) |
+| `statusMessage` | No | Custom spinner message while hook runs |
+| `async` | No | `true` → run in background, output discarded, Claude proceeds immediately |
+| `asyncRewake` | No | `true` → run in background **and** wake Claude if exit code 2 (implies `async`). Stderr shown to Claude as system reminder |
+| `if` | No | Permission-rule pattern filter, e.g. `"Bash(git *)"` |
+| `once` | No | `true` → run once per session then deregister (skill frontmatter only) |
+
+**`async` vs `asyncRewake`:** `async: true` is fire-and-forget (output discarded). `asyncRewake: true` also runs in the background but re-wakes Claude and sends hook output if exit code 2 — use for long background operations that may need human attention.
+
+### HTTP Hook Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `url` | Yes | URL to HTTP POST |
+| `headers` | No | Additional HTTP headers (key-value object) |
+| `allowedEnvVars` | No | Env var names allowed for interpolation in headers |
+
+To block via HTTP hook: return 2xx with JSON `{ "decision": "block" }` (non-2xx = non-blocking error).
+
+### MCP Tool Hook Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `server` | Yes | Name of an already-connected MCP server |
+| `tool` | Yes | Tool name on that server |
+| `input` | No | Tool arguments; supports `${path}` substitution from hook JSON |
+
+### JSON Output Fields (stdout from any hook)
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `continue` | `true` | `false` stops all processing |
+| `stopReason` | — | Message to user when `continue: false` |
+| `suppressOutput` | `false` | Hide hook stdout from transcript |
+| `systemMessage` | — | Warning shown to user |
+| `additionalContext` | — | String injected into Claude's context window |
+| `terminalSequence` | — | Terminal escape sequence (OSC/BEL) |
+| `hookSpecificOutput` | — | Nested event-specific decisions (requires `hookEventName`) |
+
+### Timeout Defaults
+
+| Hook type | Default | Overrides |
+|-----------|---------|-----------|
+| `command` | 600 s | `UserPromptSubmit`/`UserPromptExpansion` → 30 s; `MessageDisplay` → 10 s |
+| `http` | 600 s | `UserPromptSubmit`/`UserPromptExpansion` → 30 s |
+| `mcp_tool` | 600 s | `UserPromptSubmit`/`UserPromptExpansion` → 30 s |
+| `prompt` | 30 s | — |
+| `agent` | 60 s | — |
 
 ### Configuration Example
 
@@ -93,6 +223,17 @@ Hook events are defined in `settings.json` under the `hooks` key.
           { "type": "command", "command": "~/.claude/hooks/format.sh", "async": true }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/background-validate.sh",
+            "asyncRewake": true
+          }
+        ]
+      }
     ]
   }
 }
@@ -101,6 +242,20 @@ Hook events are defined in `settings.json` under the `hooks` key.
 ### Async Hooks
 
 Add `"async": true` to run a hook in the background without blocking Claude's execution (released January 2026).
+
+Add `"asyncRewake": true` to run in the background and re-wake Claude if the hook exits with code 2 (useful for deferred validation that may need to surface an error).
+
+### Matcher Patterns
+
+| Pattern | Evaluated as |
+|---------|-------------|
+| `*`, `""`, or omitted | Match all occurrences |
+| Letters/digits/`_`/`\|` only | Exact string or `\|`-separated list |
+| Any other characters | JavaScript regex |
+
+MCP tool format: `mcp__<server>__<tool>` (e.g. `mcp__memory__create_entities`; all tools from a server: `mcp__memory__.*`).
+
+---
 
 ## Built-in Tools
 
@@ -120,15 +275,22 @@ Add `"async": true` to run a hook in the background without blocking Claude's ex
 | `WebSearch` | Web search |
 | `NotebookRead` / `NotebookEdit` | Jupyter notebook support |
 
+---
+
 ## MCP Support
 
-- Config: `.claude/mcp.json` or `~/.claude/mcp.json`
+- Config: `.mcp.json` (project) or `~/.claude.json` (user)
 - Enable servers in settings under `mcpServers`
 - Servers expose additional tools available in the agent loop
+- MCP tool hooks use the `mcp_tool` hook type targeting connected servers
+
+---
 
 ## Agent / Subagent Configuration
 
-Claude Code supports spawning subagents via the `Agent` tool and via `agent`-type hooks. Subagents have access to Read, Grep, and Glob tools by default.
+Claude Code supports spawning subagents via the `Agent` tool and via `agent`-type hooks. Subagents have access to Read, Grep, and Glob tools by default. Background agents and agent-team features (with `TeammateIdle` hook) are also available.
+
+---
 
 ## Permissions
 
@@ -136,27 +298,38 @@ Claude Code supports spawning subagents via the `Agent` tool and via `agent`-typ
 {
   "permissions": {
     "allow": ["Bash(git *)", "Read(**)"],
-    "deny": ["Bash(rm -rf *)"]
+    "deny": ["Bash(rm -rf *)", "Read(./.env)"],
+    "ask": ["Write(./config.json)"]
   }
 }
 ```
+
+- Deny rules take precedence over allow rules.
+- Rules merge across scopes; higher-precedence sources can only add restrictions, not loosen them.
+
+---
 
 ## Skills (Slash Commands)
 
 Custom slash commands live in `.claude/commands/` as Markdown files. They can reference `$ARGUMENTS` and embed tool calls.
 
+---
+
 ## Notes
 
-- `CLAUDE.md` files are loaded recursively from the repo root.
-- `disableAllHooks: true` in settings disables all hooks for debugging.
-- Hook `agent` type has a 60s default timeout; `prompt` type has 30s.
+- `CLAUDE.md` files are loaded recursively from the repo root and from `.claude/rules/*.md`.
+- `disableAllHooks: true` in settings disables all hooks and the custom status line.
+- Hook `agent` type has a 60 s default timeout; `prompt` type has 30 s; `command`/`http`/`mcp_tool` default to 600 s.
+- Native installer (`curl`) automatically updates in the background; Homebrew/WinGet/npm do not.
+- Path placeholders available in hook commands: `${CLAUDE_PROJECT_DIR}`, `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PLUGIN_DATA}`.
 
-## Sources (Official)
+---
 
-| Topic | URL |
-|-------|-----|
-| Hooks reference | https://code.claude.com/docs/en/hooks |
-| Main docs | https://code.claude.com/docs |
-| Skills / slash commands | https://code.claude.com/docs/en/skills |
-| MCP configuration | https://code.claude.com/docs/en/mcp |
-| Settings reference | https://code.claude.com/docs/en/settings |
+## Sources
+
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Hooks reference | https://code.claude.com/docs/en/hooks | 2026-06-13 | [official] |
+| Overview / installation | https://code.claude.com/docs/en/overview | 2026-06-13 | [official] |
+| Settings reference | https://code.claude.com/docs/en/settings | 2026-06-13 | [official] |
+| Canonical docs redirect | https://docs.anthropic.com/en/docs/claude-code → https://code.claude.com/docs | 2026-06-13 | [official] |

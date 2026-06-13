@@ -22,15 +22,15 @@
 
 | Tool | Vendor | Config format | Hooks | MCP | Official docs |
 |------|--------|--------------|-------|-----|--------------|
-| [Claude Code](tools/claude-code/) | Anthropic | JSON | ✅ Full (12 events) | ✅ | [docs.anthropic.com/claude-code](https://docs.anthropic.com/en/docs/claude-code) |
+| [Claude Code](tools/claude-code/) | Anthropic | JSON | ✅ Full (31 events) | ✅ | [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks) |
 | [Codex CLI](tools/codex/) | OpenAI | TOML | ✅ Full (10 events) | ✅ | [developers.openai.com/codex](https://developers.openai.com/codex) |
-| [GitHub Copilot](tools/github-copilot/) | GitHub/Microsoft | JSON | ✅ Full (12 events) | ✅ | [docs.github.com/copilot/hooks](https://docs.github.com/en/copilot/concepts/agents/hooks) |
+| [GitHub Copilot](tools/github-copilot/) | GitHub/Microsoft | JSON | ✅ Full (13 events) | ✅ | [docs.github.com/en/copilot/reference/hooks-reference](https://docs.github.com/en/copilot/reference/hooks-reference) |
 | [Gemini CLI](tools/gemini-cli/) | Google | JSON | ✅ Full (11 events) | ✅ | [geminicli.com/docs](https://geminicli.com/docs) |
 | [Factory Droid](tools/factory-droid/) | Factory.ai | JSON | ✅ Full (9 events) | ✅ | [docs.factory.ai](https://docs.factory.ai) |
-| [Kiro IDE/CLI](tools/kiro/) | AWS | YAML | ✅ Full | ✅ | [kiro.dev/docs](https://kiro.dev/docs) |
-| [Kimi Code](tools/kimi-code/) | Moonshot AI | TOML | ✅ Full — Beta (13 events) | ✅ | [kimi.com/code/docs](https://www.kimi.com/code/docs/en/kimi-code-cli/) |
-| [Cursor](tools/cursor/) | Anysphere | JSON | ✅ Full (21 events) | ✅ | [cursor.com/docs/hooks](https://cursor.com/docs/hooks) |
-| [Hermes](tools/hermes/) | NousResearch | YAML | ✅ Full | ✅ | [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/docs) |
+| [Kiro IDE/CLI](tools/kiro/) | Amazon (AWS) | YAML | ✅ Full | ✅ | [kiro.dev/docs](https://kiro.dev/docs) |
+| [Kimi Code](tools/kimi-code/) | Moonshot AI | TOML | ✅ Full — Beta (16 events) | ✅ | [kimi.com/code/docs](https://www.kimi.com/code/docs/en/kimi-code-cli/) |
+| [Cursor](tools/cursor/) | Anysphere | JSON | ✅ Full (23 events) | ✅ | [cursor.com/docs/hooks](https://cursor.com/docs/hooks) |
+| [Hermes](tools/hermes/) | NousResearch | YAML | ✅ Full (❓ events) | ✅ | [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/docs) |
 | [Devin CLI](tools/devin-cli/) | Cognition AI | JSON | ✅ Full (7 events) | ✅ | [cli.devin.ai/docs/extensibility/hooks](https://cli.devin.ai/docs/extensibility/hooks/overview) |
 | [Pi Coding Agent](tools/pi-agent/) | earendil-works | JSON + YAML | ✅ Full (7 events) | ✅ | [pi.dev](https://pi.dev) |
 | [OpenCode](tools/opencode/) | OpenCode.ai | JSON | ✅ Via plugins | ✅ | [opencode.ai/docs](https://opencode.ai/docs) |
@@ -83,14 +83,16 @@ How the same lifecycle moment is named across tools:
 |---|---|---|---|---|---|---|---|---|---|
 | Before any tool | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `preToolUse` | `PreToolUse` | `tool.before.*` |
 | After any tool | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `postToolUse` | `PostToolUse` | `tool.after.*` |
-| After tool fails | `PostToolUse` | — | — | `postToolUseFailure` | `PostToolUseFailure` | — | — | — | — |
-| Prompt submitted | — | `UserPromptSubmit` | `BeforeAgent` | `userPromptSubmitted` | `UserPromptSubmit` | `UserPromptSubmit` | `beforeSubmitPrompt` | `UserPromptSubmit` | — |
+| After tool fails | `PostToolUseFailure` | — | — | `postToolUseFailure` | `PostToolUseFailure` | — | `postToolUseFailure` | — | — |
+| Prompt submitted | `UserPromptSubmit` | `UserPromptSubmit` | `BeforeAgent` | `userPromptSubmitted` | `UserPromptSubmit` | `UserPromptSubmit` | `beforeSubmitPrompt` | `UserPromptSubmit` | — |
 | Agent turn ends | `Stop` | `Stop` | `AfterAgent` | `agentStop` | `Stop` | `Stop` | `stop` | `Stop` | — |
 | Subagent starts | `SubagentStart` | `SubagentStart` | — | `subagentStart` | `SubagentStart` | — | `subagentStart` | — | — |
-| Session starts | — | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `session.created` |
-| Context compacted | `PreCompact` | `PreCompact` | `PreCompress` | `preCompact` | `PreCompact` | `PreCompact` | — | — | — |
-| Permission request | — | `PermissionRequest` | — | `permissionRequest` | — | — | — | `PermissionRequest` | — |
+| Session starts | `SessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `session.created` |
+| Session ends | `SessionEnd` | — | `SessionEnd` | `sessionEnd` | — | `SessionEnd` | `sessionEnd` | — | — |
+| Context compacted | `PreCompact` | `PreCompact` | `PreCompress` | `preCompact` | `PreCompact` | `PreCompact` | `preCompact` | — | — |
+| Permission request | `PermissionRequest` | `PermissionRequest` | — | `permissionRequest` | — | — | — | `PermissionRequest` | — |
 | LLM call | — | — | `BeforeModel` / `AfterModel` | — | — | — | — | — | — |
+| Notification | `Notification` | — | `Notification` | `notification` | — | `Notification` | — | — | — |
 
 ---
 
@@ -137,3 +139,9 @@ When adding or updating a tool:
 3. Use the `[official]` / `[github]` / `[community]` labels in the Sources table.
 4. Update the master table in this README.
 5. Update `_shared/agent-tools-hooks-config.md` with the agent's section.
+
+---
+
+## Data Sources & Disclaimer
+
+The Hook Event Cross-Reference table and event counts in the Tools Covered table are sourced directly from each tool's official documentation at the time of last update. Hook APIs evolve rapidly — vendor docs are the authoritative source and should always be consulted before relying on counts or event names listed here. Entries marked ❓ could not be verified against live official documentation at the time of writing.

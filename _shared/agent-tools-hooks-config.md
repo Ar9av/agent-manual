@@ -40,14 +40,44 @@ Comprehensive per-agent reference. All data sourced from official documentation 
 | `Skill` | Invoke a skill |
 
 ### Hook Events
-| Event | When | Can Block | Stdin fields |
-|-------|------|-----------|-------------|
-| `PreToolUse` | Before tool execution | ✅ exit 2 | `session_id`, `hook_event_name`, `tool_name`, `tool_input`, `transcript_path`, `cwd` |
-| `PostToolUse` | After tool execution | ❌ | + `tool_response` |
-| `Notification` | Agent sends notification | ❌ | + `message` |
-| `Stop` | Agent turn ends | ✅ exit 2 | + `stop_hook_active` |
-| `SubagentStop` | Subagent finishes | ✅ exit 2 | + `stop_hook_active` |
-| `PreCompact` | Before context compaction | ❌ | + `trigger`, `custom_instructions` |
+| Event | When | Can Block | Notes |
+|-------|------|-----------|-------|
+| `SessionStart` | Session begins or resumes | ❌ | |
+| `Setup` | `--init-only` / maintenance flag | ❌ | |
+| `UserPromptSubmit` | User submits a prompt, before processing | ✅ exit 2 erases prompt | 30 s timeout override |
+| `UserPromptExpansion` | User-typed slash command expands into prompt | ✅ | 30 s timeout override |
+| `PreToolUse` | Before every tool call | ✅ | |
+| `PermissionRequest` | Permission dialog triggered | ✅ exit 2 denies | |
+| `PermissionDenied` | Tool denied by auto-mode classifier | ❌ | Use JSON `retry: true` instead |
+| `PostToolUse` | After tool call succeeds | ❌ | Tool already ran |
+| `PostToolUseFailure` | After tool call fails | ❌ | |
+| `PostToolBatch` | After a parallel tool-call batch resolves | ✅ stops loop | |
+| `Notification` | Agent sends a notification | ❌ | |
+| `MessageDisplay` | While assistant message text renders | ❌ | 10 s timeout override |
+| `SubagentStart` | Subagent is spawned | ❌ | |
+| `SubagentStop` | Subagent finishes | ✅ | |
+| `TaskCreated` | Task created via `TaskCreate` | ✅ rolls back | |
+| `TaskCompleted` | Task marked completed | ✅ | |
+| `Stop` | Claude finishes a turn | ✅ continues conversation | |
+| `StopFailure` | Turn ends due to API error | ❌ | Output/exit code ignored |
+| `TeammateIdle` | Agent-team teammate about to go idle | ✅ | |
+| `InstructionsLoaded` | `CLAUDE.md` or `.claude/rules/*.md` loaded | ❌ | Exit code ignored |
+| `ConfigChange` | Config file changes during session | ✅ | Except `policy_settings` |
+| `CwdChanged` | Working directory changes | ❌ | |
+| `FileChanged` | Watched file changes on disk | ❌ | |
+| `WorktreeCreate` | Worktree created | ✅ any non-zero fails creation | |
+| `WorktreeRemove` | Worktree removed | ❌ | |
+| `PreCompact` | Before context compaction | ✅ | |
+| `PostCompact` | After context compaction completes | ❌ | |
+| `Elicitation` | MCP server requests user input | ✅ exit 2 denies | |
+| `ElicitationResult` | User responds to MCP elicitation | ✅ becomes decline | |
+| `SessionEnd` | Session terminates | ❌ | |
+
+**Stdin fields (universal):** `session_id`, `hook_event_name`, `transcript_path`, `cwd`
+**PreToolUse adds:** `tool_name`, `tool_input`
+**PostToolUse adds:** `tool_name`, `tool_input`, `tool_response`
+**Stop/SubagentStop add:** `stop_hook_active`
+**PreCompact adds:** `trigger`, `custom_instructions`
 
 **Hook types:** `command`, `http`, `prompt`, `agent`
 **Async hooks:** Add `"async": true` to run without blocking
@@ -405,6 +435,9 @@ hooks:
 | `PreCompact` | Before context compaction | ❌ | `trigger`, `token_count` |
 | `PostCompact` | After context compaction | ❌ | `trigger`, `estimated_token_count` |
 | `Notification` | Notification delivered | ❌ | `sink`, `notification_type`, `title`, `body`, `severity` |
+| `Interrupt` | User interrupts current turn (Esc) | ❌ | — |
+| `PermissionRequest` | Before user approval prompt is shown | ❌ | `tool_name` |
+| `PermissionResult` | After user approval completes | ❌ | `tool_name` |
 
 **Exit codes:** `0` = allow (stdout → context if non-empty) | `2` = block (stderr → LLM) | other = allow silently (stderr logged)
 **Fail-open policy:** hook failures do not interrupt workflows.

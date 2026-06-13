@@ -16,11 +16,27 @@
 
 ## Installation
 
+Recommended methods (in order of preference):
+
 ```sh
-pip install aider-chat
-# Run aider in any git repo
-aider
+# Option 1: aider-install (recommended — handles Python env isolation)
+pip install aider-install
+aider-install
+
+# Option 2: pipx
+pipx install aider-chat
+
+# Option 3: uv
+uv tool install --force --python python3.12 --with pip aider-chat@latest
+
+# Option 4: One-liner (Mac/Linux)
+curl -LsSf https://aider.chat/install.sh | sh
+
+# Option 5: pip (still works, but not recommended for isolation)
+pip install -U --upgrade-strategy only-if-needed aider-chat
 ```
+
+Supported Python versions: 3.8–3.13 (aider-install/one-liners); 3.9–3.12 (uv/pipx/pip).
 
 ## Configuration Files
 
@@ -29,20 +45,20 @@ aider
 | `~/.aider.conf.yml` | Global | User-level settings |
 | `.aider.conf.yml` | Project | Project-level settings |
 | `.env` | Project | Environment variables and API keys |
-| `CONVENTIONS.md` | Project | Standing instructions and coding style conventions |
+| `CONVENTIONS.md` | Project | Standing instructions and coding style conventions (any name, loaded via `--read`) |
 
 ## Instruction File
 
-Aider reads persistent, natural-language instructions from a conventions file:
-- **`CONVENTIONS.md`** (or `.aider.conventions.md`): Loaded into the context to enforce coding standards, preferred libraries, or style guides.
+Aider reads persistent, natural-language instructions from a conventions file. The official docs use `CONVENTIONS.md` as the example name, but any file can be used via `--read`. The name `.aider.conventions.md` is **not documented officially** — it is an unofficial convention used in some community guides.
 
 ### Loading Conventions
 
 1. **Automatically via Configuration:**
    Add it to your `.aider.conf.yml` file:
    ```yaml
-   read:
-     - CONVENTIONS.md
+   read: CONVENTIONS.md
+   # or multiple files:
+   read: [CONVENTIONS.md, anotherfile.txt]
    ```
 2. **On Session Start:**
    ```sh
@@ -50,8 +66,10 @@ Aider reads persistent, natural-language instructions from a conventions file:
    ```
 3. **During Chat Session:**
    ```text
-   /read CONVENTIONS.md
+   /read-only CONVENTIONS.md
    ```
+
+Loading via `--read` / `/read-only` marks the file as read-only and enables prompt caching.
 
 ## Hooks
 
@@ -62,16 +80,28 @@ Aider does not feature a native pre/post tool use hook system like Claude Code o
 - **Skip pre-commit:** Aider runs with `--no-verify` by default to avoid triggering slow pre-commit git hooks during auto-commits.
 - **Commit messages:** Automatically generates descriptive commit messages based on the diffs (similar to `commit-msg` hooks).
 
-### Functional Quality Gates (Lint/Test Hooks)
+### Functional Quality Gates (Lint/Test)
 
-Aider uses functional quality gates via CLI flags/YAML options. When specified, Aider runs these commands automatically after editing files, intercepts any non-zero exit codes, feeds the errors back into the context, and attempts to self-correct the issues.
+Aider uses functional quality gates via CLI flags or YAML config. After editing files, Aider runs these commands automatically, intercepts non-zero exit codes, feeds errors back into context, and attempts to self-correct.
 
 ```yaml
 # .aider.conf.yml
-lint-cmd: "eslint --fix {files}"
-test-cmd: "npm test"
-auto-commits: true
+lint-cmd: "eslint"          # filenames are passed as arguments by aider; no {files} placeholder
+test-cmd: "npm test"        # run without arguments
+auto-lint: true             # default: true
+auto-test: false            # default: false; enable with --auto-test flag
 ```
+
+For language-specific linters, use the `language: cmd` prefix format:
+```yaml
+lint-cmd:
+  - "python: flake8 --select=E9,F63,F7,F82"
+  - "javascript: eslint"
+```
+
+> **Note on `{files}`:** The `{files}` placeholder is **not documented** in the official lint-cmd reference. Filenames are passed as arguments directly to the lint command. Avoid using `{files}` in `lint-cmd` as its behavior is unverified.
+
+> **Note on formatters:** Formatters that return non-zero exit codes when they make changes (e.g. `black`) can confuse aider. Workaround: run the formatter twice — the second run confirms actual errors vs. formatting changes.
 
 ### Script-Level Workaround
 
@@ -93,24 +123,55 @@ post_aider
 
 ## Built-in Tools
 
-Instead of tool-calling loops, Aider implements standard in-chat slash commands to manage files, context, and environment actions.
+Instead of tool-calling loops, Aider implements standard in-chat slash commands to manage files, context, and environment actions. The full set of 43 documented commands is listed below.
 
 | Command | Description |
 |---------|-------------|
-| `/add <file>` | Add files to the chat session for editing |
+| `/add <file>` | Add files to the chat so aider can edit them or review them in detail |
+| `/architect` | Enter architect/editor mode using 2 different models |
+| `/ask <query>` | Ask questions about the code base without editing any files |
+| `/chat-mode` | Switch to a new chat mode |
+| `/clear` | Clear the chat history |
+| `/code` | Ask for changes to your code |
+| `/commit` | Commit edits to the repo made outside the chat |
+| `/context` | Enter context mode to see surrounding code context |
+| `/copy` | Copy the last assistant message to the clipboard |
+| `/copy-context` | Copy the current chat context as markdown |
+| `/diff` | Display the diff of changes since the last message |
 | `/drop <file>` | Remove files from the chat session |
-| `/read <file>` | Load a file as read-only context (prevents editing, uses prompt caching) |
-| `/ls` | List all files in the project and see what's in the chat |
-| `/diff` | Show active changes since last commit |
-| `/commit` | Manually commit active changes to Git |
-| `/run <cmd>` | Run shell command (alias `!`; can optionally send stdout to chat) |
-| `/test <cmd>` | Run command, add output to chat only if command fails |
-| `/lint` | Run the linter on active files and fix errors |
-| `/model <model>` | Switch to another language model |
-| `/models <query>`| Search or list available models |
-| `/ask <query>` | Ask questions without Aider attempting to edit any files |
-| `/clear` | Clear the active chat history |
-| `/exit` | Exit the Aider session |
+| `/edit` | Alias for `/editor`: open an editor to write a prompt |
+| `/editor` | Open an editor to write a prompt |
+| `/editor-model` | Switch the Editor Model to a new LLM |
+| `/exit` | Exit the application |
+| `/git <cmd>` | Run a git command (output excluded from chat) |
+| `/help` | Ask questions about aider |
+| `/lint` | Lint and fix in-chat files or all dirty files |
+| `/load <file>` | Load and execute commands from a file |
+| `/ls` | List all known files and indicate which are included in chat |
+| `/map` | Print out the current repository map |
+| `/map-refresh` | Force a refresh of the repository map |
+| `/model <model>` | Switch the Main Model to a new LLM |
+| `/models <query>` | Search the list of available models |
+| `/multiline-mode` | Toggle multiline mode |
+| `/ok` | Alias for `/code Ok, please go ahead and make those changes` |
+| `/paste` | Paste image/text from the clipboard into the chat |
+| `/quit` | Exit the application |
+| `/read-only <file>` | Add files to the chat that are for reference only (read-only; enables prompt caching) |
+| `/reasoning-effort` | Set the reasoning effort level |
+| `/report` | Report a problem by opening a GitHub Issue |
+| `/reset` | Drop all files and clear the chat history |
+| `/run <cmd>` | Run a shell command and optionally add output to chat (alias: `!`) |
+| `/save <file>` | Save commands to a file that can reconstruct the chat session |
+| `/settings` | Print out the current settings |
+| `/test <cmd>` | Run a shell command and add output on non-zero exit |
+| `/think-tokens` | Set the thinking token budget |
+| `/tokens` | Report on the number of tokens used |
+| `/undo` | Undo the last git commit if done by aider |
+| `/voice` | Record and transcribe voice input |
+| `/weak-model` | Switch the Weak Model to a new LLM |
+| `/web <url>` | Scrape a webpage, convert to markdown and send in a message |
+
+> **Note:** The previous version of this file listed `/read` — the correct command name is `/read-only`.
 
 ## MCP Support
 
@@ -120,7 +181,7 @@ Aider does not natively support Model Context Protocol (MCP) servers.
 
 ## Skills / Commands
 
-Aider does not support custom programmable commands or skills directory paths. Standing skills and behavioral workflows are instead defined using declarative Markdown guidelines in the `CONVENTIONS.md` file.
+Aider does not support custom programmable commands or skills directory paths. Standing skills and behavioral workflows are instead defined using declarative Markdown guidelines loaded via `--read` (e.g. a `CONVENTIONS.md` file).
 
 ## Agent / Subagent Configuration
 
@@ -130,15 +191,19 @@ Aider is designed as a single-agent pair programmer and does not support autonom
 
 - **Git-Centric Workflow:** Aider operates directly on Git diffs. Every successful model-proposed edit is automatically committed unless `--no-auto-commits` is specified.
 - **LiteLLM Integration:** Supports over 100 LLMs (Claude, GPT, Gemini, Ollama, DeepSeek) through LiteLLM.
-- **Prompt Caching:** Highly optimized for prompt caching (e.g. Anthropic's prompt caching) to keep large contexts affordable. `/read` is perfect for loading static references.
+- **Prompt Caching:** Highly optimized for prompt caching (e.g. Anthropic's prompt caching) to keep large contexts affordable. `/read-only` is ideal for loading static references.
 
-## Sources (Official)
+## Sources
 
-| Topic | URL |
-|-------|-----|
-| Main documentation | https://aider.chat/docs/ |
-| Configuration options | https://aider.chat/docs/config.html |
-| Options reference | https://aider.chat/docs/config/options.html |
-| YAML configuration reference | https://aider.chat/docs/config/aider_conf.html |
-| Git integration & hooks | https://aider.chat/docs/git.html |
-| Hooks request issue | https://github.com/Aider-AI/aider/issues/2045 |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Main documentation | https://aider.chat/docs/ | 2026-06-13 | [official] |
+| Installation | https://aider.chat/docs/install.html | 2026-06-13 | [official] |
+| Slash commands reference | https://aider.chat/docs/usage/commands.html | 2026-06-13 | [official] |
+| Lint and test | https://aider.chat/docs/usage/lint-test.html | 2026-06-13 | [official] |
+| Coding conventions | https://aider.chat/docs/usage/conventions.html | 2026-06-13 | [official] |
+| Configuration options | https://aider.chat/docs/config/options.html | 2026-06-13 | [official] |
+| YAML configuration reference | https://aider.chat/docs/config/aider_conf.html | 2026-06-13 | [official] |
+| Git integration & hooks | https://aider.chat/docs/git.html | 2026-06-13 | [official] |
+| Hooks request issue | https://github.com/Aider-AI/aider/issues/2045 | — | [github] |
+| lint-cmd examples request | https://github.com/Aider-AI/aider/issues/909 | — | [github] |

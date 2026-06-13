@@ -19,56 +19,113 @@
 
 ## Installation
 
+**Desktop (Windows/macOS):** Download the Hermes Desktop installer from the official website.
+
+**Linux/macOS/WSL2/Android (Termux):**
 ```sh
-pip install hermes-agent
-hermes
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 ```
+
+**Windows (PowerShell):**
+```powershell
+iex (irm https://hermes-agent.nousresearch.com/install.ps1)
+```
+
+After installation, run `hermes setup --portal` to configure OAuth for model access and Tool Gateway features.
+
+> ~~`pip install hermes-agent`~~ — this method does not exist; use the installer above.
 
 ## Configuration Files
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `~/.hermes/config.yaml` | Global | User settings, hooks |
-| `cli-config.yaml` | Project | Project config |
+| `~/.hermes/config.yaml` | Global | User settings, shell hooks, model config |
+| `~/.hermes/.env` | Global | API keys and secrets |
+| `~/.hermes/auth.json` | Global | OAuth provider credentials |
 | `~/.hermes/shell-hooks-allowlist.json` | Global | Trusted hook hashes |
+| `~/.hermes/SOUL.md` | Global | Agent identity (system prompt slot #1) |
 | `AGENTS.md` | Project | Natural-language instructions |
 
 ## Hooks
 
-Hooks are shell scripts declared in `cli-config.yaml` that fire at plugin-hook events in both CLI and gateway sessions. No Python plugin authoring required.
+Hermes provides three hook systems at different lifecycle points:
 
-### Supported Events
+| System | Registration | Scope | Purpose |
+|--------|--------------|-------|---------|
+| Shell hooks | `hooks:` block in `~/.hermes/config.yaml` | CLI + Gateway | Drop-in scripts: blocking, formatting, context injection |
+| Plugin hooks | `ctx.register_hook()` in plugin | CLI + Gateway | Tool interception, metrics, guardrails |
+| Gateway hooks | `HOOK.yaml` + `handler.py` in `~/.hermes/hooks/` | Gateway only | Logging, alerts, webhooks |
+
+Shell hooks require no Python authoring — they run as subprocesses and communicate over stdin/stdout JSON.
+
+### Plugin Hook Events (15 events — CLI + Gateway)
 
 | Event | When |
 |-------|------|
-| `pre_llm_call` | Before sending prompt to LLM |
-| `post_llm_call` | After receiving LLM response |
-| `pre_tool_call` | Before tool execution |
-| `post_tool_call` | After tool execution |
-| `on_session_start` | Session initialization |
-| `on_session_end` | Session teardown |
-| `on_subagent_complete` | Subagent finishes |
+| `pre_tool_call` | Before tool execution; can block with `{"action": "block", "message": str}` |
+| `post_tool_call` | After tool returns |
+| `transform_tool_result` | Post-execution, pre-model; rewrites result string |
+| `transform_terminal_output` | Inside `terminal` tool, pre-truncation/redaction |
+| `pre_llm_call` | Once per turn, before tool loop; injects context via `{"context": str}` |
+| `post_llm_call` | Once per turn, after tool loop completes |
+| `on_session_start` | New session created (first turn only) |
+| `on_session_end` | End of every `run_conversation()` call |
+| `on_session_finalize` | Session teardown before identity is discarded |
+| `on_session_reset` | Gateway swaps in fresh session key (user invoked `/new` or `/reset`) |
+| `pre_gateway_dispatch` | After internal-event guard, before auth/dispatch |
+| `pre_approval_request` | Before approval shown to user; observer-only |
+| `post_approval_response` | After user responds to approval prompt |
+| `subagent_stop` | After `delegate_task` child exits |
+| `transform_llm_output` | After tool loop, before final response delivery |
 
-### Configuration Example
+> **Note:** The event previously listed as `on_subagent_complete` does not exist. The correct name is `subagent_stop`.
+
+### Gateway-Exclusive Events (8 events)
+
+| Event | When |
+|-------|------|
+| `gateway:startup` | Gateway process initialization |
+| `session:start` | New messaging session created |
+| `session:end` | Session termination (before reset) |
+| `session:reset` | User invoked `/new` or `/reset` |
+| `agent:start` | Agent begins processing a message |
+| `agent:step` | Each tool-calling loop iteration |
+| `agent:end` | Agent finishes processing |
+| `command:*` | Any slash command executed (wildcard matching supported) |
+
+### Shell Hook Configuration
+
+Shell hooks are declared in `~/.hermes/config.yaml` (not `cli-config.yaml`):
 
 ```yaml
-# cli-config.yaml
+# ~/.hermes/config.yaml
 hooks:
   pre_tool_call:
-    - command: ~/.hermes/hooks/validate-tool.sh
-      events: ["pre_tool_call"]
+    - matcher: "<regex>"         # Optional; pre/post_tool_call only
+      command: ~/.hermes/agent-hooks/validate-tool.sh
+      timeout: 30                # Optional; default 60s, max 300s
   post_tool_call:
-    - command: ~/.hermes/hooks/audit.sh
+    - command: ~/.hermes/agent-hooks/audit.sh
   on_session_start:
-    - command: ~/.hermes/hooks/setup-context.sh
+    - command: ~/.hermes/agent-hooks/setup-context.sh
+hooks_auto_accept: false         # Skip consent prompts when true
 ```
+
+**Wire protocol:**
+- **stdin:** `{"hook_event_name", "tool_name", "tool_input", "session_id", "cwd", "extra"}`
+- **stdout:** `{"decision": "block", "reason": "..."}` or `{"context": "..."}` or `{}`
 
 ### Hook Security / Approval Model
 
-- Each unique `(event, command)` pair prompts for approval on first run.
+- Each unique `(event, command)` pair prompts for consent on first run.
 - Trust persisted to `~/.hermes/shell-hooks-allowlist.json` keyed by hook hash.
-- Changed hooks re-prompt for approval.
-- Use `hermes hooks` CLI command to inspect, test, and manage hook trust.
+- **Script edits do NOT automatically trigger re-approval.** Use `hermes hooks doctor` to detect mtime drift and `hermes hooks revoke` to reset consent.
+- Default timeout: 60 seconds. Maximum: 300 seconds (values above 300 are clamped with a warning). Non-blocking errors are logged; they never crash the agent.
+
+**Bypassing consent prompts:**
+1. `hermes --accept-hooks chat` — CLI flag
+2. `HERMES_ACCEPT_HOOKS=1` — environment variable
+3. `hooks_auto_accept: true` in `~/.hermes/config.yaml`
 
 ### Hook Use Cases
 
@@ -90,19 +147,31 @@ hooks:
 
 ## MCP Support
 
-Configure MCP servers in `cli-config.yaml` under `mcp_servers`.
+Configure MCP servers in `~/.hermes/config.yaml` under `mcp_servers`.
 
 ## Subagents
 
-Hermes supports spawning subagents for parallel workloads. The `on_subagent_complete` hook fires when a subagent finishes.
+Hermes supports spawning subagents for parallel workloads via `delegate_task`. The `subagent_stop` hook fires when a subagent exits.
 
 ## `hermes hooks` CLI
 
 ```sh
-hermes hooks list        # Show all configured hooks
-hermes hooks test <event> # Send synthetic payload to test hooks
-hermes hooks trust <id>   # Trust a specific hook
-hermes hooks disable <id> # Disable a hook
+hermes hooks list                          # Show configured hooks with matcher, timeout, consent status
+hermes hooks test <event> [--for-tool X] [--payload-file F]  # Fire hooks against synthetic payload
+hermes hooks revoke <command>              # Remove allowlist entries (aliases: remove, rm)
+hermes hooks doctor                        # Audit exec bit, allowlist, mtime drift, JSON validity, timing
+```
+
+> **Note:** `hermes hooks trust <id>` and `hermes hooks disable <id>` do not exist. Use `revoke` (aliases: `remove`, `rm`) to remove allowlist entries, and `doctor` to audit hook health.
+
+## `hermes config` CLI
+
+```sh
+hermes config           # View current configuration
+hermes config edit      # Open config.yaml in your editor
+hermes config set KEY VAL  # Set specific values
+hermes config check     # Verify all options after updates
+hermes config migrate   # Interactively add missing options
 ```
 
 ## AGENTS.md
@@ -112,19 +181,21 @@ Place `AGENTS.md` at repo root for persistent natural-language instructions that
 ## Notes
 
 - **RESOLVED:** Both `pre_tool_call`/`post_tool_call` (tool-level) AND `pre_llm_call`/`post_llm_call` (loop-level) exist — they are different lifecycle stages, not duplicates.
-- Shell hooks run as subprocesses; keep them fast. Max timeout is 300s.
+- Shell hooks run as subprocesses; keep them fast. Default timeout 60s, max 300s.
 - `hooks_auto_accept: true` or env `HERMES_ACCEPT_HOOKS=1` skips the per-hook consent prompt.
-- `SOUL.md` defines agent identity/personality — unique to Hermes.
+- `SOUL.md` defines agent identity/personality — unique to Hermes. Located at `~/.hermes/SOUL.md`.
+- Six terminal backends: local, Docker, SSH, Daytona, Singularity, Modal.
+- Machine-readable docs: `/llms.txt` (~17 KB) and `/llms-full.txt` (~1.8 MB).
 
-## Sources (Official)
+## Sources
 
-| Topic | URL |
-|-------|-----|
-| Event hooks | https://hermes-agent.nousresearch.com/docs/user-guide/features/hooks |
-| Tools reference | https://hermes-agent.nousresearch.com/docs/reference/tools-reference |
-| Configuration | https://hermes-agent.nousresearch.com/docs/user-guide/configuration |
-| CLI commands reference | https://hermes-agent.nousresearch.com/docs/reference/cli-commands |
-| Hooks (GitHub source) | https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/hooks.md |
-| CLI config example | https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example |
-| AGENTS.md | https://github.com/NousResearch/hermes-agent/blob/main/AGENTS.md |
-| GitHub repo | https://github.com/NousResearch/hermes-agent |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Installation | https://hermes-agent.nousresearch.com/docs | 2026-06-13 | [official] |
+| Event hooks | https://hermes-agent.nousresearch.com/docs/user-guide/features/hooks | 2026-06-13 | [official] |
+| CLI commands reference | https://hermes-agent.nousresearch.com/docs/reference/cli-commands | 2026-06-13 | [official] |
+| Configuration | https://hermes-agent.nousresearch.com/docs/user-guide/configuration | 2026-06-13 | [official] |
+| Hooks (GitHub source) | https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/hooks.md | — | [github] |
+| CLI config example | https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example | — | [github] |
+| AGENTS.md | https://github.com/NousResearch/hermes-agent/blob/main/AGENTS.md | — | [github] |
+| GitHub repo | https://github.com/NousResearch/hermes-agent | — | [github] |

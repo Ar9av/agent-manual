@@ -1,6 +1,6 @@
 # Pi Coding Agent
 
-> Terminal AI coding agent with a rich hook system, subagents, browser, and LSP integration.
+> Terminal AI coding agent with a rich hook system, browser, and LSP integration.
 
 **Vendor:** earendil-works / can1357 | **License:** Open Source | **Runtime:** Node.js / TypeScript
 
@@ -11,16 +11,29 @@
 - Pi YAML hooks package: https://pi.dev/packages/pi-yaml-hooks
 - Hook docs (oh-my-pi): https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md
 - Extensions docs: https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/extensions.md
-- Awesome Pi Agent: https://github.com/qualisero/awesome-pi-agent
+- Awesome Pi Agent: https://github.com/qualisero/awesome-pi-agent ⚠️ **Archived June 3, 2026 — outdated, read-only**
 
 ---
 
 ## Installation
 
+Primary install (recommended):
+
 ```sh
-npm install -g @earendil/pi
-pi
+curl -fsSL https://pi.dev/install.sh | sh
 ```
+
+Via npm / pnpm / bun (note: `--ignore-scripts` required):
+
+```sh
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+# or
+pnpm add -g --ignore-scripts @earendil-works/pi-coding-agent
+# or
+bun add -g --ignore-scripts @earendil-works/pi-coding-agent
+```
+
+> The package name is `@earendil-works/pi-coding-agent`. The name `@earendil/pi` is **incorrect**.
 
 ## Configuration Files
 
@@ -28,18 +41,36 @@ pi
 |------|-------|---------|
 | `~/.pi/agent/settings.json` | Global | User settings, model, theme |
 | `.pi/settings.json` | Project | Project settings |
-| `hooks.yaml` | Project | YAML-based hook config (via `pi-yaml-hooks` package) |
+| `~/.pi/agent/hook/hooks.yaml` | Global | YAML-based hook config (via `pi-yaml-hooks` package) |
+| `./.pi/hook/hooks.yaml` | Project | Project-scoped YAML hook config (trusted repos only) |
+
+> `hooks.yaml` does **not** live at the project root. Global paths checked in order: `~/.pi/agent/hook/hooks.yaml`, then `~/.pi/agent/hooks.yaml`. Project paths checked in order: `./.pi/hook/hooks.yaml`, then `./.pi/hooks.yaml`.
 
 ## Hooks
 
-Pi supports two hook mechanisms: TypeScript extensions (full power) and the `pi-yaml-hooks` package (YAML config, no code).
+Pi supports two hook mechanisms: TypeScript extensions (full power) and the `pi-yaml-hooks` package (YAML config, no code). These are **separate systems with different event naming conventions**.
+
+### Hook System Comparison
+
+| Aspect | `pi-yaml-hooks` | `oh-my-pi` extensions |
+|--------|----------------|----------------------|
+| Event style | dot-notation (`tool.before.bash`) | snake_case (`tool_call`, `session_start`) |
+| Config format | YAML (`hooks.yaml`) | TypeScript/JavaScript |
+| Install | `pi install npm:pi-yaml-hooks` | Built into oh-my-pi |
+| Vendor? | Community (KristjanPikhof, MIT) | Community (can1357) |
 
 ### YAML Hooks (via `pi-yaml-hooks` package)
 
-Install as a Pi package, then configure in `hooks.yaml`.
+Install as a Pi package:
+
+```sh
+pi install npm:pi-yaml-hooks
+```
+
+Then configure at `~/.pi/agent/hook/hooks.yaml` (global) or `./.pi/hook/hooks.yaml` (project):
 
 ```yaml
-# hooks.yaml
+# ~/.pi/agent/hook/hooks.yaml
 hooks:
   - on: tool.before.bash
     action:
@@ -65,7 +96,7 @@ hooks:
       setStatus: "Formatted {{file}}"
 ```
 
-### Supported Events
+### Supported Events (pi-yaml-hooks — dot-notation)
 
 | Event | When | Can Block? |
 |-------|------|-----------|
@@ -73,15 +104,25 @@ hooks:
 | `tool.after.*` | After tool call | ❌ |
 | `file.changed` | File modified | ❌ |
 | `session.created` | Session start | ❌ |
-| `session.idle` | Session goes idle | ❌ |
-| `session.deleted` | Session end | ❌ |
+| `session.idle` | Agent turn finishes with no pending messages | ❌ |
+| `session.deleted` | Session end / shutdown | ❌ |
 
-### Available Hook Actions
+Bash actions receive hook context as JSON on stdin and injected `PI_*` env vars (e.g. `PI_PROJECT_DIR`, `PI_SESSION_ID`).
+
+### Supported Events (oh-my-pi extensions — snake_case)
+
+oh-my-pi uses a different, richer event set registered via `pi.on(...)` in TypeScript:
+
+`session_start`, `session_before_switch`, `session_switch`, `session_before_compact`, `session_compact`, `session_shutdown`, `before_agent_start`, `agent_start`, `agent_end`, `turn_start`, `turn_end`, `tool_call` (pre-execution), `tool_result` (post-execution), `auto_compaction_start`, `auto_compaction_end`, and others.
+
+> Do not mix dot-notation events with oh-my-pi, or snake_case events with pi-yaml-hooks — they are incompatible.
+
+### Available Hook Actions (pi-yaml-hooks)
 
 | Action | Description |
 |--------|-------------|
 | `bash` | Run shell command |
-| `tool` | Call another Pi tool |
+| `tool` | Send follow-up prompt into current session |
 | `notify` | Show UI notification |
 | `confirm` | Prompt user for confirmation |
 | `setStatus` | Update status bar |
@@ -122,15 +163,16 @@ New hook (2026) that lets extensions inspect provider HTTP status codes and head
 | `grep` | Search files |
 | `browser` | Browser automation |
 | `lsp` | Language server queries |
-| `subagent` | Spawn subagents |
 
 ## MCP Support
 
-Configure MCP servers in `settings.json` under `mcp`.
+Pi does **not** include MCP support as a built-in feature. Per pi.dev: "No MCP." MCP can be added by building a custom extension that implements MCP connectivity.
+
+> Remove the `mcp` key from `settings.json` — it is not a recognized built-in option.
 
 ## Subagents
 
-Pi supports subagents as first-class tools. Use the `subagent` tool to delegate tasks to specialized agents.
+Pi does **not** ship subagents as a first-class built-in tool. Per pi.dev: "No sub-agents." The recommended approach is to spawn Pi instances via tmux, or implement subagent behavior via extensions.
 
 ## Settings Options
 
@@ -139,27 +181,33 @@ Pi supports subagents as first-class tools. Use the `subagent` tool to delegate 
   "model": "claude-opus-4",
   "theme": "dark",
   "compaction": { "enabled": true, "threshold": 0.8 },
-  "retry": { "maxAttempts": 3 },
-  "mcp": { "servers": {} }
+  "retry": { "maxAttempts": 3 }
 }
 ```
 
+> The `mcp.servers` key is not a built-in setting. MCP must be added via extensions.
+
 ## Notes
 
-- `pi-yaml-hooks` (v2026.5.12) is the recommended no-code hook approach.
-- TypeScript extensions give full access to the agent internals.
+- `pi-yaml-hooks` (v2026.5.12) is the recommended no-code hook approach; install with `pi install npm:pi-yaml-hooks`.
+- TypeScript extensions give full access to agent internals.
 - The `bash` tool's `spawn` hook lets you mutate command, cwd, and env before execution.
 - Pi includes browser automation and LSP integration as first-party tools.
+- Project YAML hooks only load when the repo/worktree is trusted.
+- Set `PI_YAML_HOOKS_ALLOW_GLOBAL_IMPORTS=1` to allow global hook file imports.
+- Set `PI_YAML_HOOKS_ENABLE_USER_BASH=1` to enable user bash interception.
 
 ## Sources
 
-> **Note on hook documentation:** The primary hook docs are from `oh-my-pi` (`can1357/oh-my-pi`), which is a **community-maintained** project, not the primary vendor repo (`earendil-works/pi`). Hook behavior may diverge between the two. The `pi-yaml-hooks` package and TypeScript extensions docs are from the primary vendor ecosystem.
+> **Note on hook documentation:** `oh-my-pi` (`can1357/oh-my-pi`) is a **community-maintained** project, not the primary vendor repo (`earendil-works/pi`). Hook behavior and event naming differ between `pi-yaml-hooks` (dot-notation) and oh-my-pi (snake_case). The `pi-yaml-hooks` package is also community-maintained (KristjanPikhof, MIT license), referenced from the official pi.dev packages directory.
 
-| Topic | Source type | URL |
-|-------|-------------|-----|
-| pi-yaml-hooks package | Vendor (pi.dev) | https://pi.dev/packages/pi-yaml-hooks |
-| Hooks docs (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md |
-| Extensions docs | Vendor (GitHub) | https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/extensions.md |
-| GitHub (pi-mono) — primary | Vendor | https://github.com/earendil-works/pi |
-| GitHub (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi |
-| Awesome Pi Agent | Community | https://github.com/qualisero/awesome-pi-agent |
+| Topic | Source type | URL | Fetched |
+|-------|-------------|-----|---------|
+| Installation & feature overview | Vendor (pi.dev) | https://pi.dev | 2026-06-13 [official] |
+| pi-yaml-hooks package | Vendor index (pi.dev) | https://pi.dev/packages/pi-yaml-hooks | 2026-06-13 [official] |
+| pi-yaml-hooks source | Community (KristjanPikhof) | https://github.com/KristjanPikhof/pi-yaml-hooks | 2026-06-13 [github] |
+| Hooks docs (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md | 2026-06-13 [github] |
+| Extensions docs | Vendor (GitHub) | https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/extensions.md | — [github] |
+| GitHub (pi-mono) — primary | Vendor | https://github.com/earendil-works/pi | — [github] |
+| GitHub (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi | — [github] |
+| Awesome Pi Agent | Community | https://github.com/qualisero/awesome-pi-agent | 2026-06-13 ⚠️ Archived Jun 3 2026 |

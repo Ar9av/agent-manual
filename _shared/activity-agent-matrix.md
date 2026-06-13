@@ -6,6 +6,8 @@ Every activity and which agents support it natively (built-in tools, no MCP requ
 
 Legend: ✅ Built-in | 🔌 Via MCP | ⚠️ Partial/Limited | ❌ Not supported | ❓ Unknown
 
+> **Notes:** OpenClaw is a gateway/routing product (not a standalone coding agent) — its tool capabilities are mediated through gateway-attached agents. Kiro is an Amazon/AWS product (not an independent vendor). Google Antigravity is Generally Available (not Preview). Pi Agent MCP support and subagent spawning require extensions (`pi-yaml-hooks` package or TypeScript extensions), not built-in.
+
 ---
 
 ## File Operations
@@ -94,8 +96,8 @@ Legend: ✅ Built-in | 🔌 Via MCP | ⚠️ Partial/Limited | ❌ Not supported
 
 | Activity | Claude Code | Codex | Gemini CLI | Kiro CLI | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin | Cursor | OpenCode | Aider | GitHub Copilot |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Spawn subagent | ✅ Agent | ✅ multi_tool_use | ✅ invoke_agent | ✅ subagent / delegate | ✅ Agent | ✅ (Task tool) | ✅ delegate_task | ✅ subagent | ✅ subagents | ❓ | ✅ subagentStart | ❌ | ❌ | ❌ |
-| Parallel tool calls | ✅ | ✅ multi_tool_use.parallel | ✅ | ✅ delegate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Spawn subagent | ✅ Agent | ✅ multi_tool_use | ✅ invoke_agent | ✅ subagent / delegate | ✅ Agent | ✅ (Task tool) | ✅ delegate_task | ⚠️ Via tmux/extension | ✅ subagents | ❓ | ✅ subagentStart | ❌ | ❌ | ❌ |
+| Parallel tool calls | ✅ | ✅ multi_tool_use.parallel | ✅ | ✅ delegate | ✅ | ✅ | ✅ | ⚠️ Via extension | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | On-demand tool loading | ❌ | ❌ | ❌ | ✅ tool_search | ❌ | ❌ | ❌ | ❌ | ✅ tool_search | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Planning mode | ✅ (via prompt) | ❌ | ❌ | ❌ | ✅ EnterPlanMode | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Ask user clarification | ✅ AskUserQuestion | ❌ | ✅ ask_user | ❌ | ✅ AskUserQuestion | ❌ | ✅ clarify | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
@@ -165,19 +167,37 @@ Which hook events fire for each agent activity:
 | Tab edit (Cursor) | — | — | — | — | — | — |
 | Workspace opens | — | — | — | — | — | — |
 
+### Blocking Capability Notes
+
+Not all hooks listed above can block execution. Post-tool hooks that **can** block:
+
+| Agent | Post-tool hook | Can Block | Notes |
+|-------|---------------|-----------|-------|
+| Claude Code | PostToolUse | ❌ | Advisory only |
+| Codex CLI | PostToolUse | ✅ | Can replace tool result |
+| Gemini CLI | AfterTool | ✅ | exit 2 or `decision: deny` |
+| Kiro CLI | PostToolUse | ❌ | Advisory only |
+| Kimi Code | PostToolUse | ❌ | Advisory only |
+| Factory Droid | PostToolUse | ⚠️ Partial | stderr shown to Droid; tool already ran |
+| OpenClaw | after_tool_call | ❌ | Inspect only (gateway plugin hook) |
+
+All Pre/Before tool hooks support blocking via exit code 2 (or equivalent) for all agents listed in this matrix.
+
 ## Sources (Official)
 
 Activity capability data sourced from official docs for each tool:
 
-| Tool | Primary source |
-|------|---------------|
-| Claude Code | https://docs.anthropic.com/en/docs/claude-code/tools |
-| Codex CLI | https://developers.openai.com/codex/tools |
-| Gemini CLI | https://geminicli.com/docs/tools |
-| Kiro | https://kiro.dev/docs/tools |
-| Kimi Code | https://moonshotai.github.io/kimi-code/tools |
-| Factory Droid | https://docs.factory.ai/tools |
-| Hermes | https://hermes-agent.nousresearch.com/docs/reference/tools-reference |
-| Cursor | https://cursor.com/docs/agent/tools |
-| Pi Agent | https://github.com/earendil-works/pi |
-| GitHub Copilot | https://code.visualstudio.com/docs/copilot/agents/overview |
+| Tool | Primary source | Notes |
+|------|---------------|-------|
+| Claude Code | https://docs.anthropic.com/en/docs/claude-code/tools | |
+| Codex CLI | https://developers.openai.com/codex/tools | |
+| Gemini CLI | https://geminicli.com/docs/tools | |
+| Kiro | https://kiro.dev/docs/tools | Amazon/AWS product (not an independent vendor) |
+| Kimi Code | https://moonshotai.github.io/kimi-code/tools | |
+| Factory Droid | https://docs.factory.ai/tools | |
+| Hermes | https://hermes-agent.nousresearch.com/docs/reference/tools-reference | |
+| Cursor | https://cursor.com/docs/agent/tools | |
+| OpenClaw | https://docs.openclaw.ai/tools | Gateway/routing product, not a standalone coding agent; capabilities exposed through gateway-attached agents |
+| Pi Agent | https://github.com/earendil-works/pi | MCP and subagent support are not built-in; require `pi-yaml-hooks` package or TypeScript extensions |
+| Google Antigravity | https://antigravity.google/docs | Generally Available (GA), not Preview |
+| GitHub Copilot | https://code.visualstudio.com/docs/copilot/agents/overview | |

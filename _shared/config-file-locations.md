@@ -10,15 +10,15 @@ Quick reference for where each agentic tool stores its configuration.
 | Codex CLI | `~/.codex/config.toml` |
 | Gemini CLI | `~/.gemini/settings.json` |
 | Hermes | `~/.hermes/config.yaml` |
-| Kiro | `~/.kiro/config.yaml` |
+| Kiro | `~/.kiro/config.json` |
 | Pi Agent | `~/.pi/agent/settings.json` |
 | Devin CLI | `~/.config/devin/config.json` |
 | OpenCode | `~/.config/opencode/opencode.json` |
 | Factory Droid | `~/.factory/settings.json` |
-| Kimi Code | `~/.kimi/config.json` |
+| Kimi Code | `~/.kimi-code/config.json` |
 | Cursor | `~/.cursor/settings.json` |
 | Trae | IDE Settings UI |
-| OpenClaw | `~/.openclaw/config.yaml` |
+| OpenClaw | `~/.openclaw/openclaw.json` |
 | GitHub Copilot | `~/.config/gh-copilot/config.json` |
 | Aider | `~/.aider.conf.yml` |
 | Google Antigravity | `~/.config/antigravity/config.toml` |
@@ -31,15 +31,15 @@ Quick reference for where each agentic tool stores its configuration.
 | Codex CLI | `.codex/config.toml` |
 | Gemini CLI | `.gemini/settings.json` |
 | Hermes | `cli-config.yaml` |
-| Kiro | `.kiro/config.yaml` |
+| Kiro | `.kiro/config.json` |
 | Pi Agent | `.pi/settings.json` |
 | Devin CLI | `config.json` + `hooks.v1.json` |
 | OpenCode | `opencode.json` |
 | Factory Droid | `.factory/settings.json` |
-| Kimi Code | `.kimi/config.json` |
+| Kimi Code | `.kimi-code/config.json` |
 | Cursor | `.cursor/` directory |
-| Trae | `project_rules.md` |
-| OpenClaw | `config.yaml` |
+| Trae | `.trae/rules/project_rules.md` |
+| OpenClaw | `openclaw.json` |
 | Aider | `.aider.conf.yml` |
 | Google Antigravity | `.agents/hooks.json` |
 
@@ -50,7 +50,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Claude Code | `.claude/mcp.json` or via `settings.json` |
 | Cursor | `.cursor/mcp.json` or `~/.cursor/mcp.json` |
 | Gemini CLI | `settings.json` (`mcpServers` key) |
-| Kiro | `.kiro/config.yaml` (`mcpServers` key) |
+| Kiro | `.kiro/config.json` (`mcpServers` key) |
 | Devin CLI | `config.json` (`mcpServers` key) |
 | OpenCode | `opencode.json` (`mcp.servers` key) |
 | Trae | `.trae/mcp.json` |
@@ -76,7 +76,7 @@ These paths are sourced directly from installer scripts and verified directories
 | Hermes | `~/.hermes/skills/` | `.hermes/skills/` |
 | Kiro | `~/.kiro/skills/` | `.kiro/skills/` |
 | Pi Agent | `~/.pi/agent/skills/` | `.pi/agent/skills/` |
-| Kimi Code | `~/.kimi/skills/` | `.kimi/skills/` |
+| Kimi Code | `~/.kimi-code/skills/` | `.kimi-code/skills/` |
 | Devin CLI | `~/.config/devin/skills/` | `.devin/skills/` |
 | Aider | `~/.aider/` | `.aider/` (non-standard, no skills convention) |
 | Gemini CLI | `~/.gemini/skills/` | `.gemini/skills/` |
@@ -93,8 +93,8 @@ These paths are sourced directly from installer scripts and verified directories
 |------|------|------|
 | Claude Code | `.claude/commands/` | Skills (Markdown) |
 | OpenCode | `.opencode/plugins/` | JS plugins |
-| Kiro | `.kiro/agents/` | Agent YAML |
-| Pi Agent | `.pi/extensions/` | TS extensions |
+| Kiro | `.kiro/agents/` | Agent JSON |
+| Pi Agent | `~/.pi/agent/hook/` (global) or `./.pi/hook/` (project) | Shell hooks |
 | Factory Droid | `.factory/plugins/` | Plugins |
 | Factory Droid | `.factory/droids/` | Custom droids |
 | Cursor | `.cursor/rules/` | MDC rule files |
@@ -127,4 +127,5 @@ Files meant for personal settings that shouldn't be committed:
 | Trae / Trae CN | https://docs.trae.ai/ide/ide-settings-overview |
 | OpenCode | https://opencode.ai/docs/config/ |
 | GitHub Copilot | https://code.visualstudio.com/docs/copilot/overview |
+| Devin CLI | https://docs.devin.ai/ |
 | Aider | https://aider.chat/docs/config.html |

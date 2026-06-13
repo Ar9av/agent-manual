@@ -6,27 +6,47 @@ A unified view of lifecycle hook events across all major agentic tools.
 
 | Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **Pre Tool Use** | `PreToolUse` | `pre_tool` | `before_tool_call` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `onPreEdit` |
-| **Post Tool Use** | `PostToolUse` | `post_tool` | `after_tool_call` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `onPostEdit` |
-| **Session Start** | — | `session_start` | `on_session_start` | `agentSpawn` | `AgentSpawn` | `AgentStart` | `on_session_start` | `session.created` | — | `AgentStart` | — |
-| **Session End** | — | `session_end` | `on_session_end` | — | — | — | `on_session_end` | `session.deleted` | — | `AgentStop` | — |
-| **Prompt Submit** | — | `pre_prompt` | — | `userPromptSubmit` | `UserPromptSubmit` | — | `pre_llm_call` | — | — | — | — |
-| **Post LLM Response** | — | `post_response` | — | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — |
+| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `onPreEdit` |
+| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `onPostEdit` |
+| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `AgentSpawn` | `AgentStart` | `on_session_start` | `session.created` | — | `AgentStart` | — |
+| **Session End** | — | `Stop` | `SessionEnd` | — | — | — | `on_session_end` | `session.deleted` | — | `AgentStop` | — |
+| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | — | `pre_llm_call` | — | — | — | — |
+| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — |
+| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — |
+| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — |
+| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — |
+| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — |
 | **Pre Commit** | — | — | — | — | — | — | — | — | — | — | `onPreCommit` |
 | **Diff Approved** | — | — | — | — | — | — | — | — | — | — | `onApprove` |
-| **Context Compact** | `PreCompact` | — | — | — | — | — | — | — | — | — | — |
-| **Notification** | `Notification` | — | — | — | — | — | — | `notify` action | — | — | — |
-| **Subagent Done** | `SubagentStop` | — | — | — | — | — | `on_subagent_complete` | — | — | — | — |
+| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | — | — | — | — | — | — | — |
+| **Post Compact** | — | `PostCompact` | — | — | — | — | — | — | — | — | — |
+| **Notification** | `Notification` | — | `Notification` | — | — | — | — | `notify` action | — | — | — |
+| **Subagent Start** | — | `SubagentStart` | — | — | — | — | — | — | — | — | — |
+| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | — | — | `on_subagent_complete` | — | — | — | — |
+| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | — | — | — | — | — | — | — |
 | **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — |
 | **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — |
+
+## OpenCode Event Matrix
+
+OpenCode uses dot-namespaced event names in its plugin SDK:
+
+| Hook Event | OpenCode |
+|---|---|
+| **Pre Tool Use** | `tool.execute.before` |
+| **Post Tool Use** | `tool.execute.after` |
+| **Session Start** | `session.created` |
+| **Session Idle** | `session.idle` |
+| **Session End** | `session.deleted` |
+| **Context Compact** | `session.compacted` |
 
 ## Can-Block Comparison
 
 | Tool | Block Mechanism | How to Block |
 |------|----------------|-------------|
 | Claude Code | Exit code `2` in `PreToolUse` | `exit 2` + message on stderr |
-| Codex CLI | Non-zero exit in `pre_tool` | `exit 1` |
-| Gemini CLI | Non-zero exit in `before_tool_call` | `exit 1` |
+| Codex CLI | Non-zero exit in `PreToolUse` | `exit 1` |
+| Gemini CLI | Exit code `2` in `BeforeTool` | `exit 2` + message on stderr |
 | Kiro | Exit code `2` in `preToolUse` | `exit 2` |
 | Kimi Code | Exit code `2` in `PreToolUse` | `exit 2` |
 | Factory Droid | Exit code `2` in `PreToolUse` | `exit 2` |
@@ -37,7 +57,7 @@ A unified view of lifecycle hook events across all major agentic tools.
 | Cursor | Non-zero exit in `onPreEdit` | `exit 1` |
 | Aider | ❌ No hook system | N/A |
 | Trae | ❌ No hook system | N/A (use MCP) |
-| OpenCode | Plugin return value | `{ block: true }` |
+| OpenCode | Plugin return value from `tool.execute.before` | `{ block: true }` |
 | GitHub Copilot | Plugin return value | `{ block: true }` |
 | Google Antigravity | Exit code `2` or `{"decision":"block"}` stdout | `exit 2` or return JSON block |
 

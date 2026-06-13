@@ -6,10 +6,11 @@
 
 ## Links
 
-- Hooks concepts: https://docs.github.com/en/copilot/concepts/agents/hooks
-- Hooks reference: https://docs.github.com/en/copilot/reference/hooks-configuration
+- Hooks concepts (cloud agent): https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks
+- Hooks reference: https://docs.github.com/en/copilot/reference/hooks-reference
+- Use hooks (CLI): https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks
 - Use hooks (cloud agent): https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks
-- Pre-tool use hook (SDK): https://docs.github.com/en/copilot/how-tos/copilot-sdk/use-hooks/pre-tool-use
+- Error handling hook (SDK): https://docs.github.com/en/copilot/how-tos/copilot-sdk/use-hooks/error-handling
 - VS Code Copilot overview: https://code.visualstudio.com/docs/copilot/overview
 - Agents overview: https://code.visualstudio.com/docs/copilot/agents/overview
 
@@ -37,24 +38,25 @@ gh extension install github/gh-copilot
 
 ## Hooks
 
-Copilot has a fully-documented official hook system ([docs](https://docs.github.com/en/copilot/concepts/agents/hooks)) with 12 events. Both camelCase (`preToolUse`) and PascalCase (`PreToolUse`) naming are supported.
+Copilot has a fully-documented official hook system ([docs](https://docs.github.com/en/copilot/reference/hooks-reference)) with **13 events**. Both camelCase (`preToolUse`) and PascalCase (`PreToolUse`) naming are supported; they differ in field naming conventions (see stdin schema below).
 
 ### Hook Events
 
-| Event | When | Can Block? |
-|-------|------|-----------|
-| `preToolUse` | Before tool call — can allow, deny, or mutate args | ✅ |
-| `postToolUse` | After tool completes — can modify result | Partial |
-| `postToolUseFailure` | After tool fails | ❌ |
-| `permissionRequest` | Before permission service runs — can approve/deny | ✅ |
-| `agentStop` | When main agent finishes — can force another turn | ✅ |
-| `subagentStop` | When subagent finishes — can force another turn | ✅ |
-| `subagentStart` | When a subagent starts | ❌ |
-| `sessionStart` | Session start — can inject `additionalContext` | ❌ |
-| `sessionEnd` | Session end | ❌ |
-| `userPromptSubmitted` | After user input received | ❌ |
-| `preCompact` | Before context compaction | ❌ |
-| `notification` | On notification delivery — never blocks; errors skipped | ❌ |
+| Event | PascalCase alias | When | Can Block? |
+|-------|-----------------|------|-----------|
+| `preToolUse` | `PreToolUse` | Before tool call — can allow, deny, or mutate args | ✅ |
+| `postToolUse` | `PostToolUse` | After tool completes — can modify result or inject context | ✅ |
+| `postToolUseFailure` | `PostToolUseFailure` | After tool fails | ✅ |
+| `permissionRequest` | — | Before permission service runs — can approve/deny (CLI only) | ✅ |
+| `agentStop` | `Stop` | When main agent finishes — can force another turn | ✅ |
+| `subagentStop` | `SubagentStop` | When subagent finishes — can force another turn | ✅ |
+| `subagentStart` | — | When a subagent starts | ❌ |
+| `sessionStart` | `SessionStart` | Session start | ❌ |
+| `sessionEnd` | `SessionEnd` | Session end | ❌ |
+| `userPromptSubmitted` | `UserPromptSubmit` | After user input received | ❌ |
+| `preCompact` | `PreCompact` | Before context compaction | ❌ |
+| `errorOccurred` | `ErrorOccurred` | When an error occurs during agent execution | ❌ |
+| `notification` | — | On notification delivery — never blocks; errors skipped | ❌ |
 
 ### Hook Types
 
@@ -78,12 +80,13 @@ Three types of hooks:
   "type": "http",
   "url": "https://hooks.example.com",
   "headers": { "X-Custom": "value" },
+  "allowedEnvVars": [],
   "timeoutSec": 30
 }
 ```
-Requires HTTPS (except localhost).
+Requires HTTPS (except localhost; set `COPILOT_HOOK_ALLOW_LOCALHOST=1` to enable `http://localhost`).
 
-**3. Prompt** (LLM instruction, CLI-only):
+**3. Prompt** (LLM instruction, CLI-only, fires on `sessionStart` for new interactive sessions only — does not fire on resume or in cloud agent):
 ```json
 {
   "type": "prompt",
@@ -125,30 +128,42 @@ Requires HTTPS (except localhost).
 | `2` | Warning logged; for `permissionRequest` treated as deny |
 | Other | Failure logged; execution continues (fail-open) |
 
-### stdin Schema (camelCase form)
+### stdin Schema
 
+Two naming conventions are supported; the chosen convention controls both the key used in the `hooks` config object and the field names in the JSON payload:
+
+**camelCase form** — fields use camelCase; `timestamp` is a Unix millisecond integer:
 ```json
 {
   "sessionId": "abc123",
-  "timestamp": 1748300000,
+  "timestamp": 1748300000000,
   "cwd": "/workspace",
   "toolName": "run_in_terminal",
   "toolArgs": { "command": "npm test" }
 }
 ```
 
-PascalCase form uses `hook_event_name`, `session_id`, `tool_name`, `tool_input` (ISO 8601 timestamp).
+**PascalCase form** — fields use snake_case; `timestamp` is an ISO 8601 string:
+```json
+{
+  "session_id": "abc123",
+  "timestamp": "2025-05-26T20:00:00.000Z",
+  "cwd": "/workspace",
+  "tool_name": "run_in_terminal",
+  "tool_input": { "command": "npm test" }
+}
+```
+
+Note: `sessionId` / `session_id` is present in all events. Additional fields vary by event (see `errorOccurred`, `agentStop`, etc. below).
 
 ### stdout Schema
 
-`preToolUse`:
+`preToolUse` (blocking — output fields only):
 ```json
 {
   "permissionDecision": "allow | deny | ask",
   "permissionDecisionReason": "Required when denying",
-  "modifiedArgs": {},
-  "additionalContext": "Injected into conversation",
-  "suppressOutput": false
+  "modifiedArgs": {}
 }
 ```
 
@@ -165,12 +180,36 @@ PascalCase form uses `hook_event_name`, `session_id`, `tool_name`, `tool_input` 
 }
 ```
 
+`permissionRequest`:
+```json
+{
+  "behavior": "allow | deny",
+  "message": "string",
+  "interrupt": false
+}
+```
+
+`errorOccurred` (optional — return null/undefined for default handling):
+```json
+{
+  "suppressOutput": false,
+  "errorHandling": "retry | skip | abort",
+  "retryCount": 3,
+  "userNotification": "Custom message shown to user"
+}
+```
+
+`notification`: can return `{ "additionalContext": "string" }` (injected as user message); otherwise never blocks.
+
+`sessionStart`: can inject `additionalContext` via `prompt`-type hooks only.
+
 ### Cloud Agent Constraints
 
 - Linux only (`bash` honored, `powershell` ignored)
 - Working directory: `/workspace` (cloned repo)
 - Filesystem is ephemeral — use HTTP hooks to persist data
 - `permissionRequest` does not fire (tools are pre-approved)
+- `prompt`-type hooks do not fire (cloud agent is non-interactive)
 - Default timeout: 30 seconds per hook
 - Outbound network restricted to GitHub/Copilot hosts by default
 
@@ -221,13 +260,14 @@ Cloud agent sessions run autonomously. Hooks load only from `.github/hooks/*.jso
 - `ask` decisions are treated as `deny` in non-interactive (cloud) mode.
 - `.github/copilot-instructions.md` is the standard location for project-level natural-language instructions.
 
-## Sources (Official)
+## Sources
 
-| Topic | URL |
-|-------|-----|
-| Hooks concepts | https://docs.github.com/en/copilot/concepts/agents/hooks |
-| Hooks reference | https://docs.github.com/en/copilot/reference/hooks-configuration |
-| Use hooks (cloud agent) | https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks |
-| Pre-tool use hook (SDK) | https://docs.github.com/en/copilot/how-tos/copilot-sdk/use-hooks/pre-tool-use |
-| VS Code Copilot overview | https://code.visualstudio.com/docs/copilot/overview |
-| Agents overview | https://code.visualstudio.com/docs/copilot/agents/overview |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Hooks concepts (cloud agent) | https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks | 2026-06-13 | [official] |
+| Hooks reference | https://docs.github.com/en/copilot/reference/hooks-reference | 2026-06-13 | [official] |
+| Use hooks (CLI) | https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks | 2026-06-13 | [official] |
+| Use hooks (cloud agent) | https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks | 2026-06-13 | [official] |
+| Error handling hook (SDK) | https://docs.github.com/en/copilot/how-tos/copilot-sdk/use-hooks/error-handling | 2026-06-13 | [official] |
+| VS Code Copilot overview | https://code.visualstudio.com/docs/copilot/overview | — | [official] |
+| Agents overview | https://code.visualstudio.com/docs/copilot/agents/overview | — | [official] |
