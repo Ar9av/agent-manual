@@ -52,12 +52,12 @@ Pi supports two hook mechanisms: TypeScript extensions (full power) and the `pi-
 
 ### Hook System Comparison
 
-| Aspect | `pi-yaml-hooks` | `oh-my-pi` extensions |
-|--------|----------------|----------------------|
+| Aspect | `pi-yaml-hooks` | `pi-coding-agent` extensions (TypeScript) |
+|--------|----------------|------------------------------------------|
 | Event style | dot-notation (`tool.before.bash`) | snake_case (`tool_call`, `session_start`) |
 | Config format | YAML (`hooks.yaml`) | TypeScript/JavaScript |
-| Install | `pi install npm:pi-yaml-hooks` | Built into oh-my-pi |
-| Vendor? | Community (KristjanPikhof, MIT) | Community (can1357) |
+| Install | `pi install npm:pi-yaml-hooks` | Built into `@earendil-works/pi-coding-agent` |
+| Vendor? | Community (KristjanPikhof, MIT) | Core package (earendil-works) |
 
 ### YAML Hooks (via `pi-yaml-hooks` package)
 
@@ -109,13 +109,13 @@ hooks:
 
 Bash actions receive hook context as JSON on stdin and injected `PI_*` env vars (e.g. `PI_PROJECT_DIR`, `PI_SESSION_ID`).
 
-### Supported Events (oh-my-pi extensions — snake_case)
+### Supported Events (pi-coding-agent TypeScript extensions — snake_case)
 
-oh-my-pi uses a different, richer event set registered via `pi.on(...)` in TypeScript:
+The core `@earendil-works/pi-coding-agent` package exposes a richer event set registered via `pi.on(...)` in TypeScript extensions. These snake_case events are **not** from oh-my-pi — oh-my-pi is a separate community project that happens to use a similar convention:
 
 `session_start`, `session_before_switch`, `session_switch`, `session_before_compact`, `session_compact`, `session_shutdown`, `before_agent_start`, `agent_start`, `agent_end`, `turn_start`, `turn_end`, `tool_call` (pre-execution), `tool_result` (post-execution), `auto_compaction_start`, `auto_compaction_end`, and others.
 
-> Do not mix dot-notation events with oh-my-pi, or snake_case events with pi-yaml-hooks — they are incompatible.
+> Do not mix dot-notation events with TypeScript extensions, or snake_case events with pi-yaml-hooks — the two hook systems are incompatible with each other.
 
 ### Available Hook Actions (pi-yaml-hooks)
 

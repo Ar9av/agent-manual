@@ -241,7 +241,7 @@ Extensions can provide additional tools and hook configurations. Hooks from inst
 
 - Tool context injection (git commits, tickets, docs) is a primary hook use case.
 - Dynamic tool filtering via `BeforeToolSelection` hooks allows narrowing available tools per-session using `toolConfig.allowedFunctionNames`.
-- Environment variables `GEMINI_PROJECT_DIR` (alias: `CLAUDE_PROJECT_DIR`), `GEMINI_PLANS_DIR`, `GEMINI_SESSION_ID`, `GEMINI_CWD` are available inside hook processes.
+- Environment variables `GEMINI_PROJECT_DIR`, `GEMINI_PLANS_DIR`, `GEMINI_SESSION_ID`, `GEMINI_CWD` are available inside hook processes.
 
 ## Sources
 
@@ -256,5 +256,5 @@ Extensions can provide additional tools and hook configurations. Hooks from inst
 | Writing hooks (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/writing-hooks.md | [github] |
 | Tools reference | https://geminicli.com/docs/tools/file-system/ | [official] |
 | Google blog (hooks intro) | https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/ | [official] |
-| Main docs | https://geminicli.com/docs/ | [official] |
+| Main docs | https://geminicli.com/docs/ | [official] (Google-hosted; geminicli.com is the canonical Google documentation site, not a third-party mirror) |
 | GitHub repo | https://github.com/google-gemini/gemini-cli | [github] |

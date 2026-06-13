@@ -80,6 +80,8 @@ Aider does not feature a native pre/post tool use hook system like Claude Code o
 - **Skip pre-commit:** Aider runs with `--no-verify` by default to avoid triggering slow pre-commit git hooks during auto-commits.
 - **Commit messages:** Automatically generates descriptive commit messages based on the diffs (similar to `commit-msg` hooks).
 
+> **Warning — pre-commit hooks are SKIPPED by default:** Because aider passes `--no-verify` to every auto-commit, any pre-commit hooks your project relies on — including security scanners, secret detectors, linters, and quality gates — will NOT run during aider's commits. If your workflow depends on pre-commit hooks for safety or compliance, either disable auto-commits (`--no-auto-commits`) and commit manually, or set `--verify` in your `.aider.conf.yml` to re-enable hook execution at the cost of slower commits.
+
 ### Functional Quality Gates (Lint/Test)
 
 Aider uses functional quality gates via CLI flags or YAML config. After editing files, Aider runs these commands automatically, intercepts non-zero exit codes, feeds errors back into context, and attempts to self-correct.

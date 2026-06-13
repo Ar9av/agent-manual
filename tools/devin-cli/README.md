@@ -97,7 +97,7 @@ Standalone file (`.devin/hooks.v1.json`) — top-level keys are event names:
 }
 ```
 
-When embedded in `config.json` or `.claude/settings.json`, the hooks object nests under a `"hooks"` key.
+When embedded in `.devin/config.json` (project) or `~/.config/devin/config.json` (global), the hooks object nests under a `"hooks"` key.
 
 ### Hook Types
 

@@ -31,11 +31,19 @@ Download the installer from https://kiro.dev/ and follow OS-specific instruction
 - Windows: 10/11 (64-bit only; ARM not supported)
 - Linux: glibc 2.39+ (Ubuntu 24+, Debian 13+, Fedora 40+, Arch, Linux Mint 22+)
 
-### CLI (Linux / macOS)
+### CLI
+
+> **Note:** The Kiro CLI is not available via Homebrew. Use the platform-specific installers below.
+
+**macOS / Linux:**
 
 ```sh
 curl -fsSL https://cli.kiro.dev/install | bash
 ```
+
+**Windows (PowerShell / Windows Terminal — not Command Prompt):**
+
+See the [CLI installation docs](https://kiro.dev/docs/cli/installation/) for the dedicated PowerShell install command. Windows 11 is the supported version.
 
 **Linux system requirement:** glibc 2.34+ (standard on most distros since 2021). For older distros, a musl binary is available — check the [CLI installation docs](https://kiro.dev/docs/cli/installation/) for the musl download command. Note: the IDE has a stricter glibc 2.39+ requirement; the CLI glibc floor is lower.
 
