@@ -9,6 +9,8 @@
 - Docs: https://docs.trae.ai
 - Agent guide: https://docs.trae.ai/ide/agent
 - Rules: https://docs.trae.ai/ide/rules
+- Skills: https://docs.trae.ai/ide/skills
+- SOLO mode: https://docs.trae.ai/ide/solo-mode
 - IDE settings overview: https://docs.trae.ai/ide/ide-settings-overview
 - Models: https://docs.trae.ai/ide/models
 - MCP protocol: https://docs.trae.ai/ide/model-context-protocol
@@ -20,7 +22,7 @@
 
 ## Installation
 
-Download from https://www.trae.ai — available for Mac and Windows.
+Download from https://www.trae.ai — available for Mac, Windows, and Linux (.deb/.rpm for x64).
 
 ## Configuration Files
 
@@ -29,6 +31,9 @@ Download from https://www.trae.ai — available for Mac and Windows.
 | `.trae/rules/project_rules.md` | Project | Project-level agent rules (see Rules section) |
 | `user_rules.md` | Global | User-level agent rules — IDE-managed, auto-created via Settings UI (not manually placed) |
 | `.trae/mcp.json` | Project | MCP server configuration |
+| `.trae/skills/{skill_name}/SKILL.md` | Project | IDE-managed skill definitions (see Skills section) |
+| `.agents/skills/` | Project | Open agent skills standard — alternative skill location |
+| `.trae/commands/` | Project | Custom slash commands (v3.5.54+, up to 3 nesting levels) |
 | IDE Settings UI | Global | All other settings |
 
 > Note: `.trae/rules/` is auto-created by the IDE if it does not exist. The IDE also auto-generates `.trae/rules/git-commit-message.md` for commit message rules.
@@ -65,11 +70,45 @@ As of v3.5.18 (January 2026), four application modes are available per rule:
 - Maintain >80% coverage
 ```
 
-Rules also include AGENTS.md, CLAUDE.md, and CLAUDE.local.md from the project root in the agent's context.
+Trae also reads `AGENTS.md`, `CLAUDE.md`, and `CLAUDE.local.md` from the project root as rule sources (toggleable in Settings > Rules).
 
 ### User Rules
 
 `user_rules.md` is the global personal rules file. It is **IDE-managed and auto-created** — do not place it manually. To create or edit it: open the AI dialog → Settings icon (upper right) → Rules → Personal Rules → click to create. The file applies across all projects.
+
+## Skills (v3.5.41+, March 2026)
+
+Skills are on-demand reusable procedures — the key distinction from Rules is loading behavior:
+
+| Feature | Rules | Skills |
+|---------|-------|--------|
+| Loading | Always-on — loaded into every context | On-demand — only loaded when explicitly invoked |
+| Token cost | Every session | Only when used |
+| Format | `.md` files in `.trae/rules/` | `SKILL.md` files in skill directories |
+| Invocation | Automatic (per mode) | Explicit invocation only |
+
+Skills are stored as `SKILL.md` files and can be placed in:
+
+- `.trae/skills/{skill_name}/SKILL.md` — IDE-managed location
+- `.agents/skills/` — open agent skills standard (interoperable with other agents)
+
+Skills allow teams to define reusable procedures (e.g., "run the test suite", "scaffold a new component") that only consume tokens when explicitly called, keeping routine contexts lean.
+
+## SOLO Mode
+
+SOLO is Trae's autonomous multi-agent mode for end-to-end task execution. Unlike the standard agent (which is interactive and step-by-step), SOLO operates autonomously across the full development lifecycle:
+
+- **Requirements analysis** — breaks down tasks and plans implementation
+- **Code generation** — writes and edits files across the project
+- **Terminal commands** — runs builds, tests, and installs autonomously
+- **Browser testing** — interacts with a browser to verify functionality
+- **Deployment** — can execute deployment steps end-to-end
+
+SOLO is designed for larger, self-contained tasks where you want minimal interruption. Full documentation: https://docs.trae.ai/ide/solo-mode
+
+## Slash Commands (v3.5.54+)
+
+Custom slash commands can be defined in `.trae/commands/`. Up to 3 levels of nesting are supported, enabling structured command hierarchies (e.g., `/project/setup/database`).
 
 ## Hooks
 
@@ -135,12 +174,17 @@ Custom agents are configured via the IDE UI with:
 
 ## Supported Models (2026)
 
-❓ The live models page was not fully retrievable. Known state as of mid-2026:
+Built-in models as of mid-2026:
 
-- **GPT-4o** — available built-in
-- **Claude models** — built-in access was suspended November 2025 due to Anthropic regional restrictions; Claude can be re-enabled by configuring the Anthropic provider with a personal API key under custom models
-- **DeepSeek R1** — available (reported in 2026 reviews)
-- Additional models configurable via custom provider API key
+| Model | Status |
+|-------|--------|
+| GPT-4o | Available built-in |
+| GPT-5 | Available built-in |
+| Gemini 2.5 Pro | Available built-in |
+| DeepSeek R1 | Available built-in |
+| DeepSeek V3 / Chat V3 | Available built-in |
+| Kimi-K2 | Available built-in |
+| Claude models | Removed from built-in November 2025 (Anthropic regional restrictions); re-enable via custom provider with personal API key |
 
 See https://docs.trae.ai/ide/models for the current authoritative list.
 
@@ -154,6 +198,10 @@ See [trae-cn/](../trae-cn/README.md) — the Chinese-market version of Trae with
 - Rules are loaded at agent initialization; updates may require restarting the agent session.
 - `project_rules.md` lives at `.trae/rules/project_rules.md` (note the `rules/` subdirectory).
 - `user_rules.md` is IDE-managed (global); create via Settings UI, not by manually placing a file.
+- `AGENTS.md`, `CLAUDE.md`, and `CLAUDE.local.md` are read as rule sources (toggleable in Settings > Rules).
+- Skills (v3.5.41+) load on demand only — unlike Rules which are always-on — saving tokens on large contexts.
+- SOLO mode is the autonomous multi-agent mode for end-to-end task execution without step-by-step confirmation.
+- Custom slash commands live in `.trae/commands/` (v3.5.54+, up to 3 nesting levels).
 - No native hook API; MCP is the primary extensibility path.
 - `bytedance/trae-agent` on GitHub is a separate CLI tool, not the Trae IDE. The official Trae IDE repo is `Trae-AI/Trae`.
 
@@ -163,6 +211,8 @@ See [trae-cn/](../trae-cn/README.md) — the Chinese-market version of Trae with
 |-------|-----|---------|-------|
 | Main docs | https://docs.trae.ai | 2026-06-13 | [official] |
 | Rules | https://docs.trae.ai/ide/rules | 2026-06-13 | [official] |
+| Skills | https://docs.trae.ai/ide/skills | 2026-06-13 | [official] |
+| SOLO mode | https://docs.trae.ai/ide/solo-mode | 2026-06-13 | [official] |
 | MCP protocol / transport types | https://docs.trae.ai/ide/model-context-protocol | 2026-06-13 | [official] |
 | Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-06-13 | [official] |
 | Models | https://docs.trae.ai/ide/models | 2026-06-13 | [official] |

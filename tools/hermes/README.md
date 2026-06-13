@@ -33,7 +33,11 @@ iex (irm https://hermes-agent.nousresearch.com/install.ps1)
 
 After installation, run `hermes setup --portal` to configure OAuth for model access and Tool Gateway features.
 
-> ~~`pip install hermes-agent`~~ — this method does not exist; use the installer above.
+**pip (Python):**
+```sh
+pip install hermes-agent
+```
+As of v0.14.0 (May 16, 2026), `pip install hermes-agent` is an officially documented installation method. The binary is placed at `~/.local/bin/hermes` via `console_scripts`.
 
 ## Configuration Files
 
@@ -191,7 +195,7 @@ Place `AGENTS.md` at repo root for persistent natural-language instructions that
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Installation | https://hermes-agent.nousresearch.com/docs | 2026-06-13 | [official] |
+| Installation | https://hermes-agent.nousresearch.com/docs/getting-started/installation | 2026-06-13 | [official] |
 | Event hooks | https://hermes-agent.nousresearch.com/docs/user-guide/features/hooks | 2026-06-13 | [official] |
 | CLI commands reference | https://hermes-agent.nousresearch.com/docs/reference/cli-commands | 2026-06-13 | [official] |
 | Configuration | https://hermes-agent.nousresearch.com/docs/user-guide/configuration | 2026-06-13 | [official] |

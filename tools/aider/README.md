@@ -20,7 +20,7 @@ Recommended methods (in order of preference):
 
 ```sh
 # Option 1: aider-install (recommended — handles Python env isolation)
-pip install aider-install
+python -m pip install aider-install
 aider-install
 
 # Option 2: pipx
@@ -36,7 +36,7 @@ curl -LsSf https://aider.chat/install.sh | sh
 pip install -U --upgrade-strategy only-if-needed aider-chat
 ```
 
-Supported Python versions: 3.8–3.13 (aider-install/one-liners); 3.9–3.12 (uv/pipx/pip).
+Supported Python versions: 3.8–3.13 (aider-install/one-liners); 3.8–3.13 (uv — provisions its own Python 3.12); 3.9–3.12 (pipx/pip).
 
 ## Configuration Files
 
@@ -138,7 +138,7 @@ Instead of tool-calling loops, Aider implements standard in-chat slash commands 
 | `/copy` | Copy the last assistant message to the clipboard |
 | `/copy-context` | Copy the current chat context as markdown |
 | `/diff` | Display the diff of changes since the last message |
-| `/drop <file>` | Remove files from the chat session |
+| `/drop <file>` | Remove files from the chat session to free up context space |
 | `/edit` | Alias for `/editor`: open an editor to write a prompt |
 | `/editor` | Open an editor to write a prompt |
 | `/editor-model` | Switch the Editor Model to a new LLM |
@@ -153,7 +153,7 @@ Instead of tool-calling loops, Aider implements standard in-chat slash commands 
 | `/model <model>` | Switch the Main Model to a new LLM |
 | `/models <query>` | Search the list of available models |
 | `/multiline-mode` | Toggle multiline mode |
-| `/ok` | Alias for `/code Ok, please go ahead and make those changes` |
+| `/ok` | Alias for `/code Ok, please go ahead and make those changes (any args are appended)` |
 | `/paste` | Paste image/text from the clipboard into the chat |
 | `/quit` | Exit the application |
 | `/read-only <file>` | Add files to the chat that are for reference only (read-only; enables prompt caching) |

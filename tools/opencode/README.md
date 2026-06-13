@@ -24,6 +24,12 @@ curl -fsSL https://opencode.ai/install | bash
 npm install -g opencode-ai
 # or
 bun install -g opencode-ai
+# or
+pnpm install -g opencode-ai
+# or
+yarn global add opencode-ai
+# or (Homebrew)
+brew install anomalyco/tap/opencode
 ```
 
 ## Configuration Files
@@ -47,7 +53,7 @@ OpenCode uses a **plugin system** as its primary extension mechanism. Plugins ru
 
 ### Plugin Hook Events
 
-Plugins can register callbacks for 25+ lifecycle events:
+Plugins can register callbacks for 30+ lifecycle events:
 
 | Category | Events |
 |----------|--------|
@@ -68,12 +74,10 @@ Specialized hooks (returned as top-level keys alongside event handlers):
 
 | Hook Key | Purpose |
 |----------|---------|
+| `tool` | Define custom tools using a `tool()` factory function with Zod-based argument schemas |
 | `tool.execute.before` | Intercept/modify tool args before execution |
 | `tool.execute.after` | Process tool results post-execution |
-| `chat.message` | Intercept messages before LLM processing |
-| `chat.params` | Modify model parameters |
-| `permission.ask` | Control permission request handling |
-| `config` | Modify configuration at runtime |
+| `stop` | Intercept agent termination attempts |
 | `experimental.chat.system.transform` | Inject context into system prompt |
 | `experimental.session.compacting` | Preserve state during compaction |
 
@@ -189,8 +193,11 @@ Agents can also be defined as markdown files in `.opencode/agents/` (filename be
 | `mode` | `"primary"`, `"subagent"`, or `"all"` |
 | `permission` | Per-tool permission overrides |
 | `temperature` | 0.0–1.0 |
+| `top_p` | 0.0–1.0, alternative diversity control |
 | `steps` | Max agentic iterations |
 | `color` | Hex or theme name |
+| `hidden` | Boolean; hide from `@` autocomplete |
+| `disable` | Boolean; disable this agent entirely |
 
 ### Permissions
 
@@ -206,7 +213,24 @@ Config key is `permission` (singular). Valid values: `"allow"`, `"ask"`, `"deny"
 }
 ```
 
-Permission keys include: `read`, `edit`, `glob`, `grep`, `list`, `bash`, `task`, `external_directory`, `todowrite`, `webfetch`, `websearch`, `lsp`, `skill`.
+Permission keys include: `read`, `edit`, `glob`, `grep`, `bash`, `task`, `external_directory`, `todowrite`, `webfetch`, `websearch`, `lsp`, `skill`, `question`, `doom_loop`.
+
+| Permission Key | Description |
+|----------------|-------------|
+| `read` | Reading a file (matches the file path) |
+| `edit` | All file modifications (covers `edit`, `write`, `patch`) |
+| `glob` | File globbing (matches the glob pattern) |
+| `grep` | Content search (matches the regex pattern) |
+| `bash` | Running shell commands (matches parsed commands) |
+| `task` | Launching subagents (matches the subagent type) |
+| `skill` | Loading a skill (matches the skill name) |
+| `lsp` | Running LSP queries (currently non-granular) |
+| `webfetch` | Fetching a URL (matches the URL) |
+| `websearch` | Web search (matches the query) |
+| `external_directory` | Triggered when a tool touches paths outside the project working directory |
+| `todowrite` | Writing to the todo list |
+| `question` | Asking the user questions during execution |
+| `doom_loop` | Triggered when the same tool call repeats 3 times with identical input |
 
 ## Skills
 
@@ -235,6 +259,7 @@ Custom slash commands go in `.opencode/commands/`.
 | Agents reference | https://opencode.ai/docs/agents/ | [official] |
 | Skills reference | https://opencode.ai/docs/skills/ | [official] |
 | Plugins reference | https://opencode.ai/docs/plugins/ | [official] |
+| Permissions reference | https://opencode.ai/docs/permissions/ | [official] |
 | GitHub repo | https://github.com/anomalyco/opencode | [github] |
 | Awesome OpenCode | https://github.com/awesome-opencode/awesome-opencode | [github] |
 | Plugin guide (gist) | https://gist.github.com/johnlindquist/0adf1032b4e84942f3e1050aba3c5e4a | [github] |

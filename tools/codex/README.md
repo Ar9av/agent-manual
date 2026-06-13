@@ -83,7 +83,7 @@ allow_managed_hooks_only = true
 | `SubagentStop` | A subagent finishes | Turn |
 | `Stop` | A conversation turn completes | Turn |
 
-> Note: As of mid-2026, hooks reliably fire for Bash tool calls but not reliably for `apply_patch` or most MCP tool calls ([issue #16732](https://github.com/openai/codex/issues/16732)).
+> Note: `apply_patch` now correctly emits `PreToolUse`/`PostToolUse` hooks — this was fixed in [PR #18391](https://github.com/openai/codex/pull/18391) ('fix(core): emit hooks for apply_patch edits'), which closed [issue #16732](https://github.com/openai/codex/issues/16732). Hook reliability for MCP tool calls may still vary.
 
 ### Hook Input
 
@@ -121,6 +121,7 @@ Event-specific shapes:
 - **PermissionRequest** — return `"decision": {"behavior": "allow"|"deny", "message": "..."}`
 - **PostToolUse** — block with `"decision": "block"` (does not undo side effects)
 - **Stop / SubagentStop** — `"decision": "block"` prompts continuation
+- **SubagentStart** — `"continue": false` is parsed but does NOT actually prevent subagent startup (effectively non-blocking)
 
 Exit code `2` with stderr text also signals blocking/denial for some events.
 
@@ -191,11 +192,9 @@ Use `"*"`, `""`, or omit `matcher` to match all.
 | Tool | Description |
 |------|-------------|
 | `shell` | Execute shell commands |
-| `read_file` | Read file contents |
-| `write_file` | Write files |
-| `patch_file` | Apply diffs |
-| `list_files` | List directory |
-| `search` | Search files |
+| `apply_patch` | Apply code edits (file creation, modification, deletion via unified diff) |
+
+MCP servers provide additional tools to the agent at runtime.
 
 ## MCP Support
 
@@ -230,4 +229,4 @@ https://developers.openai.com/codex/github-action
 | GitHub Action | https://developers.openai.com/codex/github-action | [official] |
 | Main docs | https://developers.openai.com/codex | [official] |
 | GitHub repo | https://github.com/openai/codex | [github] |
-| Issue: hooks not firing for apply_patch/MCP | https://github.com/openai/codex/issues/16732 | [github] |
+| Issue: hooks not firing for apply_patch/MCP | https://github.com/openai/codex/issues/16732 | [closed — fixed in PR #18391] |

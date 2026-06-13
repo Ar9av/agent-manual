@@ -9,7 +9,7 @@
 - Docs: https://cursor.com/docs
 - Agent best practices: https://cursor.com/blog/agent-best-practices
 - Changelog: https://cursor.com/changelog
-- MCP setup guide: https://www.truefoundry.com/blog/mcp-servers-in-cursor-setup-configuration-and-security-guide
+- MCP docs: https://cursor.com/docs/mcp
 
 ---
 
@@ -70,7 +70,7 @@ Additional rule locations: **User Rules** (global Cursor settings), **Team Rules
 
 ## Hooks
 
-Cursor has **21 hook events** across two config files (`.cursor/hooks.json` project, `~/.cursor/hooks.json` global). All hooks receive JSON via stdin. ❓ A prior audit noted live page may state 23 events — live fetch on 2026-06-13 returned 21 (18 agent + 2 Tab + 1 App Lifecycle).
+Cursor has **21 hook events** (18 agent + 2 Tab + 1 App Lifecycle) across two config files (`.cursor/hooks.json` project, `~/.cursor/hooks.json` global). All hooks receive JSON via stdin.
 
 **Env vars available to all hooks:** `CURSOR_PROJECT_DIR`, `CURSOR_VERSION`, `CURSOR_USER_EMAIL`, `CURSOR_TRANSCRIPT_PATH`, `CURSOR_CODE_REMOTE`, `CLAUDE_PROJECT_DIR` (alias for `CURSOR_PROJECT_DIR`)
 
@@ -108,8 +108,8 @@ Cursor has **21 hook events** across two config files (`.cursor/hooks.json` proj
 
 Base fields present on all events: `conversation_id`, `generation_id`, `model`, `hook_event_name`, `cursor_version`, `workspace_roots`, `user_email`, `transcript_path`
 
-- `preToolUse`: `tool_name`, `tool_input`, `tool_use_id`, `cwd`, `model`, `agent_message`
-- `postToolUse`: `tool_name`, `tool_input`, `tool_output`, `tool_use_id`, `cwd`, `duration`
+- `preToolUse`: `tool_name`, `tool_input`, `tool_use_id`, `cwd`
+- `postToolUse`: `tool_name`, `tool_input`, `tool_output`, `duration`
 - `postToolUseFailure`: `tool_name`, `tool_input`, `tool_use_id`, `cwd`, `error_message`, `failure_type`, `duration`, `is_interrupt`
 - `beforeShellExecution`: `command`, `cwd`, `sandbox`
 - `afterShellExecution`: `command`, `output`, `duration`, `sandbox`
@@ -120,8 +120,8 @@ Base fields present on all events: `conversation_id`, `generation_id`, `model`, 
 - `beforeSubmitPrompt`: `prompt`, `attachments`
 - `sessionStart`: `session_id`, `is_background_agent`, `composer_mode`
 - `sessionEnd`: `session_id`, `reason`, `duration_ms`, `is_background_agent`, `final_status`, `error_message`
-- `subagentStart`: `subagent_id`, `subagent_type`, `task`, `parent_conversation_id`, `tool_call_id`, `subagent_model`, `is_parallel_worker`, `git_branch`
-- `subagentStop`: `subagent_type`, `status`, `task`, `description`, `summary`, `duration_ms`, `message_count`, `tool_call_count`, `loop_count`, `modified_files`, `agent_transcript_path`
+- `subagentStart`: `subagent_id`, `subagent_type`, `task`, `parent_conversation_id`, `subagent_model`, `is_parallel_worker`, `git_branch`
+- `subagentStop`: `subagent_type`, `status`, `task`, `summary`, `duration_ms`, `message_count`, `tool_call_count`, `loop_count`, `modified_files`
 - `preCompact`: `trigger`, `context_usage_percent`, `context_tokens`, `context_window_size`, `message_count`, `messages_to_compact`, `is_first_compaction`
 - `stop`: `status`, `loop_count`
 - `afterAgentResponse`: `text`
@@ -132,16 +132,39 @@ Base fields present on all events: `conversation_id`, `generation_id`, `model`, 
 
 ```json
 {
-  "event": "preToolUse",
-  "command": ".cursor/hooks/validate.sh",
-  "type": "command",
-  "matcher": "Run shell commands",
-  "timeout": 5000,
-  "failClosed": true
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/validate.sh",
+        "type": "command",
+        "matcher": "Run shell commands",
+        "timeout": 30,
+        "failClosed": true
+      }
+    ]
+  }
 }
 ```
 
-`failClosed: true` — if the hook errors, block instead of proceeding.
+`failClosed: true` — if the hook errors, block instead of proceeding. `timeout` is in **seconds**.
+
+### Config File Locations
+
+| Scope | Path |
+|-------|------|
+| Project | `.cursor/hooks.json` |
+| User (global) | `~/.cursor/hooks.json` |
+| Enterprise (macOS) | `/Library/Application Support/Cursor/hooks.json` |
+| Enterprise (Linux/WSL) | `/etc/cursor/hooks.json` |
+| Enterprise (Windows) | `C:\ProgramData\Cursor\hooks.json` |
+| Team | Cloud-distributed (Enterprise only) |
+
+Priority order: **Enterprise > Team > Project > User**
+
+### Cloud Agent Hook Availability
+
+The following hooks are **unavailable** in cloud/background agents: `sessionStart`, `sessionEnd`, `beforeSubmitPrompt`, `beforeTabFileRead`, `afterTabFileEdit`, `workspaceOpen`, `beforeMCPExecution`, `afterMCPExecution`, `afterAgentResponse`, `afterAgentThought`, `stop`.
 
 ## Built-in Agent Tools
 
@@ -175,7 +198,7 @@ Cursor loads MCP servers from two locations:
 }
 ```
 
-- Go to **Settings > Tools & MCP** to toggle individual tools on/off.
+- Go to **Settings → Features → Model Context Protocol** to toggle individual tools on/off.
 - Agent scans enabled servers and loads their tools automatically.
 
 ## Agent Mode
@@ -190,7 +213,7 @@ Cursor loads MCP servers from two locations:
 - Globs in MDC frontmatter are bare strings (not JSON arrays); multiple patterns are comma-separated.
 - `failClosed: true` on a hook makes errors block rather than proceed.
 - `stop` / `subagentStop` can return `followup_message` in stdout JSON to continue the agent loop.
-- Cursor Settings > Tools & MCP provides a GUI for MCP server management.
+- Cursor Settings → Features → Model Context Protocol provides a GUI for MCP server management.
 
 ## Sources
 

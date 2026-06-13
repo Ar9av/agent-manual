@@ -87,7 +87,7 @@ Hook events are defined in `settings.json` under the `hooks` key.
 | `UserPromptExpansion` | User-typed slash command expands into prompt | ✅ | 30 s timeout override |
 | `PreToolUse` | Before every tool call | ✅ | |
 | `PermissionRequest` | Permission dialog triggered | ✅ (exit 2 denies) | |
-| `PermissionDenied` | Tool denied by auto-mode classifier | ❌ | Use JSON `retry: true` instead |
+| `PermissionDenied` | Tool denied by auto-mode classifier | ❌ | Use `hookSpecificOutput: { hookEventName: "PermissionDenied", retry: true }` to retry |
 | `PostToolUse` | After tool call succeeds | ❌ | Tool already ran |
 | `PostToolUseFailure` | After tool call fails | ❌ | |
 | `PostToolBatch` | After a parallel tool-call batch resolves | ✅ (stops loop) | |
@@ -114,13 +114,15 @@ Hook events are defined in `settings.json` under the `hooks` key.
 
 ### Hook Types
 
-| Type | Description |
-|------|-------------|
-| `command` | Run a shell command (stdin = hook JSON, exit code drives behavior) |
-| `http` | HTTP POST to a URL (body = hook JSON) |
-| `mcp_tool` | Call a tool on a connected MCP server |
-| `prompt` | Single-turn LLM evaluation (yes/no) — 30 s default timeout |
-| `agent` | Spawn a subagent with Read/Grep/Glob tools (experimental) — 60 s default timeout |
+| Type | Description | Available Events |
+|------|-------------|-----------------|
+| `command` | Run a shell command (stdin = hook JSON, exit code drives behavior) | All events |
+| `http` | HTTP POST to a URL (body = hook JSON) | All events |
+| `mcp_tool` | Call a tool on a connected MCP server | All events |
+| `prompt` | Single-turn LLM evaluation (yes/no) — 30 s default timeout | `UserPromptSubmit`, `UserPromptExpansion`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `PostToolUseFailure`, `PostToolBatch`, `Stop`, `SubagentStart`, `SubagentStop` only |
+| `agent` | Spawn a subagent with Read/Grep/Glob tools (experimental) — 60 s default timeout | `UserPromptSubmit`, `UserPromptExpansion`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `PostToolUseFailure`, `PostToolBatch`, `Stop`, `SubagentStart`, `SubagentStop` only |
+
+> Note: `SessionStart` and `Setup` only support `command` and `mcp_tool` types. Most informational/lifecycle events (e.g. `Notification`, `MessageDisplay`, `InstructionsLoaded`, `SessionEnd`) support `command`, `http`, and `mcp_tool` but not `prompt` or `agent`.
 
 ### Hook Input (stdin JSON)
 
@@ -183,15 +185,40 @@ To block via HTTP hook: return 2xx with JSON `{ "decision": "block" }` (non-2xx 
 
 ### JSON Output Fields (stdout from any hook)
 
+These are the **top-level universal fields** returned in JSON from any hook's stdout:
+
 | Field | Default | Description |
 |-------|---------|-------------|
 | `continue` | `true` | `false` stops all processing |
 | `stopReason` | — | Message to user when `continue: false` |
 | `suppressOutput` | `false` | Hide hook stdout from transcript |
 | `systemMessage` | — | Warning shown to user |
-| `additionalContext` | — | String injected into Claude's context window |
 | `terminalSequence` | — | Terminal escape sequence (OSC/BEL) |
-| `hookSpecificOutput` | — | Nested event-specific decisions (requires `hookEventName`) |
+| `hookSpecificOutput` | — | Nested object for event-specific decisions (requires `hookEventName` inside) |
+
+`hookSpecificOutput` is a **nested object** — not a top-level field itself — containing event-specific fields. For example:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PermissionDenied",
+    "retry": true
+  }
+}
+```
+
+or, to inject context into Claude's context window from a `PreToolUse` hook:
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "additionalContext": "This file is auto-generated — do not manually edit."
+  }
+}
+```
+
+`additionalContext` (a string injected into Claude's context window) is an event-specific field inside `hookSpecificOutput`, not a top-level field.
 
 ### Timeout Defaults
 

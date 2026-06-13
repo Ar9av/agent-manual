@@ -37,11 +37,7 @@ Download the installer from https://kiro.dev/ and follow OS-specific instruction
 curl -fsSL https://cli.kiro.dev/install | bash
 ```
 
-Alternative (macOS via Homebrew):
-
-```sh
-brew install kiro-cli
-```
+**Linux system requirement:** glibc 2.34+ (standard on most distros since 2021). For older distros, a musl binary is available — check the [CLI installation docs](https://kiro.dev/docs/cli/installation/) for the musl download command. Note: the IDE has a stricter glibc 2.39+ requirement; the CLI glibc floor is lower.
 
 **Launch command:**
 
@@ -145,8 +141,8 @@ Matchers for `preToolUse` / `postToolUse` accept snake_case canonical names, ali
 
 | Matcher | Matches |
 |---------|---------|
-| `"read"` or `"fs_read"` | File read tool |
-| `"write"` or `"fs_write"` | File write tool |
+| `"read"` or `"fs_read"` or `"fsRead"` | File read tool |
+| `"write"` or `"fs_write"` or `"fsWrite"` | File write tool |
 | `"shell"` or `"execute_bash"` or `"execute_cmd"` | Shell execution |
 | `"aws"` or `"use_aws"` | AWS CLI tool |
 | `"@git"` | All git MCP server tools |
@@ -188,14 +184,14 @@ The IDE has 10 hook types (configured in the IDE UI, not in agent JSON):
 | Hook Type | Trigger | Can Block? |
 |-----------|---------|-----------|
 | Prompt Submit | User submits a prompt (`USER_PROMPT` env var available) | ✅ |
-| Agent Stop | Agent finishes its turn | ❌ |
+| Agent Stop | Agent finishes its turn | ✅ |
 | Pre Tool Use | Agent about to invoke a tool (filterable by tool name) | ✅ |
-| Post Tool Use | Agent completed tool invocation | ❌ |
-| File Create | New files matching pattern created | ❌ |
-| File Save | Files matching pattern saved | ❌ |
-| File Delete | Files matching pattern deleted | ❌ |
+| Post Tool Use | Agent completed tool invocation | ✅ |
+| File Create | New files matching pattern created | ✅ |
+| File Save | Files matching pattern saved | ✅ |
+| File Delete | Files matching pattern deleted | ✅ |
 | Pre Task Execution | Spec task status → in_progress | ✅ |
-| Post Task Execution | Spec task status → completed | ❌ |
+| Post Task Execution | Spec task status → completed | ✅ |
 | Manual Trigger | User manually executes on demand | N/A |
 
 IDE hooks support two action types: **Ask Kiro** (agent prompt) or **Run Command** (shell).
@@ -206,10 +202,10 @@ Tool names are **snake_case**. `Edit` and `LS` do not exist as built-in tools.
 
 | Tool | Aliases | Description |
 |------|---------|-------------|
-| `read` | `fs_read` | Read files, folders, and images |
+| `read` | `fs_read`, `fsRead` | Read files, folders, and images |
 | `glob` | — | File discovery using glob patterns (respects .gitignore) |
 | `grep` | — | Fast content search using regex (respects .gitignore) |
-| `write` | `fs_write` | Create and edit files |
+| `write` | `fs_write`, `fsWrite` | Create and edit files |
 | `shell` | `execute_bash`, `execute_cmd` | Execute bash commands |
 | `aws` | `use_aws` | Make AWS CLI calls |
 | `web_search` | — | Search the web |

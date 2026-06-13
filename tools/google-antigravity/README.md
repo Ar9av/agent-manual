@@ -69,9 +69,13 @@ The execution pipeline runs: **Decide → Execute → Inspect/PostToolCall**. Tr
   "hook_event_name": "PreToolUse",
   "tool_name": "run_command",
   "tool_input": { "command": "npm test" },
+  "workspacePaths": ["/home/user/project"],
+  "transcriptPath": "/home/user/.gemini/antigravity-cli/transcripts/session.json",
   "session_id": "session-12345"
 }
 ```
+
+> Note: `workspacePaths` and `transcriptPath` are confirmed in live docs. `session_id` is unverified ❓ — treat as provisional.
 
 ### Hook Output (stdout JSON, optional)
 
@@ -82,7 +86,7 @@ The execution pipeline runs: **Decide → Execute → Inspect/PostToolCall**. Tr
 }
 ```
 
-Valid decision values: `"allow"`, `"deny"`. (`"block"` is not a valid value.)
+Valid decision values: `"allow"`, `"deny"`, `"ask"`. (`"block"` is not a valid value.) The `"ask"` value was added with the Unified Permission System (April 2026) and prompts the user for confirmation before the agent proceeds.
 
 ### Exit Code Behavior
 
@@ -164,13 +168,29 @@ Supports both local stdio and remote HTTP/SSE transport modes.
 
 ## Skills / Commands
 
-- Skills location: Global `~/.gemini/antigravity-cli/skills/` or Project `.agents/skills/`
+- Skills location:
+  - `~/.gemini/skills/` — Shared path available to ALL Antigravity tools (IDE and CLI)
+  - `~/.gemini/antigravity-cli/skills/` — CLI-specific path
+  - `.agents/skills/` — Project-level path
 - Format: Markdown file `SKILL.md` (YAML frontmatter: `name`, `description`, `trigger`, etc.). Windows variant uses PowerShell.
 - Convention shared with Codex CLI.
+
+### Slash Commands
+
+The following slash commands are available in Antigravity CLI 2.0 (added at I/O 2026):
+
+| Command | Description |
+|---------|-------------|
+| `/goal` | Set or update the active agent goal for the current session |
+| `/schedule` | Schedule a deferred or recurring agent task |
 
 ## Agent / Subagent Configuration
 
 Antigravity CLI and IDE allow spawning and managing background subagents (e.g. `research` and `self`). Subagents can inherit, branch, or share the parent workspace to run concurrent processes.
+
+### Browser Subagent
+
+Antigravity 2.0 (I/O 2026) added a native Browser subagent that operates via headless Chrome MCP commands. No additional configuration is required — it is available out of the box for tasks that require web browsing, scraping, or UI interaction.
 
 ## Notes
 

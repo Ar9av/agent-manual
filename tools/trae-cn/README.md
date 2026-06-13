@@ -20,7 +20,7 @@ Trae CN is the Chinese-market edition of [Trae IDE](../trae/README.md). The arch
 
 | Aspect | Trae (Global) | Trae CN |
 |--------|--------------|---------|
-| Default models | Claude, GPT-4o | Doubao-1.5-Pro, DeepSeek (R1 + V3) |
+| Default models | Claude, GPT-4o | Dola-Seed-2.0-Code, GPT-5.x variants |
 | API endpoints | Global Anthropic/OpenAI | ByteDance domestic endpoints |
 | Compliance | Standard | Chinese data residency |
 | UI language | English (primary) | Chinese (primary) |
@@ -30,16 +30,19 @@ Trae CN is the Chinese-market edition of [Trae IDE](../trae/README.md). The arch
 Identical to [Trae (Global)](../trae/README.md) — same configuration files, rules format, and MCP support.
 
 ```
-.trae/rules/project_rules.md   # Project-level rules (Markdown)
-.trae/rules/user_rules.md      # User-level rules
+.trae/rules/<name>.md          # Project-level rules (Markdown, user-defined filenames)
 .trae/mcp.json                 # MCP server configuration
 ```
 
-The `.trae/rules/` folder can also be placed in any project subdirectory to scope rules to that module. Project rules take precedence over user rules when there is a conflict.
+The `.trae/rules/` folder can also be placed in any project subdirectory to scope rules to that module. Project rules take precedence over user rules when there is a conflict. Rule filenames within `.trae/rules/` are user-defined (e.g. `global-style.md`, `react-best-practices.md`); there is no canonical `user_rules.md` filename.
 
 ## Hooks
 
 Same situation as Trae global — no native pre/post tool use hooks. Use MCP servers for lifecycle extensibility.
+
+## SOLO Mode
+
+Trae CN supports SOLO mode, the same autonomous multi-agent mode available in Trae global. In SOLO mode the agent plans and executes multi-step tasks independently, spawning sub-agents as needed, with minimal human interruption.
 
 ## MCP Transport Types
 
@@ -47,21 +50,32 @@ Trae IDE supports three MCP transport types:
 
 - **stdio** — local process, uses `command` + optional `env`
 - **SSE** — remote HTTP, uses `url` + `"type": "sse"`
-- **Streamable HTTP** — remote HTTP streaming (added in later releases)
+- **Streamable HTTP** — remote HTTP streaming
 
 ## Supported Models (CN edition, 2026)
 
 Built-in defaults (no additional API key required):
-- Doubao-1.5-Pro (ByteDance)
-- DeepSeek R1
-- DeepSeek V3
+- Dola-Seed-2.0-Code (ByteDance)
+- GPT-5.x variants
+- MiniMax-M3 / MiniMax-M2.7
+- Kimi-K2.5
+- DeepSeek-V3.2
+- Gemini-3.1-Pro-Preview
+- Gemini-3-Flash-Preview
 
-Via SiliconCloud integration (requires SiliconCloud API key):
-- Qwen (Alibaba) — e.g. Qwen2.5-Coder
-- QWQ-32B
-- Additional SiliconCloud-hosted models
+Via preset CN provider integrations (each requires the respective provider's API key):
+- Silicon Flow CN
+- MiniMax CN
+- Kimi CN
+- Volcano Engine
+- Alibaba Cloud
+- Tencent Cloud
+- Bigmodel
+- Gitee
+- PPIO
+- Infinigence AI CN
 
-Additional providers configurable via custom model settings: ❓ full CN provider list not confirmed from live docs.
+Additional providers configurable via custom model settings.
 
 ## Notes
 
@@ -79,5 +93,4 @@ Additional providers configurable via custom model settings: ❓ full CN provide
 | Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-06-13 | [official] |
 | Models / custom models | https://docs.trae.ai/ide/models | 2026-06-13 | [official] |
 | Agent guide | https://docs.trae.ai/ide/agent | 2026-06-13 | [official] |
-| Trae + SiliconCloud integration (Qwen, DeepSeek) | https://www.aibase.com/news/16237 | 2026-06-13 | [news] |
 | Trae v1.3.0 MCP + .rules release notes | https://traeide.com/news/6 | 2026-06-13 | [community] |

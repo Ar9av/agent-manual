@@ -72,35 +72,35 @@ Then configure at `~/.pi/agent/hook/hooks.yaml` (global) or `./.pi/hook/hooks.ya
 ```yaml
 # ~/.pi/agent/hook/hooks.yaml
 hooks:
-  - on: tool.before.bash
-    action:
-      bash: |
-        if echo "$TOOL_INPUT" | grep -q "rm -rf"; then
-          echo "Blocked" >&2
-          exit 2
-        fi
+  - event: tool.before.bash
+    actions:
+      - bash: |
+          if echo "$TOOL_INPUT" | grep -q "rm -rf"; then
+            echo "Blocked" >&2
+            exit 2
+          fi
 
-  - on: tool.after.*
-    action:
-      notify:
-        title: "Tool completed"
-        body: "{{tool_name}} finished"
+  - event: tool.after.*
+    actions:
+      - notify:
+          title: "Tool completed"
+          body: "{{tool_name}} finished"
 
-  - on: session.created
-    action:
-      bash: ~/.pi/hooks/setup.sh
+  - event: session.created
+    actions:
+      - bash: ~/.pi/hooks/setup.sh
 
-  - on: file.changed
-    action:
-      bash: "prettier --write '{{file}}'"
-      setStatus: "Formatted {{file}}"
+  - event: file.changed
+    actions:
+      - bash: "prettier --write '{{file}}'"
+      - setStatus: "Formatted {{file}}"
 ```
 
 ### Supported Events (pi-yaml-hooks — dot-notation)
 
 | Event | When | Can Block? |
 |-------|------|-----------|
-| `tool.before.*` | Before tool call (glob matches tool name) | ✅ (exit 2) |
+| `tool.before.*` | Before tool call (glob matches tool name) | ✅ (`stop` action or `exit 2`) |
 | `tool.after.*` | After tool call | ❌ |
 | `file.changed` | File modified | ❌ |
 | `session.created` | Session start | ❌ |
@@ -122,6 +122,7 @@ oh-my-pi uses a different, richer event set registered via `pi.on(...)` in TypeS
 | Action | Description |
 |--------|-------------|
 | `bash` | Run shell command |
+| `stop` | Block the tool call (primary blocking mechanism for `tool.before.*`) |
 | `tool` | Send follow-up prompt into current session |
 | `notify` | Show UI notification |
 | `confirm` | Prompt user for confirmation |
@@ -131,20 +132,17 @@ oh-my-pi uses a different, richer event set registered via `pi.on(...)` in TypeS
 
 ```typescript
 // .pi/extensions/my-extension.ts
-export default {
-  hooks: {
-    'tool.before.bash': async ({ input, session }) => {
-      if (input.command.includes('rm -rf')) {
-        return { block: true, reason: 'Destructive command blocked' }
-      }
-    },
-    'after_provider_response': async ({ status, headers }) => {
-      // Inspect provider HTTP response
-    }
-  },
-  tools: { /* custom tools */ },
-  commands: { /* custom slash commands */ }
-}
+import { pi } from '@earendil-works/pi-coding-agent'
+
+pi.on('tool_call', async (event, ctx) => {
+  if (event.toolName === 'bash' && event.input.command.includes('rm -rf')) {
+    return { block: true, reason: 'Destructive command blocked' }
+  }
+})
+
+pi.on('after_provider_response', async (event, ctx) => {
+  // Inspect provider HTTP response (status, headers)
+})
 ```
 
 ### `after_provider_response` Hook
@@ -196,6 +194,9 @@ Pi does **not** ship subagents as a first-class built-in tool. Per pi.dev: "No s
 - Project YAML hooks only load when the repo/worktree is trusted.
 - Set `PI_YAML_HOOKS_ALLOW_GLOBAL_IMPORTS=1` to allow global hook file imports.
 - Set `PI_YAML_HOOKS_ENABLE_USER_BASH=1` to enable user bash interception.
+- Set `PI_YAML_HOOKS_ALLOW_PACKAGE_IMPORTS=1` to allow importing npm packages from hooks.
+- Set `PI_YAML_HOOKS_ALLOW_PROJECT_IMPORTS_OUTSIDE_TRUST_ANCHOR=1` to allow project-local imports outside the trust anchor path.
+- Set `PI_YAML_HOOKS_TRUST_PROJECT=1` to trust the current project directory for hook loading without an explicit trust prompt.
 
 ## Sources
 

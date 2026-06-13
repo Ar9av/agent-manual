@@ -46,15 +46,15 @@ gemini
 
 Configuration is merged from multiple layers. Precedence order (highest wins):
 
-| Priority | Layer | Path (Linux/macOS) | Notes |
-|----------|-------|--------------------|-------|
-| 7 | CLI flags | — | Runtime arguments |
-| 6 | Environment variables | `.env` files / shell env | Includes `.gemini/.env` |
-| 5 | System settings | `/etc/gemini-cli/settings.json` | Admin overrides |
-| 4 | Project settings | `.gemini/settings.json` | Project-specific |
-| 3 | User settings | `~/.gemini/settings.json` | Per-user global |
-| 2 | System defaults | `/etc/gemini-cli/system-defaults.json` | Base system-wide |
-| 1 | Built-in defaults | — | Hardcoded application defaults |
+| Priority | Layer | Path (Linux) | Path (macOS) | Notes |
+|----------|-------|--------------|--------------|-------|
+| 7 | CLI flags | — | — | Runtime arguments |
+| 6 | Environment variables | `.env` files / shell env | `.env` files / shell env | Includes `.gemini/.env` |
+| 5 | System settings | `/etc/gemini-cli/settings.json` | `/Library/Application Support/GeminiCli/settings.json` | Admin overrides |
+| 4 | Project settings | `.gemini/settings.json` | `.gemini/settings.json` | Project-specific |
+| 3 | User settings | `~/.gemini/settings.json` | `~/.gemini/settings.json` | Per-user global |
+| 2 | System defaults | `/etc/gemini-cli/system-defaults.json` | `/Library/Application Support/GeminiCli/system-defaults.json` | Base system-wide |
+| 1 | Built-in defaults | — | — | Hardcoded application defaults |
 
 Extensions (installed plugins) also contribute hooks and settings, merged before project settings.
 
@@ -76,13 +76,13 @@ Hooks are scripts executed synchronously at defined lifecycle points in the agen
 | `AfterAgent` | After agent loop completion | ✅ (retry or halt) |
 | `BeforeModel` | Before LLM request is sent | ✅ |
 | `AfterModel` | After LLM response is received | ✅ |
-| `BeforeToolSelection` | Before the model selects tools | ✅ (filter available tools) |
+| `BeforeToolSelection` | Before the model selects tools | ❌ advisory only (no decision/continue/systemMessage support) |
 | `BeforeTool` | Before a tool call executes | ✅ |
 | `AfterTool` | After a tool call completes | ✅ (`decision: deny` hides result) |
 | `PreCompress` | Before context compression | ❌ advisory only |
 | `Notification` | System alert events | ❌ advisory only |
 
-**AfterAgent details:** `decision: deny` triggers automatic retry using `reason` as feedback; `continue: false` halts the agent loop entirely.
+**AfterAgent details:** `decision: deny` triggers automatic retry using `reason` as feedback; `continue: false` halts the agent loop entirely. AfterAgent also accepts `hookSpecificOutput.clearContext: true` to clear LLM conversation history while preserving UI display. The `stop_hook_active` input field (boolean) indicates whether a retry is already in progress.
 
 ### Configuration Schema
 
@@ -161,11 +161,12 @@ All hooks receive a base JSON payload on stdin:
 
 | Event | Extra stdin fields |
 |-------|-------------------|
-| `BeforeTool`, `AfterTool` | `tool_name`, `tool_input` |
-| `BeforeAgent`, `AfterAgent` | `llm_request.messages` (agent context) |
+| `BeforeTool` | `tool_name`, `tool_input`, `mcp_context`, `original_request_name` |
+| `AfterTool` | `tool_name`, `tool_input`, `tool_response` (object: `{llmContent, returnDisplay, optional error}`), `mcp_context`, `original_request_name` |
+| `BeforeAgent` | `prompt` (string) |
+| `AfterAgent` | `prompt` (string), `prompt_response` (string), `stop_hook_active` (boolean) |
 | `BeforeModel` | `llm_request` (full request object) |
 | `AfterModel` | `llm_request`, `llm_response` |
-| `AfterAgent` | `prompt_response` |
 
 > **Note:** `tool_name` and `tool_input` are event-specific (BeforeTool/AfterTool), not universal fields. The universal key is `hook_event_name` (not `event`).
 
@@ -240,7 +241,7 @@ Extensions can provide additional tools and hook configurations. Hooks from inst
 
 - Tool context injection (git commits, tickets, docs) is a primary hook use case.
 - Dynamic tool filtering via `BeforeToolSelection` hooks allows narrowing available tools per-session using `toolConfig.allowedFunctionNames`.
-- Environment variables `GEMINI_PROJECT_DIR`, `GEMINI_PLANS_DIR`, `GEMINI_SESSION_ID`, `GEMINI_CWD` are available inside hook processes.
+- Environment variables `GEMINI_PROJECT_DIR` (alias: `CLAUDE_PROJECT_DIR`), `GEMINI_PLANS_DIR`, `GEMINI_SESSION_ID`, `GEMINI_CWD` are available inside hook processes.
 
 ## Sources
 

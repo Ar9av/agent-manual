@@ -65,7 +65,7 @@ Hooks provide deterministic control over Droid's behavior — actions that alway
 | `SessionStart` | Session starts or resumes | ❌ |
 | `SessionEnd` | Session ends | ❌ |
 | `PreToolUse` | Before tool call | ✅ |
-| `PostToolUse` | After tool call completes | ✅ (via JSON `decision`) |
+| `PostToolUse` | After tool call completes | ❌ (tool already ran; `decision` sends feedback only) |
 | `UserPromptSubmit` | User submits a prompt, before processing | ✅ |
 | `Notification` | Droid sends a notification | ❌ |
 | `Stop` | Droid finishes responding | ✅ (via JSON `decision`) |
@@ -153,10 +153,12 @@ Event-specific JSON fields:
 | Event | JSON field | Values / Notes |
 |-------|-----------|----------------|
 | `PreToolUse` | `permissionDecision` | `"allow"` / `"deny"` / `"ask"` |
+| `PreToolUse` | `permissionDecisionReason` | Shown to user alongside the permission decision |
 | `PreToolUse` | `updatedInput` | Override tool input |
-| `PostToolUse` | `decision` | `"block"` to block |
-| `PostToolUse` | `additionalContext` | Extra context for Droid |
+| `PostToolUse` | `decision` | `"block"` to send feedback (tool already ran) |
+| `PostToolUse` | `hookSpecificOutput.additionalContext` | Extra context for Droid (nested inside hookSpecificOutput) |
 | `UserPromptSubmit` | `decision` | `"block"` to block |
+| `UserPromptSubmit` | `hookSpecificOutput.additionalContext` | Inject context when prompt is not blocked |
 | `SessionStart` | `additionalContext` | Inject context into session |
 | `Stop` / `SubagentStop` | `decision` | `"block"` to block |
 

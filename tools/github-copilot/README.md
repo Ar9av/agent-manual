@@ -45,8 +45,8 @@ Copilot has a fully-documented official hook system ([docs](https://docs.github.
 | Event | PascalCase alias | When | Can Block? |
 |-------|-----------------|------|-----------|
 | `preToolUse` | `PreToolUse` | Before tool call — can allow, deny, or mutate args | ✅ |
-| `postToolUse` | `PostToolUse` | After tool completes — can modify result or inject context | ✅ |
-| `postToolUseFailure` | `PostToolUseFailure` | After tool fails | ✅ |
+| `postToolUse` | `PostToolUse` | After tool completes — can modify result or inject context | ❌ |
+| `postToolUseFailure` | `PostToolUseFailure` | After tool fails | ❌ |
 | `permissionRequest` | — | Before permission service runs — can approve/deny (CLI only) | ✅ |
 | `agentStop` | `Stop` | When main agent finishes — can force another turn | ✅ |
 | `subagentStop` | `SubagentStop` | When subagent finishes — can force another turn | ✅ |
@@ -125,8 +125,8 @@ Requires HTTPS (except localhost; set `COPILOT_HOOK_ALLOW_LOCALHOST=1` to enable
 | Code | Meaning |
 |------|---------|
 | `0` | Success; stdout parsed as JSON output |
-| `2` | Warning logged; for `permissionRequest` treated as deny |
-| Other | Failure logged; execution continues (fail-open) |
+| `2` | Warning logged; for `permissionRequest` treated as deny; for `preToolUse` treated as warning only (tool call proceeds — NOT a deny) |
+| Other non-zero | For `preToolUse`: tool call is denied (fail-closed). For all other events: failure logged, execution continues (fail-open) |
 
 ### stdin Schema
 
@@ -189,15 +189,7 @@ Note: `sessionId` / `session_id` is present in all events. Additional fields var
 }
 ```
 
-`errorOccurred` (optional — return null/undefined for default handling):
-```json
-{
-  "suppressOutput": false,
-  "errorHandling": "retry | skip | abort",
-  "retryCount": 3,
-  "userNotification": "Custom message shown to user"
-}
-```
+`errorOccurred`: notification-only — no output is processed (Output processed: No). Do not return structured fields; the hook is for side-effects only (logging, alerting, etc.).
 
 `notification`: can return `{ "additionalContext": "string" }` (injected as user message); otherwise never blocks.
 

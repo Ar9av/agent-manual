@@ -149,10 +149,10 @@ Handlers run sequentially in descending priority order; same-priority hooks main
 
 | SDK Hook | When it fires | Can Block? | Notes |
 |----------|---------------|------------|-------|
-| `before_model_resolve` | Pre-session, before provider resolution AND before session messages load | ❌ No | Override provider/model; receives only current prompt and attachment metadata |
+| `before_model_resolve` | Pre-session, before provider resolution AND before session messages load | ❌ No | Override provider/model; receives only current prompt and attachment metadata. Requires `allowConversationAccess: true` in non-bundled plugins. |
 | `agent_turn_prepare` | After queued injections are consumed, before prompt hooks | ❌ No | Add same-turn context before prompt build |
 | `before_prompt_build` | Post-session load (messages available), before model call | ❌ No | Inject dynamic `prependContext` or system prompts |
-| `before_agent_start` | Compatibility alias | ❌ No | Deprecated; prefer `before_model_resolve` and `before_prompt_build` |
+| `before_agent_start` | Compatibility alias | ❌ No | Deprecated; prefer `before_model_resolve` and `before_prompt_build`. Requires `allowConversationAccess: true` in non-bundled plugins. |
 | `before_agent_run` | After prompt is finalized, before model submission | ✅ Yes | Inspect final prompt/messages; can block before submission |
 | `before_agent_reply` | Before the LLM generation call | ✅ Yes | Can return synthetic reply or silence turn entirely |
 | `before_agent_finalize` | Agent finishes reasoning turn | ✅ Yes | Can inspect messages and request extra pass |
@@ -188,7 +188,7 @@ Handlers run sequentially in descending priority order; same-priority hooks main
 | `reply_payload_sending` | Normalized reply payload before delivery | ✅ Yes | Mutate or cancel reply payloads |
 | `message_sent` | Outbound message delivered | ❌ No | Observation-only; final delivery success or failure |
 | `before_dispatch` | Before channel handoff | ✅ Yes | Inspect or rewrite outbound dispatch |
-| `reply_dispatch` | Final reply-dispatch pipeline | ✅ Yes | Participate in final dispatch |
+| `reply_dispatch` | Final reply-dispatch pipeline | ❌ No | Observation/participation hook; non-blocking |
 
 #### Session Hooks
 
@@ -206,6 +206,7 @@ Handlers run sequentially in descending priority order; same-priority hooks main
 |----------|---------------|------------|-------|
 | `subagent_spawned` | Subagent launches | ❌ No | Observe subagent launch and completion |
 | `subagent_ended` | Subagent completes | ❌ No | Resolved model/provider data |
+| `subagent_spawning` | Subagent spawn event | ❌ No | Deprecated compatibility hook; non-blocking |
 | `subagent_delivery_target` | Subagent delivery routing | ❌ No | Compatibility hook for completion delivery routing |
 
 #### Lifecycle Hooks
@@ -214,6 +215,7 @@ Handlers run sequentially in descending priority order; same-priority hooks main
 |----------|---------------|------------|-------|
 | `gateway_start` | Gateway process starts | ❌ No | Global startup initialization; start plugin-owned services |
 | `gateway_stop` | Gateway process begins shutdown | ❌ No | Global cleanup sequence; clean up long-running resources |
+| `deactivate` | Gateway shutdown (deprecated alias) | ❌ No | Deprecated alias for `gateway_stop`; non-blocking |
 | `cron_changed` | Gateway-owned cron lifecycle events | ❌ No | added, updated, removed, started |
 | `before_install` | Before skill or plugin installation | ✅ Yes | Prevent untrusted execution (`{ block: true }`) |
 
@@ -331,7 +333,7 @@ Agents and custom providers are declared in `openclaw.json` (JSON5). Multi-agent
 - **Event-Driven vs. Lifecycle Hooks:** Operator-level internal hooks in folders (discovered via `HOOK.md`) are asynchronously non-blocking. Intercepting or blocking tool commands requires compiling in-process plugins via the SDK.
 - **Trace Context:** Agent lifecycle hooks receive W3C-compatible `trace` contexts inside events for OpenTelemetry logging correlation.
 - **Plugin Hook Access Control:** `plugins.entries.<id>.hooks.allowPromptInjection` controls whether core blocks `before_prompt_build` prompt-mutating fields from legacy `before_agent_start`. `plugins.entries.<id>.hooks.allowConversationAccess` gates raw conversation access in typed hooks.
-- **Supported Channels:** Discord, Slack, WhatsApp, Telegram, Google Chat, iMessage, Signal, Microsoft Teams, Matrix, IRC, Feishu, LINE, Mattermost, Nextcloud Talk, Nostr, Synology Chat, Tlon, Twitch, Zalo, WeChat, QQ, WebChat.
+- **Supported Channels:** Discord, Slack, WhatsApp, Telegram, Google Chat, iMessage, Signal, Microsoft Teams, Matrix, IRC, Feishu, LINE, Mattermost, Nextcloud Talk, Nostr, Synology Chat, Tlon, Twitch, Zalo, Zalo Personal, WeChat, QQ, WebChat.
 
 ## Sources
 

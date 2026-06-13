@@ -22,10 +22,10 @@ curl -fsSL https://cli.devin.ai/install.sh | bash
 **macOS (Homebrew):**
 ```sh
 brew install --cask devin-cli
-brew upgrade --cask devin-cli  # for upgrades
+brew upgrade devin  # for upgrades
 ```
 
-**Windows (PowerShell only — incompatible with Git Bash or CMD):**
+**Windows (install via PowerShell — the `irm`/`iex` install command requires PowerShell; after install, the CLI itself runs in Git Bash too):**
 ```powershell
 irm https://static.devin.ai/cli/setup.ps1 | iex
 ```
@@ -54,19 +54,20 @@ Files containing `.local.` are auto-excluded from git.
 
 ## Hooks
 
-7 hook events, with two hook types: **command** (shell script) and **prompt** (LLM evaluation).
+8 hook events, with two hook types: **command** (shell script) and **prompt** (LLM evaluation).
 
 ### Supported Events
 
 | Event | When | Can Block? |
 |-------|------|-----------|
 | `PreToolUse` | Before a tool executes | ✅ (exit 2 or stdout JSON) |
-| `PostToolUse` | After a tool finishes | ❓ (not explicitly stated in docs) |
+| `PostToolUse` | After a tool finishes | ❌ (cannot block — post-execution) |
 | `PermissionRequest` | When a permission decision is needed | ✅ |
 | `UserPromptSubmit` | When the user submits a message | ✅ (exit 2 blocks the prompt) |
 | `Stop` | When the agent wants to stop | ✅ |
-| `SessionStart` | When a session begins | ❓ (not explicitly stated in docs) |
-| `SessionEnd` | When a session ends | ❓ (not explicitly stated in docs) |
+| `SessionStart` | When a session begins | ❌ (cannot block — lifecycle event) |
+| `SessionEnd` | When a session ends | ❌ (cannot block — lifecycle event) |
+| `PostCompaction` | After context compaction (summary on stdin) | ❌ (cannot block — post-execution) |
 
 ### Configuration Format
 
@@ -181,12 +182,14 @@ Configure under `mcpServers` in `config.json`. Supports all standard MCP server 
 
 ## Skills
 
-Markdown files with YAML frontmatter stored in `.devin/skills/<name>/`:
+Markdown files with YAML frontmatter stored in `.devin/skills/<name>/SKILL.md` (subagent profiles use `AGENT.md` at `.devin/agents/<name>/AGENT.md`):
 
 ```yaml
 ---
 name: skill-name
 description: What this skill does
+subagent: true
+model: claude-opus-4
 allowed-tools:
   - Bash
   - Read

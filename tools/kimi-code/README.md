@@ -118,8 +118,10 @@ For `Stop` blocking, exit 0 and output structured JSON stdout (not exit code 2):
 
 ```json
 {
-  "permissionDecision": "deny",
-  "permissionDecisionReason": "Command not allowed by policy"
+  "hookSpecificOutput": {
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "Command not allowed by policy"
+  }
 }
 ```
 
