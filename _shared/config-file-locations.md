@@ -65,6 +65,7 @@ These paths are sourced directly from installer scripts and verified directories
 | Tool | Global Skills Path | Project Skills Path |
 |------|-------------------|---------------------|
 | Claude Code | `~/.claude/skills/` | `.claude/skills/` |
+| Claude Desktop / claude.ai app | _upload-only_ (Settings → Capabilities → Skills) | _upload-only_ — no filesystem discovery |
 | Codex CLI | `~/.agents/skills/` | `.agents/skills/` |
 | **Google Antigravity** | `~/.agents/skills/` | `.agents/skills/` |
 | OpenCode | `~/.config/opencode/skills/` | `.config/opencode/skills/` |
@@ -86,6 +87,8 @@ These paths are sourced directly from installer scripts and verified directories
 **Key finding:** Hermes uses the same skill format as OpenClaw (`skill-claw.md`) — they have essentially identical skill architectures.
 
 **Key finding:** Kimi Code uses the same skill format as Claude Code (`skill.md`).
+
+**Key finding:** The Claude **Desktop / claude.ai app** shares the `SKILL.md` format with Claude Code but has **no filesystem auto-discovery** — skills are added manually by uploading a `.zip` (with `SKILL.md` at the zip root) via Settings → Capabilities → Skills, and require the Code-execution sandbox to be enabled. A skill sitting in `~/.claude/skills/` is visible to Claude Code but *not* to the app.
 
 ## Hook / Extension Directories
 

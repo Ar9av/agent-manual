@@ -336,9 +336,36 @@ Claude Code supports spawning subagents via the `Agent` tool and via `agent`-typ
 
 ---
 
-## Skills (Slash Commands)
+## Skills
 
-Custom slash commands live in `.claude/commands/` as Markdown files. They can reference `$ARGUMENTS` and embed tool calls.
+Skills and slash commands are **two different things** in the Claude ecosystem:
+
+| | Location | Shape | Invocation |
+|---|---|---|---|
+| **Skill** | `.claude/skills/<name>/SKILL.md` (project) · `~/.claude/skills/<name>/SKILL.md` (personal) | A folder whose `SKILL.md` has YAML frontmatter (`name`, `description`) + instructions | Auto-invoked by the model when the `description` matches intent |
+| **Slash command** | `.claude/commands/<name>.md` | A single Markdown file; can reference `$ARGUMENTS` and embed tool calls | Typed explicitly as `/name` |
+
+A skill is a directory, not a file. The `description` field is what the model uses to decide *when* to reach for it, so it should enumerate trigger phrases.
+
+### Filesystem auto-discovery (Claude Code)
+
+Claude Code (CLI, IDE extensions) **scans the filesystem** on startup and discovers every skill under `.claude/skills/` and `~/.claude/skills/` automatically. Drop a folder in, restart the session, and it's available. No registration step.
+
+### Manual upload (Claude Desktop / claude.ai app)
+
+The **Claude Desktop app and claude.ai web app do NOT read your local `.claude/skills/` folders.** They have no filesystem-discovery step at all — pointing them at a repo or a local path does nothing. Skills must be **added manually**, one at a time:
+
+1. Enable the sandbox: **Settings → Capabilities** (a.k.a. Features) and turn on **Code execution** / file creation — Agent Skills run inside that sandbox, so they're invisible without it.
+2. In the same **Capabilities → Skills** panel, click **Upload skill**.
+3. Upload a **`.zip` of a single skill folder**, with `SKILL.md` at the **root of the zip** (zip the folder's *contents*, or the folder such that `SKILL.md` is at the top level — not nested under extra directories).
+4. Repeat per skill — the uploader takes one skill per zip; there's no bulk "import a directory of skills" path.
+
+**Common gotchas when a skill "doesn't show up" in the app:**
+
+- **It's only on your disk.** A skill living in `.claude/skills/` works in Claude Code but is *not* synced to the app. The app only knows about skills you've explicitly uploaded.
+- **Symlinks don't survive zipping.** If your `.claude/skills/<name>` entries are symlinks into another directory (a common pattern for sharing one source across tools), zipping them produces a broken link. Package from the **real** skill folder.
+- **`SKILL.md` is buried.** If the zip expands to `myskill/myskill/SKILL.md` or the file isn't at the root, the app can't find the manifest and rejects it.
+- **Sandbox off.** With Code execution disabled, uploaded skills exist but never trigger.
 
 ---
 
