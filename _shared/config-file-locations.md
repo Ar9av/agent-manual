@@ -67,7 +67,7 @@ These paths are sourced directly from installer scripts and verified directories
 | Claude Code | `~/.claude/skills/` | `.claude/skills/` |
 | Claude Desktop / claude.ai app | _upload-only_ (Settings → Capabilities → Skills) | _upload-only_ — no filesystem discovery |
 | Codex CLI | `~/.agents/skills/` | `.agents/skills/` |
-| **Google Antigravity** | `~/.agents/skills/` | `.agents/skills/` |
+| **Google Antigravity** | `~/.gemini/skills/` or `~/.gemini/antigravity-cli/skills/` | `.agents/skills/` |
 | OpenCode | `~/.config/opencode/skills/` | `.config/opencode/skills/` |
 | GitHub Copilot | `~/.copilot/skills/` | `.copilot/skills/` |
 | OpenClaw | `~/.openclaw/skills/` | `.openclaw/skills/` |
@@ -102,7 +102,7 @@ These paths are sourced directly from installer scripts and verified directories
 | Factory Droid | `.factory/droids/` | Custom droids |
 | Cursor | `.cursor/rules/` | MDC rule files |
 | OpenClaw | `hooks/` | Shell scripts |
-| Google Antigravity | `.agent/rules/` and `.agent/workflows/` | Declarative Rules/Workflows |
+| Google Antigravity | `.agents/rules/` and `.agents/workflows/` | Declarative Rules/Workflows |
 
 ## Git-Ignored / Personal Override Files
 
@@ -114,21 +114,21 @@ Files meant for personal settings that shouldn't be committed:
 | Devin CLI | `config.local.json` (any file with `.local.`) |
 | Codex CLI | `~/.codex/` (user-level) |
 
-## Sources (Official)
+## Sources
 
-| Tool | Config docs URL |
-|------|----------------|
-| Claude Code | https://docs.anthropic.com/en/docs/claude-code/settings |
-| Codex CLI | https://developers.openai.com/codex/configuration |
-| Gemini CLI | https://geminicli.com/docs/configuration |
-| Kiro | https://kiro.dev/docs/configuration |
-| Kimi Code | https://moonshotai.github.io/kimi-code/configuration |
-| Factory Droid | https://docs.factory.ai/configuration |
-| Hermes | https://hermes-agent.nousresearch.com/docs/configuration |
-| Cursor | https://cursor.com/docs/rules |
-| Pi Agent | https://github.com/earendil-works/pi |
-| Trae / Trae CN | https://docs.trae.ai/ide/ide-settings-overview |
-| OpenCode | https://opencode.ai/docs/config/ |
-| GitHub Copilot | https://code.visualstudio.com/docs/copilot/overview |
-| Devin CLI | https://docs.devin.ai/ |
-| Aider | https://aider.chat/docs/config.html |
+| Tool | Config docs URL | Fetched | Label |
+|------|----------------|---------|-------|
+| Claude Code | https://docs.anthropic.com/en/docs/claude-code/settings | 2026-06-26 | [official] |
+| Codex CLI | https://developers.openai.com/codex/configuration | 2026-06-26 | [official] |
+| Gemini CLI | https://geminicli.com/docs/configuration | 2026-06-26 | [official] |
+| Kiro | https://kiro.dev/docs/configuration | 2026-06-26 | [official] |
+| Kimi Code | https://moonshotai.github.io/kimi-code/configuration | 2026-06-26 | [official mirror] |
+| Factory Droid | https://docs.factory.ai/configuration | 2026-06-26 | [official] |
+| Hermes | https://hermes-agent.nousresearch.com/docs/configuration | 2026-06-26 | [official] |
+| Cursor | https://cursor.com/docs/rules | 2026-06-26 | [official] |
+| Pi Agent | https://github.com/earendil-works/pi | 2026-06-26 | [github] |
+| Trae / Trae CN | https://docs.trae.ai/ide/ide-settings-overview | 2026-06-26 | [official] |
+| OpenCode | https://opencode.ai/docs/config/ | 2026-06-26 | [official] |
+| GitHub Copilot | https://code.visualstudio.com/docs/copilot/overview | 2026-06-26 | [official] |
+| Devin CLI | https://docs.devin.ai/ | 2026-06-26 | [official] |
+| Aider | https://aider.chat/docs/config.html | 2026-06-26 | [official] |

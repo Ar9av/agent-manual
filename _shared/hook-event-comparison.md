@@ -113,20 +113,20 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Gemini CLI | `.gemini/GEMINI.md` |
 | Kiro | `.kiro/agents/*.yaml` (system prompt) |
 | Aider | `CONVENTIONS.md` |
-| Google Antigravity | `.agent/rules/` and `.agent/workflows/` |
+| Google Antigravity | `.agents/rules/` and `.agents/workflows/` |
 
-## Sources (Official)
+## Sources
 
-| Tool | Hook docs URL |
-|------|--------------|
-| Claude Code | https://docs.anthropic.com/en/docs/claude-code/hooks |
-| Codex CLI | https://developers.openai.com/codex/hooks |
-| Gemini CLI | https://geminicli.com/docs/hooks |
-| Kiro | https://kiro.dev/docs/hooks |
-| Kimi Code | https://moonshotai.github.io/kimi-code/hooks |
-| Factory Droid | https://docs.factory.ai/hooks |
-| Hermes | https://hermes-agent.nousresearch.com/docs/hooks |
-| Cursor | https://cursor.com/docs/hooks |
-| Pi Agent | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md |
-| OpenClaw | https://docs.openclaw.ai/automation/hooks |
-| Google Antigravity | https://antigravity.google/docs/hooks |
+| Tool | Hook docs URL | Fetched | Label |
+|------|--------------|---------|-------|
+| Claude Code | https://docs.anthropic.com/en/docs/claude-code/hooks | 2026-06-26 | [official] |
+| Codex CLI | https://developers.openai.com/codex/hooks | 2026-06-26 | [official] |
+| Gemini CLI | https://geminicli.com/docs/hooks | 2026-06-26 | [official] |
+| Kiro | https://kiro.dev/docs/hooks | 2026-06-26 | [official] |
+| Kimi Code | https://moonshotai.github.io/kimi-code/hooks | 2026-06-26 | [official mirror] |
+| Factory Droid | https://docs.factory.ai/hooks | 2026-06-26 | [official] |
+| Hermes | https://hermes-agent.nousresearch.com/docs/hooks | 2026-06-26 | [official] |
+| Cursor | https://cursor.com/docs/hooks | 2026-06-26 | [official] |
+| Pi Agent | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md | 2026-06-26 | [community] |
+| OpenClaw | https://docs.openclaw.ai/automation/hooks | 2026-06-26 | [official] |
+| Google Antigravity | https://antigravity.google/docs/hooks | 2026-06-26 | [official] |

@@ -976,8 +976,8 @@ Instead of tool-calling loops, Aider implements terminal slash commands:
 
 ## Google Antigravity
 
-**Vendor:** Google | **Config format:** JSON / TOML | **Instruction file:** `.agent/rules/` and `.agent/workflows/`
-**Sources:** https://antigravity.google/docs/home [official — auth required] · https://antigravity.google/docs/hooks [official] · https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 [community forum] · [installer-src — skill paths]
+**Vendor:** Google | **Config format:** JSON / TOML | **Instruction file:** `.agents/rules/` and `.agents/workflows/`
+**Sources:** https://antigravity.google/docs/home [official] · https://antigravity.google/docs/hooks [official] · https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 [community] · [installer-src] skill-path conventions
 
 ### Config Files
 | File | Scope | Purpose |

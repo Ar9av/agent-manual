@@ -2,6 +2,7 @@
   <img src="https://img.shields.io/badge/Agentic%20Tools%20Almanac-%E2%9C%A7-blueviolet?style=for-the-badge" alt="Agentic Tools Almanac">
   <a href="_shared/agent-tools-hooks-config.md"><img src="https://img.shields.io/badge/Config%20Reference-Shared-FFD700?style=for-the-badge" alt="Config Reference"></a>
   <a href="_shared/hook-event-comparison.md"><img src="https://img.shields.io/badge/Hooks%20Matrix-Cross%20Tool-5865F2?style=for-the-badge" alt="Hooks Matrix"></a>
+  <a href="frameworks/README.md"><img src="https://img.shields.io/badge/Frameworks%20%26%20SDKs-Sourced-2E8B57?style=for-the-badge" alt="Frameworks and SDKs"></a>
   <a href="https://github.com/Ar9av/agent-manual"><img src="https://img.shields.io/badge/Repo-GitHub-green?style=for-the-badge" alt="GitHub Repo"></a>
 </p>
 
@@ -52,6 +53,23 @@
 | What are all of Agent Y's hooks/tools/config? | [`_shared/agent-tools-hooks-config.md`](_shared/agent-tools-hooks-config.md) |
 | What is PreToolUse called in each tool? | [`_shared/hook-event-comparison.md`](_shared/hook-event-comparison.md) |
 | Where does Tool Y store its config and skills? | [`_shared/config-file-locations.md`](_shared/config-file-locations.md) |
+| Which pages still rely on community or inferred sources? | [`_shared/source-audit.md`](_shared/source-audit.md) |
+| Do we track orchestration frameworks and SDKs too? | [`frameworks/README.md`](frameworks/README.md) |
+
+---
+
+## Frameworks & SDKs
+
+These are tracked separately from the coding-agent matrices because they are developer frameworks/runtimes rather than end-user CLI agents with a shared hooks/config surface.
+
+| Framework / SDK | Vendor | Notes | Docs |
+|------|--------|-------|------|
+| [LangGraph](frameworks/README.md#langgraph) | LangChain | Low-level stateful agent orchestration | https://github.com/langchain-ai/langgraph |
+| [CrewAI](frameworks/README.md#crewai) | CrewAI, Inc. | Crews, flows, memory, guardrails | https://docs.crewai.com/ |
+| [AutoGen](frameworks/README.md#autogen-stable) | Microsoft | Stable docs tracked instead of unverified "2.0" branding | https://microsoft.github.io/autogen/stable/ |
+| [OpenAI Agents SDK](frameworks/README.md#openai-agents-sdk) | OpenAI | Agent runtime with handoffs, guardrails, MCP | https://openai.github.io/openai-agents-python/ |
+| [Claude Code Agent SDK](frameworks/README.md#claude-code-agent-sdk) | Anthropic | Official product name for the requested "Anthropic Agent SDK" | https://code.claude.com/docs/en/agent-sdk/overview |
+| [Google ADK](frameworks/README.md#adk) | Google | Agent Development Kit | https://adk.dev/ |
 
 ---
 
@@ -60,12 +78,15 @@
 ```
 .
 ├── README.md                          # Master index + comparative benchmarks
+├── frameworks/
+│   └── README.md                      # Sourced framework / SDK catalog
 ├── tools/
 │   └── <tool-name>/
 │       └── README.md                 # Per-tool configuration & command references
 ├── _shared/
 │   ├── activity-agent-matrix.md      # Capabilities matrix (natively supported tools)
 │   ├── agent-tools-hooks-config.md   # Unified agent specifications & schemas
+│   ├── source-audit.md               # Source coverage audit and unresolved gaps
 │   ├── hook-event-comparison.md      # Cross-agent hook event name lookup
 │   ├── mcp-support.md                # MCP client capabilities & transport settings
 │   └── config-file-locations.md      # Global/local paths & git-ignored overrides
@@ -124,7 +145,10 @@ Each tool README labels sources:
 |-------|---------|
 | **[official]** | Published by the vendor on their own docs site |
 | **[github]** | Vendor GitHub repo (README, source code) |
+| **[official mirror]** | Vendor-maintained mirror of official docs |
 | **[community]** | Community-maintained project (e.g., oh-my-pi) — may diverge from vendor |
+| **[third-party]** | Non-vendor package index, mirror, or independently maintained page |
+| **[press]** | News or press coverage, useful for release context but not normative product behavior |
 | **[installer-src]** | Inferred from the installer scripts or directory structures |
 
 ---

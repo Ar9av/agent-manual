@@ -245,16 +245,16 @@ Extensions can provide additional tools and hook configurations. Hooks from inst
 
 ## Sources
 
-| Topic | URL | Label |
-|-------|-----|-------|
-| Hooks overview | https://geminicli.com/docs/hooks/ | [official] |
-| Hooks reference | https://geminicli.com/docs/hooks/reference/ | [official] |
-| Writing hooks | https://geminicli.com/docs/hooks/writing-hooks/ | [official] |
-| Configuration reference | https://geminicli.com/docs/reference/configuration/ | [official] |
-| Hooks index (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/index.md | [github] |
-| Hooks reference (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/reference.md | [github] |
-| Writing hooks (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/writing-hooks.md | [github] |
-| Tools reference | https://geminicli.com/docs/tools/file-system/ | [official] |
-| Google blog (hooks intro) | https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/ | [official] |
-| Main docs | https://geminicli.com/docs/ | [official] (Google-hosted; geminicli.com is the canonical Google documentation site, not a third-party mirror) |
-| GitHub repo | https://github.com/google-gemini/gemini-cli | [github] |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Hooks overview | https://geminicli.com/docs/hooks/ | 2026-06-26 | [official] |
+| Hooks reference | https://geminicli.com/docs/hooks/reference/ | 2026-06-26 | [official] |
+| Writing hooks | https://geminicli.com/docs/hooks/writing-hooks/ | 2026-06-26 | [official] |
+| Configuration reference | https://geminicli.com/docs/reference/configuration/ | 2026-06-26 | [official] |
+| Hooks index (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/index.md | 2026-06-26 | [github] |
+| Hooks reference (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/reference.md | 2026-06-26 | [github] |
+| Writing hooks (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/writing-hooks.md | 2026-06-26 | [github] |
+| Tools reference | https://geminicli.com/docs/tools/file-system/ | 2026-06-26 | [official] |
+| Google blog (hooks intro) | https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/ | 2026-06-26 | [official] |
+| Main docs | https://geminicli.com/docs/ | 2026-06-26 | [official] |
+| GitHub repo | https://github.com/google-gemini/gemini-cli | 2026-06-26 | [github] |

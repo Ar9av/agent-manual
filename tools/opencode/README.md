@@ -252,14 +252,14 @@ Custom slash commands go in `.opencode/commands/`.
 
 ## Sources
 
-| Topic | URL | Label |
-|-------|-----|-------|
-| Docs home | https://opencode.ai/docs | [official] |
-| Config reference | https://opencode.ai/docs/config/ | [official] |
-| Agents reference | https://opencode.ai/docs/agents/ | [official] |
-| Skills reference | https://opencode.ai/docs/skills/ | [official] |
-| Plugins reference | https://opencode.ai/docs/plugins/ | [official] |
-| Permissions reference | https://opencode.ai/docs/permissions/ | [official] |
-| GitHub repo | https://github.com/anomalyco/opencode | [github] |
-| Awesome OpenCode | https://github.com/awesome-opencode/awesome-opencode | [github] |
-| Plugin guide (gist) | https://gist.github.com/johnlindquist/0adf1032b4e84942f3e1050aba3c5e4a | [github] |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Docs home | https://opencode.ai/docs | 2026-06-26 | [official] |
+| Config reference | https://opencode.ai/docs/config/ | 2026-06-26 | [official] |
+| Agents reference | https://opencode.ai/docs/agents/ | 2026-06-26 | [official] |
+| Skills reference | https://opencode.ai/docs/skills/ | 2026-06-26 | [official] |
+| Plugins reference | https://opencode.ai/docs/plugins/ | 2026-06-26 | [official] |
+| Permissions reference | https://opencode.ai/docs/permissions/ | 2026-06-26 | [official] |
+| GitHub repo | https://github.com/anomalyco/opencode | 2026-06-26 | [github] |
+| Awesome OpenCode | https://github.com/awesome-opencode/awesome-opencode | 2026-06-26 | [community] |
+| Plugin guide (gist) | https://gist.github.com/johnlindquist/0adf1032b4e84942f3e1050aba3c5e4a | 2026-06-26 | [community] |

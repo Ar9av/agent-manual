@@ -97,17 +97,17 @@ When an MCP server is connected, the agent automatically discovers its tools. To
 
 In Cursor, use **Settings > Tools & MCP** to see all loaded servers and toggle individual tools on/off.
 
-## Sources (Official)
+## Sources
 
-| Tool | MCP docs URL |
-|------|-------------|
-| Claude Code | https://docs.anthropic.com/en/docs/claude-code/mcp |
-| Codex CLI | https://developers.openai.com/codex/mcp |
-| Gemini CLI | https://github.com/google-gemini/gemini-cli#mcp |
-| Cursor | https://cursor.com/docs/mcp |
-| Kiro | https://kiro.dev/docs/mcp |
-| Hermes | https://hermes-agent.nousresearch.com/docs/mcp |
-| Trae / Trae CN | https://docs.trae.ai/ide/mcp |
-| Pi Agent | https://github.com/earendil-works/pi |
-| GitHub Copilot | https://code.visualstudio.com/docs/copilot/overview |
-| OpenCode | https://opencode.ai/docs/config/ |
+| Tool | MCP docs URL | Fetched | Label |
+|------|-------------|---------|-------|
+| Claude Code | https://docs.anthropic.com/en/docs/claude-code/mcp | 2026-06-26 | [official] |
+| Codex CLI | https://developers.openai.com/codex/mcp | 2026-06-26 | [official] |
+| Gemini CLI | https://github.com/google-gemini/gemini-cli#mcp | 2026-06-26 | [github] |
+| Cursor | https://cursor.com/docs/mcp | 2026-06-26 | [official] |
+| Kiro | https://kiro.dev/docs/mcp | 2026-06-26 | [official] |
+| Hermes | https://hermes-agent.nousresearch.com/docs/mcp | 2026-06-26 | [official] |
+| Trae / Trae CN | https://docs.trae.ai/ide/mcp | 2026-06-26 | [official] |
+| Pi Agent | https://github.com/earendil-works/pi | 2026-06-26 | [github] |
+| GitHub Copilot | https://code.visualstudio.com/docs/copilot/overview | 2026-06-26 | [official] |
+| OpenCode | https://opencode.ai/docs/config/ | 2026-06-26 | [official] |

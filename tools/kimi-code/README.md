@@ -168,14 +168,14 @@ Kimi Code CLI speaks the [Agent Client Protocol](https://agentclientprotocol.com
 
 ## Sources
 
-| Topic | URL | Label |
-|-------|-----|-------|
-| Hooks event reference | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/hooks.html | [official] |
-| Config files | https://www.kimi.com/code/docs/en/kimi-code-cli/configuration/config-files.html | [official] |
-| Config files (mirror) | https://moonshotai.github.io/kimi-code/en/configuration/config-files | [official mirror] |
-| Getting started / npm install | https://moonshotai.github.io/kimi-code/en/guides/getting-started | [official mirror] |
-| Agents & subagents | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/agents.html | [official] |
-| Skills | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/skills.html | [official] |
-| Kimi Code intro | https://www.kimi.com/resources/kimi-code-introduction | [official] |
-| GitHub repo | https://github.com/MoonshotAI/kimi-code | [github] |
-| Legacy repo (winding down) | https://github.com/MoonshotAI/kimi-cli | [github] |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Hooks event reference | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/hooks.html | 2026-06-26 | [official] |
+| Config files | https://www.kimi.com/code/docs/en/kimi-code-cli/configuration/config-files.html | 2026-06-26 | [official] |
+| Config files (mirror) | https://moonshotai.github.io/kimi-code/en/configuration/config-files | 2026-06-26 | [official mirror] |
+| Getting started / npm install | https://moonshotai.github.io/kimi-code/en/guides/getting-started | 2026-06-26 | [official mirror] |
+| Agents & subagents | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/agents.html | 2026-06-26 | [official] |
+| Skills | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/skills.html | 2026-06-26 | [official] |
+| Kimi Code intro | https://www.kimi.com/resources/kimi-code-introduction | 2026-06-26 | [official] |
+| GitHub repo | https://github.com/MoonshotAI/kimi-code | 2026-06-26 | [github] |
+| Legacy repo (winding down) | https://github.com/MoonshotAI/kimi-cli | 2026-06-26 | [github] |

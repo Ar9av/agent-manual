@@ -204,7 +204,7 @@ Antigravity 2.0 (I/O 2026) added a native Browser subagent that operates via hea
 | Docs home | https://antigravity.google/docs/home | 2026-06-13 | [official] |
 | Lifecycle Hooks | https://antigravity.google/docs/hooks | 2026-06-13 | [official] |
 | Workflows & Rules | https://antigravity.google/docs/rules-workflows | 2026-06-13 | [official] |
-| Community forum | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 | 2026-06-13 | [official] |
+| Community forum | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 | 2026-06-13 | [community] |
 | Migrating to Antigravity CLI (hook deny value, skills path) | https://medium.com/google-cloud/migrating-to-antigravity-cli-a841c6964f37 | 2026-06-13 | [community] |
 | Configuring MCP Servers and Skills (skills path) | https://medium.com/google-cloud/configuring-mcp-servers-and-skills-for-antigravity-cli-and-ide-a938c7eebb78 | 2026-06-13 | [community] |
 | Google Antigravity SDK developer guide (hook pipeline, Transform) | https://medium.com/google-cloud/google-antigravity-sdk-the-developer-guide-7770ad8a5f53 | 2026-06-13 | [community] |

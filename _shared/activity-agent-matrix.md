@@ -183,21 +183,21 @@ Not all hooks listed above can block execution. Post-tool hooks that **can** blo
 
 All Pre/Before tool hooks support blocking via exit code 2 (or equivalent) for all agents listed in this matrix.
 
-## Sources (Official)
+## Sources
 
-Activity capability data sourced from official docs for each tool:
+Activity capability data is sourced from primary docs where available. Community- or GitHub-backed edge cases are called out explicitly below.
 
-| Tool | Primary source | Notes |
-|------|---------------|-------|
-| Claude Code | https://docs.anthropic.com/en/docs/claude-code/tools | |
-| Codex CLI | https://developers.openai.com/codex/tools | |
-| Gemini CLI | https://geminicli.com/docs/tools | |
-| Kiro | https://kiro.dev/docs/tools | Amazon/AWS product (not an independent vendor) |
-| Kimi Code | https://moonshotai.github.io/kimi-code/tools | |
-| Factory Droid | https://docs.factory.ai/tools | |
-| Hermes | https://hermes-agent.nousresearch.com/docs/reference/tools-reference | |
-| Cursor | https://cursor.com/docs/agent/tools | |
-| OpenClaw | https://docs.openclaw.ai/tools | Gateway/routing product, not a standalone coding agent; capabilities exposed through gateway-attached agents |
-| Pi Agent | https://github.com/earendil-works/pi | MCP and subagent support are not built-in; require `pi-yaml-hooks` package or TypeScript extensions |
-| Google Antigravity | https://antigravity.google/docs | Generally Available (GA), not Preview |
-| GitHub Copilot | https://code.visualstudio.com/docs/copilot/agents/overview | |
+| Tool | Primary source | Fetched | Label | Notes |
+|------|---------------|---------|-------|-------|
+| Claude Code | https://docs.anthropic.com/en/docs/claude-code/tools | 2026-06-26 | [official] | |
+| Codex CLI | https://developers.openai.com/codex/tools | 2026-06-26 | [official] | |
+| Gemini CLI | https://geminicli.com/docs/tools | 2026-06-26 | [official] | |
+| Kiro | https://kiro.dev/docs/tools | 2026-06-26 | [official] | Amazon/AWS product |
+| Kimi Code | https://moonshotai.github.io/kimi-code/tools | 2026-06-26 | [official mirror] | |
+| Factory Droid | https://docs.factory.ai/tools | 2026-06-26 | [official] | |
+| Hermes | https://hermes-agent.nousresearch.com/docs/reference/tools-reference | 2026-06-26 | [official] | |
+| Cursor | https://cursor.com/docs/agent/tools | 2026-06-26 | [official] | |
+| OpenClaw | https://docs.openclaw.ai/tools | 2026-06-26 | [official] | Gateway/routing product, not a standalone coding agent |
+| Pi Agent | https://github.com/earendil-works/pi | 2026-06-26 | [github] | MCP and subagent support are extension-backed, not built-in |
+| Google Antigravity | https://antigravity.google/docs | 2026-06-26 | [official] | Generally Available (GA), not Preview |
+| GitHub Copilot | https://code.visualstudio.com/docs/copilot/agents/overview | 2026-06-26 | [official] | |

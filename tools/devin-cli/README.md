@@ -219,10 +219,10 @@ Custom subagent profiles in `.devin/agents/` with distinct system prompts, tool 
 
 ## Sources
 
-| Topic | URL | Label |
-|-------|-----|-------|
-| CLI docs (main) | https://docs.devin.ai/cli | [official] |
-| Hooks overview | https://docs.devin.ai/cli/extensibility/hooks/overview | [official] |
-| Stable changelog | https://docs.devin.ai/cli/changelog/stable | [official] |
-| Unofficial PyPI package (NOT official) | https://pypi.org/project/devin-cli/ | [third-party] |
-| Unofficial PyPI source (NOT official) | https://github.com/revanthpobala/devin-cli | [github] |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| CLI docs (main) | https://docs.devin.ai/cli | 2026-06-26 | [official] |
+| Hooks overview | https://docs.devin.ai/cli/extensibility/hooks/overview | 2026-06-26 | [official] |
+| Stable changelog | https://docs.devin.ai/cli/changelog/stable | 2026-06-26 | [official] |
+| Unofficial PyPI package (NOT official) | https://pypi.org/project/devin-cli/ | 2026-06-26 | [third-party] |
+| Unofficial PyPI source (NOT official) | https://github.com/revanthpobala/devin-cli | 2026-06-26 | [third-party] |

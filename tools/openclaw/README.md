@@ -337,14 +337,14 @@ Agents and custom providers are declared in `openclaw.json` (JSON5). Multi-agent
 
 ## Sources
 
-| Topic | URL | Label |
-|-------|-----|-------|
-| Hooks Overview | https://docs.openclaw.ai/automation/hooks | [official] |
-| Plugin Hooks Reference | https://docs.openclaw.ai/plugins/hooks | [official] |
-| apply_patch tool | https://docs.openclaw.ai/tools/apply-patch | [official] |
-| CLI hooks commands | https://docs.openclaw.ai/cli/hooks | [official] |
-| Configuration Reference | https://docs.openclaw.ai/gateway/configuration-reference | [official] |
-| Tools & Custom Providers Config | https://docs.openclaw.ai/gateway/config-tools | [official] |
-| Agent Loop Concepts | https://docs.openclaw.ai/concepts/agent-loop | [official] |
-| Agent Bootstrapping | https://docs.openclaw.ai/start/bootstrapping | [official] |
-| GitHub Repository | https://github.com/openclaw/openclaw | [github] |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Hooks Overview | https://docs.openclaw.ai/automation/hooks | 2026-06-26 | [official] |
+| Plugin Hooks Reference | https://docs.openclaw.ai/plugins/hooks | 2026-06-26 | [official] |
+| `apply_patch` tool | https://docs.openclaw.ai/tools/apply-patch | 2026-06-26 | [official] |
+| CLI hooks commands | https://docs.openclaw.ai/cli/hooks | 2026-06-26 | [official] |
+| Configuration Reference | https://docs.openclaw.ai/gateway/configuration-reference | 2026-06-26 | [official] |
+| Tools & Custom Providers Config | https://docs.openclaw.ai/gateway/config-tools | 2026-06-26 | [official] |
+| Agent Loop Concepts | https://docs.openclaw.ai/concepts/agent-loop | 2026-06-26 | [official] |
+| Agent Bootstrapping | https://docs.openclaw.ai/start/bootstrapping | 2026-06-26 | [official] |
+| GitHub Repository | https://github.com/openclaw/openclaw | 2026-06-26 | [github] |

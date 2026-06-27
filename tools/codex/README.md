@@ -216,17 +216,17 @@ https://developers.openai.com/codex/github-action
 
 ## Sources
 
-| Topic | URL | Label |
-|-------|-----|-------|
-| Hooks reference | https://developers.openai.com/codex/hooks | [official] |
-| CLI reference | https://developers.openai.com/codex/cli/reference | [official] |
-| CLI features | https://developers.openai.com/codex/cli/features | [official] |
-| Config reference | https://developers.openai.com/codex/config-reference | [official] |
-| Advanced config | https://developers.openai.com/codex/config-advanced | [official] |
-| Config file schema | https://github.com/openai/codex/blob/main/docs/config.md | [github] |
-| AGENTS.md guide | https://developers.openai.com/codex/guides/agents-md | [official] |
-| Skills | https://developers.openai.com/codex/skills | [official] |
-| GitHub Action | https://developers.openai.com/codex/github-action | [official] |
-| Main docs | https://developers.openai.com/codex | [official] |
-| GitHub repo | https://github.com/openai/codex | [github] |
-| Issue: hooks not firing for apply_patch/MCP | https://github.com/openai/codex/issues/16732 | [closed — fixed in PR #18391] |
+| Topic | URL | Fetched | Label |
+|-------|-----|---------|-------|
+| Hooks reference | https://developers.openai.com/codex/hooks | 2026-06-26 | [official] |
+| CLI reference | https://developers.openai.com/codex/cli/reference | 2026-06-26 | [official] |
+| CLI features | https://developers.openai.com/codex/cli/features | 2026-06-26 | [official] |
+| Config reference | https://developers.openai.com/codex/config-reference | 2026-06-26 | [official] |
+| Advanced config | https://developers.openai.com/codex/config-advanced | 2026-06-26 | [official] |
+| Config file schema | https://github.com/openai/codex/blob/main/docs/config.md | 2026-06-26 | [github] |
+| AGENTS.md guide | https://developers.openai.com/codex/guides/agents-md | 2026-06-26 | [official] |
+| Skills | https://developers.openai.com/codex/skills | 2026-06-26 | [official] |
+| GitHub Action | https://developers.openai.com/codex/github-action | 2026-06-26 | [official] |
+| Main docs | https://developers.openai.com/codex | 2026-06-26 | [official] |
+| GitHub repo | https://github.com/openai/codex | 2026-06-26 | [github] |
+| Issue: hooks not firing for `apply_patch` / MCP (closed; fixed in PR `#18391`) | https://github.com/openai/codex/issues/16732 | 2026-06-26 | [github] |
