@@ -26,6 +26,14 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | DSPy | DSPy | Stanford NLP | Prompt optimization / AI system framework | Python | `pip install -U dspy` |
 | Letta | Letta | Letta AI (formerly MemGPT) | Stateful agent platform | Python, TypeScript | `pip install letta-client` / `npm install @letta-ai/letta-client` |
 | LlamaStack | LlamaStack | Meta | Agentic API server / inference stack | Python, TypeScript | `pip install llama-stack` |
+| CAMEL-AI | CAMEL | CAMEL-AI | Multi-agent research framework | Python | `pip install camel-ai[all]` |
+| MetaGPT | MetaGPT | FoundationAgents | Multi-agent software engineering framework | Python | `pip install metagpt` |
+| TaskWeaver | TaskWeaver | Microsoft | Code-first agent framework for data analytics | Python | `git clone https://github.com/microsoft/TaskWeaver && pip install -r requirements.txt` |
+| Flowise | Flowise | FlowiseAI | Low-code visual LLM workflow builder | JavaScript/TypeScript | `npm install -g flowise` |
+| Langflow | Langflow | langflow-ai | Low-code visual agent and RAG builder | Python (backend), TypeScript (frontend) | `pip install langflow` |
+| Composio | Composio | ComposioHQ | Tool integration platform for AI agents | Python, TypeScript | `pip install composio-core` |
+| Instructor | Instructor | jxnl | Structured LLM output extraction library | Python, TypeScript, Go, Ruby | `pip install instructor` |
+| Marvin | Marvin | PrefectHQ | Ambient AI library for structured outputs and tasks | Python | `pip install marvin` |
 
 ## Comparison
 
@@ -39,16 +47,24 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Pydantic AI | Python framework for production-grade agent applications and workflows | Agents, typed output, dependencies, hooks, toolsets, native tools, MCP client/server support, multi-agent patterns, durable execution, evals, graph workflows | https://pydantic.dev/docs/ai/overview/ |
 | Claude Code Agent SDK | Claude Code packaged as a programmable SDK | File/tools/web/code capabilities from Claude Code, hooks, sessions, permissions, subagents, Python and TypeScript SDKs | https://code.claude.com/docs/en/agent-sdk/overview |
 | ADK | Open-source framework for building, debugging, and deploying agents | Multi-tool agents, graph workflows, multi-agent workflows, MCP tools, sessions/memory, plugins, deploy-to-Google-Cloud path | https://adk.dev/ |
-| Vercel AI SDK | TypeScript SDK for building AI-powered web and server applications | Streaming text and structured output, multi-step agents, tool use, built-in providers (OpenAI, Anthropic, Google, etc.), React hooks, MCP client support | https://sdk.vercel.ai/ |
-| LlamaIndex | Framework for building LLM applications over custom data | Data loaders/connectors, vector stores, query engines, agents, workflows, RAG pipelines, multi-modal support, TypeScript counterpart LlamaIndex.TS | https://docs.llamaindex.ai/ |
+| Vercel AI SDK | TypeScript SDK for building AI-powered web and server applications | Streaming text and structured output, multi-step agents, tool use, built-in providers (100+ models via OpenAI, Anthropic, Google, etc.), React hooks, built-in fallbacks | https://ai-sdk.dev/ |
+| LlamaIndex | Framework for building LLM applications over custom data | Data loaders/connectors, vector stores, query engines, agents, workflows, RAG pipelines, multi-modal support, TypeScript counterpart LlamaIndex.TS | https://developers.llamaindex.ai/python/framework/ |
 | Semantic Kernel | Enterprise-grade SDK for integrating AI models into applications | Agents, plugins, planners, memory/vector stores, function calling, process framework, multi-agent orchestration, .NET/Python/Java support | https://learn.microsoft.com/en-us/semantic-kernel/overview/ |
 | smolagents | Minimal, code-first agent framework from Hugging Face | Code agents (write Python to act), tool-calling agents, multi-agent orchestration, MCP tool support, guided generation, model-agnostic | https://huggingface.co/docs/smolagents/ |
 | Agno | High-performance agent platform SDK | Agents, teams (multi-agent), sessions, memory, knowledge bases, tools, reasoning models, multimodal support, evals, built-in observability | https://docs.agno.com/ |
 | Haystack | Composable AI pipeline framework | Pipelines, components, document stores, RAG, agents, tool calling, async support, YAML pipeline serialization, 60+ integrations | https://docs.haystack.deepset.ai/ |
-| BeeAI Framework | Open-source agent framework from IBM Research | Agents, workflows, memory, tools, ReAct/Granite agent patterns, Python and TypeScript SDKs, Linux Foundation AI & Data project | https://beeai.dev/docs/ |
+| BeeAI Framework | Open-source agent framework from IBM Research | Agents, workflows, memory, tools, ReAct/Granite agent patterns, Python and TypeScript SDKs, Linux Foundation AI & Data project | https://framework.beeai.dev/ |
 | DSPy | Framework for algorithmically optimizing LLM prompts and weights | Signatures, modules, optimizers (compile), assertions, retrieval models, multi-hop programs, evaluation, model-agnostic | https://dspy.ai/ |
 | Letta | Stateful long-term memory agent platform | Agents with persistent memory, memory blocks (core/archival/recall), tool calling, multi-agent support, REST API server, Python and TypeScript clients | https://docs.letta.com/ |
-| LlamaStack | Standardized agentic API server and inference stack from Meta | Inference, agents, memory, safety, tool groups, eval tasks, REST API spec, multiple distribution backends (Ollama, Together, Fireworks, etc.) | https://llama-stack.readthedocs.io/ |
+| LlamaStack | Standardized agentic API server and inference stack from Meta | Inference, agents, memory, safety, tool groups, eval tasks, REST API spec, multiple distribution backends (Ollama, Together, Fireworks, etc.) | https://github.com/meta-llama/llama-stack |
+| CAMEL | Multi-agent framework for role-playing, task decomposition, and agent society research | Role assignment, Society framework, multi-agent task coordination, MCP multi-agent support, RAG, web tools, research-oriented scaling experiments | https://docs.camel-ai.org/ |
+| MetaGPT | Multi-agent framework modeled as a software engineering company | One-line requirement → full PRD/design/tasks/repo, SOP-encoded agent roles (PM, architect, engineer, QA), assembly-line task decomposition, collaborative code review | https://github.com/FoundationAgents/MetaGPT |
+| TaskWeaver | Code-first data analytics agent framework from Microsoft | Sandbox code execution, task decomposition and progress tracking, reflective execution (mid-flight adjustment), handles tabular/high-dimensional data, preserves chat and code history | https://microsoft.github.io/TaskWeaver/ |
+| Flowise | Low-code visual builder for LLM workflows and agents | Drag-and-drop canvas, Agentflow (multi-agent) and Chatflow (single-agent/chatbot) modes, modular component library, Docker deployment, quick prototyping to production | https://docs.flowiseai.com/ |
+| Langflow | Low-code visual builder for agents and RAG pipelines | Visual component editor, Python-based and model/database agnostic, built-in API and MCP server export, supports all major LLMs and vector databases | https://docs.langflow.org/ |
+| Composio | Tool integration and orchestration platform for AI agents | 1000+ app/tool integrations, MCP server architecture, managed auth, sandboxed workbench, integrates with Claude Code/Cursor/VS Code, tool search and context management | https://docs.composio.dev/ |
+| Instructor | Structured LLM output extraction library | Pydantic model-based schema definition, 15+ provider support, automatic validation and retries, streaming (Iterables/Partial), TypeScript/Go/Ruby ports, 3M+ monthly downloads | https://python.useinstructor.com/ |
+| Marvin | Ambient AI library for structured outputs and task-based workflows | Tasks as fundamental unit, multi-agent assignment, Threads for workflow orchestration, Pydantic AI backend, SQLite message history, cast/classify/extract/generate primitives | https://askmarvin.ai/ |
 
 ## Notes By Project
 
@@ -102,15 +118,16 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 
 ### Vercel AI SDK
 
-- Official positioning: a TypeScript SDK for building AI-powered web and full-stack applications, with first-class Next.js/React integration.
+- Official positioning: a unified TypeScript SDK for building AI apps across React, Next.js, Vue, Svelte, and Node.js. The canonical docs site is now `https://ai-sdk.dev/` (the old `sdk.vercel.ai` redirects there).
 - Core primitives: `generateText`, `streamText`, `generateObject`, `streamObject` — all model-agnostic via a unified provider interface.
-- Verified features include multi-step (agentic) tool use, built-in provider packages for OpenAI, Anthropic, Google, and others, React streaming hooks (`useChat`, `useCompletion`), and MCP client support.
-- Ships as `ai` (core) plus separate `@ai-sdk/<provider>` packages; designed for edge and Node.js runtimes.
+- Verified features: multi-step (agentic) tool use, 100+ model support via separate `@ai-sdk/<provider>` packages, built-in fallbacks for production reliability, and React streaming hooks (`useChat`, `useCompletion`).
+- Ships as `ai` (core) on npm; provider packages follow the `@ai-sdk/<provider>` naming convention.
 
 ### LlamaIndex
 
+- Official docs have moved to `https://developers.llamaindex.ai/python/framework/` (the old `docs.llamaindex.ai` redirects there).
 - Official docs position LlamaIndex as a data framework for building LLM applications over custom/private data.
-- Core primitives: data loaders (150+ connectors), vector stores, indices, query engines, and agents.
+- Core primitives: data loaders, vector stores, indices, query engines, and agents.
 - Verified features include RAG pipelines, structured extraction, multi-modal support, workflows, agentic tool use, and observability integrations.
 - Has a TypeScript counterpart (`llamaindex` npm package) maintained as LlamaIndex.TS.
 
@@ -144,9 +161,9 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 
 ### BeeAI Framework
 
-- Developed by IBM Research, now a Linux Foundation AI & Data project.
-- Verified features: agents (ReAct and Granite agent patterns), structured workflows, memory, tools, and both Python and TypeScript SDK packages.
-- Official docs position it as a framework for building production-ready agents with open-source models in mind.
+- Developed by IBM Research, now a Linux Foundation AI & Data project; GitHub organization is `i-am-bee`.
+- Official docs are at `https://framework.beeai.dev/` (the old `beeai.dev/docs` URL is broken).
+- Verified features: agents (ReAct and Granite agent patterns), structured workflows, memory, 10+ LLM provider support (Ollama, OpenAI, Watsonx.ai, etc.), and feature-parity Python and TypeScript SDKs.
 - Available as `beeai-framework` (pip) and `beeai-framework` (npm).
 
 ### DSPy
@@ -165,10 +182,67 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 
 ### LlamaStack
 
-- Meta's standardized agentic API server and inference stack, designed to make Llama models deployable across providers.
-- Official docs verify a REST API specification covering inference, agents, memory, safety (shields), tool groups, and eval tasks.
+- Meta's standardized agentic API server and inference stack, designed to make Llama models deployable across providers. GitHub is `meta-llama/llama-stack`.
+- The old `llama-stack.readthedocs.io` URL is defunct; versioned docs live at `llamastack.github.io/v<version>/`.
+- Verified REST API spec covers inference, agents, memory, safety (shields), tool groups, and eval tasks.
+- Install the server with `pip install llama-stack`; install only the client with `pip install llama-stack-client`.
 - Verified distribution backends include Ollama, Together AI, Fireworks, NVIDIA, and others.
-- Ships as `llama-stack` (Python server) plus client SDKs in Python and TypeScript.
+
+### CAMEL
+
+- CAMEL (Communicative Agents for "Mind" Exploration of Large Language Model Society) is a research-oriented multi-agent framework from the CAMEL-AI community.
+- Official docs verify role-playing agent coordination, a Society framework for task decomposition, code execution via built-in interpreters (Python, shell, browser), and RAG and web tools.
+- Research focus includes scaling laws for agent societies, synthetic data generation, and world simulation.
+- Install all toolkits and interpreters with `pip install camel-ai[all]`; use partial extras (e.g., `[rag]`, `[web_tools]`) to keep installs lean.
+
+### MetaGPT
+
+- FoundationAgents' framework models a software engineering company as a multi-agent system, where a one-line requirement produces a complete PRD, design, task plan, and code repository.
+- Core design: SOP-encoded agent roles (product manager, architect, engineer, QA) collaborate in an assembly-line paradigm.
+- Includes collaborative code review and a research track (ICLR 2025 AFlow paper).
+- Primarily documented via the GitHub repo rather than a standalone docs site.
+
+### TaskWeaver
+
+- Microsoft's code-first agent framework designed for data analytics tasks requiring code execution.
+- **No pip package exists.** Install by cloning the repo: `git clone https://github.com/microsoft/TaskWeaver && cd TaskWeaver && pip install -r requirements.txt`. A specific tag can be installed via `pip install git+https://github.com/microsoft/TaskWeaver@<TAG>`.
+- Verified features: sandbox Python execution, task decomposition with progress tracking, plugin architecture for domain customization, reflective mid-flight execution adjustment, and support for complex data structures (pandas DataFrames, tabular, high-dimensional data).
+- Documented at `https://microsoft.github.io/TaskWeaver/`.
+
+### Flowise
+
+- FlowiseAI's low-code visual builder for LLM workflows, backed by Y Combinator.
+- Three visual builder modes: **Assistant** (beginner-friendly, instruction-following + RAG), **Chatflow** (single-agent and advanced LLM flows), **Agentflow** (multi-agent orchestration).
+- Install globally with `npm install -g flowise`; start with `npx flowise start` (runs on localhost:3000). Docker recommended for production.
+- Backend is Node.js/TypeScript; frontend is React; 100+ data source integrations verified.
+
+### Langflow
+
+- langflow-ai's low-code visual builder for agents and RAG pipelines, Python-first.
+- Verified features: visual component editor, model/database-agnostic design, built-in REST API export, and MCP server output.
+- Supports all major LLMs and vector databases as interchangeable components.
+- Backend is Python (FastAPI); frontend is React; deployable locally or via Docker.
+
+### Composio
+
+- ComposioHQ's tool integration and orchestration platform designed to give AI agents access to external apps and services.
+- Verified features: 1000+ pre-built tool/app integrations, MCP server architecture, managed OAuth/auth flows, sandboxed workbench, and IDE integrations (Claude Code, Cursor, VS Code).
+- Ships as `composio-core` (Python) plus an npm package for TypeScript.
+- Distinct from agent frameworks — functions as an integration layer layered on top of existing agent frameworks.
+
+### Instructor
+
+- jxnl's structured output extraction library; often described as the standard approach for getting typed, validated data out of LLMs.
+- Core primitive: decorate a function with a Pydantic model and the library handles schema generation, API call, validation, and automatic retries.
+- Verified features: 15+ provider support, streaming (Iterables and Partial), and ports in TypeScript, Go, Ruby, Elixir, and Rust.
+- Positioned as a utility library rather than a full agent framework; widely used as a building block inside agent systems.
+
+### Marvin
+
+- PrefectHQ's ambient AI library for structured outputs and task-based workflows.
+- Core primitives: `cast`, `classify`, `extract`, `generate` for structured data; Tasks as the fundamental scheduling unit; Threads for multi-step workflow orchestration.
+- Verified backend: Pydantic AI; verified persistence: SQLite-based message history.
+- Multi-agent assignment is built in; designed to integrate naturally with Prefect workflows.
 
 ## Sources
 
@@ -182,13 +256,21 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Pydantic AI | https://pydantic.dev/docs/ai/overview/ | 2026-06-26 | [official] |
 | Claude Code Agent SDK | https://code.claude.com/docs/en/agent-sdk/overview | 2026-06-26 | [official] |
 | ADK | https://adk.dev/ | 2026-06-26 | [official] |
-| Vercel AI SDK | https://sdk.vercel.ai/ | 2026-06-27 | [official] |
-| LlamaIndex | https://docs.llamaindex.ai/ | 2026-06-27 | [official] |
+| Vercel AI SDK | https://ai-sdk.dev/ | 2026-06-27 | [official] |
+| LlamaIndex | https://developers.llamaindex.ai/python/framework/ | 2026-06-27 | [official] |
 | Semantic Kernel | https://learn.microsoft.com/en-us/semantic-kernel/overview/ | 2026-06-27 | [official] |
 | smolagents | https://huggingface.co/docs/smolagents/ | 2026-06-27 | [official] |
 | Agno | https://docs.agno.com/ | 2026-06-27 | [official] |
 | Haystack | https://docs.haystack.deepset.ai/ | 2026-06-27 | [official] |
-| BeeAI Framework | https://beeai.dev/docs/ | 2026-06-27 | [official] |
+| BeeAI Framework | https://framework.beeai.dev/ | 2026-06-27 | [official] |
 | DSPy | https://dspy.ai/ | 2026-06-27 | [official] |
 | Letta | https://docs.letta.com/ | 2026-06-27 | [official] |
-| LlamaStack | https://llama-stack.readthedocs.io/ | 2026-06-27 | [official] |
+| LlamaStack | https://github.com/meta-llama/llama-stack | 2026-06-27 | [github] |
+| CAMEL | https://docs.camel-ai.org/ | 2026-06-27 | [official] |
+| MetaGPT | https://github.com/FoundationAgents/MetaGPT | 2026-06-27 | [github] |
+| TaskWeaver | https://microsoft.github.io/TaskWeaver/ | 2026-06-27 | [official] |
+| Flowise | https://docs.flowiseai.com/ | 2026-06-27 | [official] |
+| Langflow | https://docs.langflow.org/ | 2026-06-27 | [official] |
+| Composio | https://docs.composio.dev/ | 2026-06-27 | [official] |
+| Instructor | https://python.useinstructor.com/ | 2026-06-27 | [official] |
+| Marvin | https://askmarvin.ai/ | 2026-06-27 | [official] |
