@@ -67,7 +67,9 @@ These are tracked separately from the coding-agent matrices because they are dev
 | [LangGraph](frameworks/README.md#langgraph) | LangChain | Low-level stateful agent orchestration | https://github.com/langchain-ai/langgraph |
 | [CrewAI](frameworks/README.md#crewai) | CrewAI, Inc. | Crews, flows, memory, guardrails | https://docs.crewai.com/ |
 | [AutoGen](frameworks/README.md#autogen-stable) | Microsoft | Stable docs tracked instead of unverified "2.0" branding | https://microsoft.github.io/autogen/stable/ |
+| [Mastra](frameworks/README.md#mastra) | Mastra | TypeScript agent/app framework | https://mastra.ai/ |
 | [OpenAI Agents SDK](frameworks/README.md#openai-agents-sdk) | OpenAI | Agent runtime with handoffs, guardrails, MCP | https://openai.github.io/openai-agents-python/ |
+| [Pydantic AI](frameworks/README.md#pydantic-ai) | Pydantic | Python agent framework with typed outputs | https://pydantic.dev/docs/ai/overview/ |
 | [Claude Code Agent SDK](frameworks/README.md#claude-code-agent-sdk) | Anthropic | Official product name for the requested "Anthropic Agent SDK" | https://code.claude.com/docs/en/agent-sdk/overview |
 | [Google ADK](frameworks/README.md#adk) | Google | Agent Development Kit | https://adk.dev/ |
 
