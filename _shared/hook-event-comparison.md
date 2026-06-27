@@ -6,24 +6,23 @@ A unified view of lifecycle hook events across all major agentic tools.
 
 | Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `onPreEdit` |
-| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `onPostEdit` |
-| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `AgentSpawn` | `AgentStart` | `on_session_start` | `session.created` | — | `AgentStart` | — |
-| **Session End** | — | `Stop` | `SessionEnd` | — | — | — | `on_session_end` | `session.deleted` | — | `AgentStop` | — |
-| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | — | `pre_llm_call` | — | — | — | — |
+| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` |
+| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` |
+| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — |
+| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — |
+| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — |
 | **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — |
 | **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — |
 | **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — |
 | **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — |
 | **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — |
-| **Pre Commit** | — | — | — | — | — | — | — | — | — | — | `onPreCommit` |
-| **Diff Approved** | — | — | — | — | — | — | — | — | — | — | `onApprove` |
-| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | — | — | — | — | — | — | — |
-| **Post Compact** | — | `PostCompact` | — | — | — | — | — | — | — | — | — |
-| **Notification** | `Notification` | — | `Notification` | — | — | — | — | `notify` action | — | — | — |
-| **Subagent Start** | — | `SubagentStart` | — | — | — | — | — | — | — | — | — |
-| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | — | — | `on_subagent_complete` | — | — | — | — |
-| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | — | — | — | — | — | — | — |
+| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — |
+| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — |
+| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — |
+| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — |
+| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — |
+| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — |
+| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` |
 | **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — |
 | **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — |
 
@@ -45,7 +44,7 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Tool | Block Mechanism | How to Block |
 |------|----------------|-------------|
 | Claude Code | Exit code `2` in `PreToolUse` | `exit 2` + message on stderr |
-| Codex CLI | Non-zero exit in `PreToolUse` | `exit 1` |
+| Codex CLI | Exit code `2` in `PreToolUse` | `exit 2` (or stdout JSON `"permissionDecision": "deny"`) |
 | Gemini CLI | Exit code `2` in `BeforeTool` | `exit 2` + message on stderr |
 | Kiro | Exit code `2` in `preToolUse` | `exit 2` |
 | Kimi Code | Exit code `2` in `PreToolUse` | `exit 2` |
@@ -54,11 +53,11 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Pi Agent | Exit code `2` in `tool.before.*` | `exit 2` |
 | OpenClaw | Plugin SDK `before_tool_call` return | Synchronous block decision / throw |
 | Devin CLI | Exit code `2` in `PreToolUse` | `exit 2` |
-| Cursor | Non-zero exit in `onPreEdit` | `exit 1` |
+| Cursor | Exit code `2` in `preToolUse` | `exit 2` |
 | Aider | ❌ No hook system | N/A |
 | Trae | ❌ No hook system | N/A (use MCP) |
 | OpenCode | Plugin return value from `tool.execute.before` | `{ block: true }` |
-| GitHub Copilot | Plugin return value | `{ block: true }` |
+| GitHub Copilot | stdout JSON in `preToolUse` | `{"permissionDecision": "deny"}` |
 | Google Antigravity | Exit code `2` or `{"decision":"block"}` stdout | `exit 2` or return JSON block |
 
 ## Hook Input Format Comparison
@@ -66,14 +65,14 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Tool | Format | Delivery |
 |------|--------|---------|
 | Claude Code | JSON | stdin |
-| Codex CLI | JSON env vars | `CODEX_TOOL_NAME`, `CODEX_TOOL_INPUT` |
+| Codex CLI | JSON | stdin |
 | Gemini CLI | JSON | stdin |
 | Kiro | JSON | stdin |
 | Kimi Code | JSON | stdin |
 | Factory Droid | JSON | stdin |
 | Hermes | YAML config → subprocess | stdin |
 | Pi Agent | JSON context | stdin / template vars |
-| OpenClaw | JSON env vars | `HOOK_TOOL_NAME`, `HOOK_TOOL_INPUT`, `HOOK_EVENT` |
+| OpenClaw | TypeScript plugin SDK | in-process event object |
 | Devin CLI | JSON | stdin |
 | Google Antigravity | JSON | stdin |
 
@@ -85,9 +84,9 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Codex CLI | TOML | `config.toml` |
 | Gemini CLI | JSON | `settings.json` |
 | Kiro | YAML | `config.yaml` / agent YAML |
-| Kimi Code | JSON | `config.json` |
+| Kimi Code | TOML | `~/.kimi-code/config.toml` |
 | Factory Droid | JSON | `settings.json` |
-| Hermes | YAML | `cli-config.yaml` |
+| Hermes | YAML | `~/.hermes/config.yaml` |
 | Pi Agent | YAML | `hooks.yaml` (via package) |
 | OpenClaw | YAML | `config.yaml` |
 | Devin CLI | JSON | `hooks.v1.json` |

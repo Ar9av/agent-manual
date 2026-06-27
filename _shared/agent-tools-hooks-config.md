@@ -385,16 +385,18 @@ hooks:
 ## Kimi Code CLI
 
 **Vendor:** Moonshot AI | **Config format:** TOML | **Instruction file:** `KIMI.md` (inferred)
-**Sources:** https://moonshotai.github.io/kimi-cli/en/customization/hooks.html [official] · https://moonshotai.github.io/kimi-cli/en/customization/agents.html [official] · https://moonshotai.github.io/kimi-cli/en/configuration/config-files.html [official]
+**Sources:** https://www.kimi.com/code/docs/en/kimi-code-cli/customization/hooks.html [official] · https://www.kimi.com/code/docs/en/kimi-code-cli/customization/agents.html [official] · https://www.kimi.com/code/docs/en/kimi-code-cli/configuration/config-files.html [official]
 
 ### Config Files
-| File | Scope |
-|------|-------|
-| `~/.kimi/config.toml` | Primary (auto-migrated from JSON) |
-| `~/.kimi/config.json` | Legacy (backed up on migration) |
-| Custom via `--config-file` | Override |
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.kimi-code/config.toml` | Global | Agent settings, model, hooks |
+| `~/.kimi-code/tui.toml` | Global | TUI/UI preferences |
+| `~/.kimi-code/mcp.json` | Global | MCP server declarations |
+| `.kimi-code/config.toml` | Project | Project-level overrides |
+| `.kimi-code/mcp.json` | Project | Project-local MCP servers |
 
-**Key config options:** `default_model`, `default_thinking`, `default_yolo`, `theme`, `providers`, `models`, `loop_control`, `background`, `mcp`, `services`
+Override global dir with `KIMI_CODE_HOME`. Use `/reload` to apply config changes without restart.
 
 ### Built-in Tools
 | Tool | Description |
@@ -425,7 +427,7 @@ hooks:
 | `PreToolUse` | Before tool execution | ✅ exit 2 | `tool_name`, `tool_input`, `tool_call_id` |
 | `PostToolUse` | After tool succeeds | ❌ | + `tool_output` |
 | `PostToolUseFailure` | After tool fails | ❌ | + `error` |
-| `UserPromptSubmit` | Before user input processed | ❌ | `prompt` |
+| `UserPromptSubmit` | Before user input processed; text appended to context | ✅ blocks model call for turn | `prompt` |
 | `Stop` | Agent turn ends | ✅ via stdout JSON | `stop_hook_active` |
 | `StopFailure` | Turn ends due to error | ❌ | `error_type`, `error_message` |
 | `SessionStart` | Session created or resumed | ❌ | `source` (startup/resume) |
@@ -444,8 +446,8 @@ hooks:
 **Stop blocking:** uses structured JSON stdout, not exit code 2.
 
 ### Skills
-- Location: `~/.kimi/skills/*/SKILL.md`
-- Same skill format as Claude Code (`skill.md`)
+- Location: `~/.kimi-code/skills/*/SKILL.md` (global), `.kimi-code/skills/*/SKILL.md` (project)
+- Same skill format as Claude Code
 
 ---
 
@@ -854,7 +856,7 @@ Plugin hooks are registered programmatically via the Plugin SDK.
 
 Also reads: `AGENTS.md`, `AGENT.md`, `CLAUDE.md`, `.cursor/rules/*.md`, `.windsurf/rules/*.md`
 
-### Hook Events (7 events — official)
+### Hook Events (8 events — official)
 | Event | When | Can Block |
 |-------|------|-----------|
 | `PreToolUse` | Before tool call | ✅ exit 2 or `{"decision":"block"}` |
@@ -864,6 +866,7 @@ Also reads: `AGENTS.md`, `AGENT.md`, `CLAUDE.md`, `.cursor/rules/*.md`, `.windsu
 | `Stop` | Agent wants to stop | ✅ |
 | `SessionStart` | Session begins | ❌ |
 | `SessionEnd` | Session ends | ❌ |
+| `PostCompaction` | After context compaction; summary injected via stdin | ❌ |
 
 **Hook types:** `command` (shell) or `prompt` (LLM evaluation)
 **stdin:** JSON with `hook_event_name`, `tool_name`, `tool_input`
@@ -1084,6 +1087,7 @@ Execution order is strictly enforced: **Decide → Transform → Inspect** to pr
 | `userPromptSubmitted` | After user input received | ❌ |
 | `preCompact` | Before context compaction | ❌ |
 | `notification` | On notification delivery | ❌ |
+| `errorOccurred` | When an error occurs during agent execution; notification-only, no output processed | ❌ |
 
 **Hook types:** `command` (bash/PowerShell), `http` (webhook), `prompt` (LLM, CLI-only)
 **stdin:** JSON `{sessionId, timestamp, cwd, toolName, toolArgs}`
@@ -1117,15 +1121,34 @@ Execution order is strictly enforced: **Decide → Transform → Inspect** to pr
 | `opencode.json` | Project |
 | `.opencode/plugins/` | Local plugins |
 
-### Hook Events (via plugins)
-| Event | When |
-|-------|------|
-| `before_tool` | Before tool execution |
-| `after_tool` | After tool execution |
-| `on_message` | Every LLM message |
-| `on_session_start` | Session start |
+### Hook Events (via plugins — 30+ events, dot-namespaced)
 
-Blocking: return `{ block: true, message: "..." }` from plugin handler.
+Plugins are async functions run on **Bun** that export a hooks object. All lifecycle control is via plugins; there is no standalone hook config key.
+
+| Category | Events |
+|----------|--------|
+| **Tool** | `tool.execute.before` (blocking — return `{ block: true, message }`) · `tool.execute.after` |
+| **Session** | `session.created` · `session.updated` · `session.deleted` · `session.idle` · `session.error` · `session.compacted` · `session.diff` · `session.status` |
+| **Message** | `message.updated` · `message.removed` · `message.part.updated` · `message.part.removed` |
+| **File** | `file.edited` · `file.watcher.updated` |
+| **Permission** | `permission.asked` · `permission.replied` |
+| **LSP** | `lsp.updated` · `lsp.client.diagnostics` |
+| **Shell / Command** | `command.executed` · `shell.env` |
+| **TUI** | `tui.prompt.append` · `tui.command.execute` · `tui.toast.show` |
+| **Install** | `installation.updated` |
+| **Server** | `server.connected` |
+| **Misc** | `todo.updated` |
+| **Experimental** | `experimental.session.compacting` |
+
+Specialized top-level hook keys (alongside event handlers):
+
+| Hook Key | Purpose |
+|----------|---------|
+| `tool` | Define custom tools via `tool()` factory with Zod-based argument schemas |
+| `stop` | Intercept agent termination attempts |
+| `experimental.chat.system.transform` | Inject context into system prompt |
+
+**Plugin config:** `"plugin": ["opencode-plugin-logger", "./plugins/my-plugin.js"]` in `opencode.json`, or drop files in `.opencode/plugins/` (auto-loaded). Plugins run on **Bun**, not Node.js.
 
 ### Skills
 - Location: `~/.config/opencode/skills/*/SKILL.md`
