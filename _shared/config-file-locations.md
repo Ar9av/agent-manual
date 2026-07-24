@@ -135,7 +135,7 @@ These paths are sourced directly from installer scripts and verified directories
 | OpenClaw | `hooks/` | Shell scripts |
 | Google Antigravity | `.agents/rules/` and `.agents/workflows/` | Declarative Rules/Workflows |
 | Amp | `.amp/plugins/*.ts` (project) or `~/.config/amp/plugins/*.ts` (global) | TypeScript Plugin API |
-| Goose | Plugin discovery dir (Open Plugins spec) | Plugin binaries/scripts |
+| Goose | `~/.agents/plugins/<name>/` (global) or `<project>/.agents/plugins/<name>/` (project); hook config at `<plugin>/hooks/hooks.json` | Plugin scripts (Open Plugins spec) — confirmed by live test 2026-07-23 |
 | OpenHands | `.openhands/hooks.json` | JSON hooks config |
 
 ## Git-Ignored / Personal Override Files

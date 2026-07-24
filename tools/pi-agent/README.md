@@ -96,6 +96,8 @@ hooks:
       - setStatus: "Formatted {{file}}"
 ```
 
+> **Live-tested 2026-07-23 on pi-coding-agent v0.81.1 with `pi-yaml-hooks` (installed fresh via `pi install npm:pi-yaml-hooks`) and `gpt-4o-mini` via `--provider openai`.** Confirmed working: the hook loads (`[pi-yaml-hooks] Loaded 1 hook`), fires on every `tool.before.bash` call, and **unconditional `exit 2` genuinely blocks the tool call** (the model reported the command as blocked, and no output from the intended command ever appeared). **Not confirmed as documented:** the example above reads the triggering command via a `$TOOL_INPUT` environment variable inside the `bash:` action — in this test, `$TOOL_INPUT` was empty and, in fact, `env` inside the hook showed **no `TOOL_*`-prefixed variables at all**. Mustache-style templating in the bash string itself (`{{tool_input}}`, `{{command}}`, `{{input}}`, guessed from the `{{file}}` pattern used elsewhere in this same doc) also did not get substituted — the literal `{{...}}` text passed through unchanged. **Bottom line:** hook firing and blocking are real and confirmed; how to actually read the command/tool-input text from inside a `pi-yaml-hooks` bash action remains unconfirmed by this pass — don't copy the `$TOOL_INPUT` pattern from the example below without verifying it against your installed version first.
+
 ### Supported Events (pi-yaml-hooks — dot-notation)
 
 | Event | When | Can Block? |

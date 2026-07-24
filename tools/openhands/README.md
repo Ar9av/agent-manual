@@ -196,6 +196,8 @@ Hooks marked `"async": true` run in the background and can never block, regardle
 
 Matcher patterns: `*` (all tools), an exact tool name (e.g. `"terminal"`), or a `/regex/`.
 
+> **Live-verified 2026-07-23:** Confirmed end-to-end on Ubuntu 24.04 with `openhands` v1.21.0 (installed via `uv tool install openhands`). A `PreToolUse` hook in `.openhands/hooks.json` matching `"terminal"` correctly intercepted a shell command and blocked it via `exit 2` — the CLI printed "✓ Hooks loaded" at startup and the agent reported "unable to run the command due to restrictions in place." One useful confirmation for anyone building a hook: the real `tool_name` sent on stdin for the shell tool is exactly `"terminal"` (matches this page's example) — a matcher of `"execute_bash"` or `"bash"` (names used by *other* agents in this catalog) will silently never match.
+
 ### Hook Environment Variables
 
 `OPENHANDS_EVENT_TYPE`, `OPENHANDS_TOOL_NAME`, `OPENHANDS_PROJECT_DIR`, `OPENHANDS_SESSION_ID`
@@ -312,6 +314,8 @@ agent = Agent(..., mcp_config=mcp_config, filter_tools_regex="...")  # filter_to
 ## Agent / Subagent Configuration
 
 The Software Agent SDK is explicitly "a composable Python library" for building custom agents — tool sets, LLM config, and MCP servers are assembled programmatically via `Agent(...)` rather than through a declarative subagent-profile file format like some competitors. ❓ No standalone "subagent" file convention comparable to Devin's `AGENT.md` or Claude Code's subagents was found in the fetched docs.
+
+> **Live-verified 2026-07-23 — real, working delegation confirmed.** The Python package ships dedicated `openhands/tools/delegate/` and `openhands/tools/task/` modules; the delegate tool accepts a `command` of `"spawn"` or `"delegate"`. Asked the CLI to "Delegate to a subagent/sub-task to create subagent-test.txt..." and it completed the task — inspecting the on-disk conversation state afterward showed a genuine `~/.openhands/conversations/<id>/subagents/<subagent-id>/` directory with its **own independent event log**, distinct from the parent conversation's events. This is a real isolated sub-conversation, not just a differently-worded tool call — comparable in substance to Claude Code's `Task` tool or Goose's `delegate` tool, and notably more real than the "subagent" scaffolding found (but confirmed non-functional) in Crush and Continue CLI during this same testing pass.
 
 ## Notes
 

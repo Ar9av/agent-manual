@@ -103,9 +103,11 @@ import type { Plugin } from "@opencode-ai/plugin"
 
 export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree }) => {
   return {
-    "tool.execute.before": async ({ tool, input }) => {
-      if (tool === "bash" && input.command?.includes("rm -rf")) {
-        return { block: true, message: "Blocked destructive command" }
+    "tool.execute.before": async (input, output) => {
+      // input = { tool, sessionID, callID } — metadata about the call
+      // output = { args: { command, ... } } — the tool's actual arguments, nested under `.args`
+      if (input.tool === "bash" && output.args.command?.includes("rm -rf")) {
+        throw new Error("Blocked destructive command")
       }
     },
     "tool.execute.after": async ({ tool, output }) => {
@@ -117,6 +119,8 @@ export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree
   }
 }
 ```
+
+> **Live-verified 2026-07-23, two real corrections to the pattern above** (tested on opencode v1.18.4 with an OpenAI model): (1) **the callback signature is `(input, output)`, two separate arguments — not a single destructured `{ tool, input }` object.** `input` carries `{tool, sessionID, callID}`; the tool's actual arguments (e.g. `command` for `bash`) live on the *second* argument, under `output.args.command`. A plugin written the old way (`input.command`) throws `undefined is not an object (evaluating 'input.command')` the moment a matching tool runs — confirmed by triggering it live. (2) **Blocking is done by `throw`ing an Error inside the hook, not by `return { block: true, message: "..." }`.** The `throw` approach was confirmed to actually stop the tool call (`✗ echo ... failed`, `Error: <message>` surfaced to the model); the `return { block: true }` shape shown in some examples was not verified to work and should not be trusted without re-testing.
 
 **Context object properties:**
 - `project` — Current project info
@@ -182,7 +186,9 @@ Define specialized agents with custom prompts, models, and tool access. Config k
 }
 ```
 
-Agents can also be defined as markdown files in `.opencode/agents/` (filename becomes the agent name).
+Agents can also be defined as markdown files in `.opencode/agent/` (filename becomes the agent name). **Live-verified 2026-07-23:** the correct directory is singular `.opencode/agent/` — this matches the `--path` default used by `opencode agent create`, and a file placed there (with `mode: subagent` in its YAML frontmatter) was correctly picked up: `opencode agent list` showed it as `<name> (subagent)`. (Some other docs/examples may show the plural `.opencode/agents/`; treat that as unconfirmed/possibly stale — this page now reflects the live-tested singular form.)
+
+> **Live-verified 2026-07-23 — subagent delegation genuinely works.** Wrote a real subagent to `.opencode/agent/writer.md` (frontmatter: `mode: subagent`, `model: openai/gpt-4o-mini`, `tools: {write, read, bash}`) and asked the primary agent to "Use the task tool to delegate to the writer subagent." The transcript showed the delegated step labeled `Writer Agent`, and the target file was created correctly — confirming OpenCode's `task` tool (visible in `opencode agent create --permissions` as an available permission: `bash, read, edit, glob, grep, webfetch, task, todowrite, websearch, lsp, skill`) does real inter-agent delegation, comparable to Claude Code's `Task` tool, Goose's `delegate`, OpenHands' `delegate`, and Codex's `collab`/`SpawnAgent` — and notably more real than the non-functional "subagent" scaffolding found in Crush and Continue CLI during this same testing pass.
 
 **Agent config fields:**
 | Field | Description |

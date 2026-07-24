@@ -77,7 +77,7 @@ Crush has a lightweight, still-evolving hook system (per the hooks guide, "preli
 
 | Event | When | Can Block? | Scope |
 |-------|------|-----------|-------|
-| `PreToolUse` | Before every top-level-agent tool call | ✅ (exit 2 = deny, exit 49 = halt turn) | Only the top-level agent — sub-agent tool calls are **not** intercepted |
+| `PreToolUse` | Before every top-level-agent tool call | ✅ (exit 2 = deny, exit 49 = halt turn) | Only the top-level agent — sub-agent tool calls are **not** intercepted (see Subagents caveat below — this scoping exists in the code even though the feature isn't user-facing yet) |
 
 Currently `PreToolUse` is the only supported event; the hook engine's input/output parsing is also Claude-Code-compatible (`internal/hooks/input.go` notes "Crush + Claude Code compat").
 
@@ -114,6 +114,8 @@ Currently `PreToolUse` is the only supported event; the hook engine's input/outp
 | `2` | Block/deny the tool call; stderr is used as the deny reason |
 | `49` | Halt the entire agent turn; stderr is used as the halt reason |
 | Other | Non-blocking error is logged; tool call proceeds |
+
+> **Live-verified 2026-07-23:** Built a real `block-sudo` hook (`crush.json` → `hooks.PreToolUse`, matcher `"bash"`) on Ubuntu 24.04 running crush v0.86.0 with an OpenAI model, and confirmed the exit-2/stderr path exactly as documented: a hook script that `exit 2`s with the deny reason on stderr produced `Tool call blocked by hook. Reason: <exact stderr text>` in the session output, and the underlying `bash` tool call never ran. One thing worth flagging for anyone testing this themselves: printing a `{"decision":"block",...}` stdout envelope (the *Goose*-style schema) does **not** work here — Crush's own schema uses `"decision": "deny"` (not `"block"`), so a hook copy-pasted from another tool's convention will silently fail to surface its custom reason even though the exit-2 block still happens via the stderr fallback.
 
 ### Example Config
 
@@ -228,6 +230,8 @@ Additional paths and disables are configurable via `options.skills_paths` / `opt
 ## Agent / Subagent Configuration
 
 Crush's internal `Coordinator` manages multiple named agents — at minimum a `"coder"` agent (main interactive agent) and a `"task"` agent (used for sub-tasks/delegation), each with its own Go-template system prompt (`internal/agent/templates/*.md.tpl`). ❓ End-user-facing configuration surface for defining custom named agents (beyond the built-in `coder`/`task`) is not clearly documented in the public README; treat as an internal architecture detail rather than a confirmed user-facing feature.
+
+> **Live-tested 2026-07-23 — subagents are NOT currently user-invokable, despite the scaffolding above.** Ran `crush run "Use a subagent/task tool to create subagent-test.txt..."` on v0.86.0; the main agent just did the work itself via its own `write` tool — no delegation occurred. Checked the built-in tools list directly against the `internal/agent/tools/` source tree on GitHub: there is **no `task`/`agent`/`delegate` tool** among the ~30 built-in tool files (bash, edit, view, grep, glob, etc. — see Built-in Tools above), so there is currently no mechanism for the LLM to invoke the "task" agent even though it's defined in the `Coordinator`. This is confirmed by the `Coordinator` interface's own source comment on `SetMainAgent`: `// INFO: (kujtim) this is not used yet — we will use this when we have multiple agents`. **Conclusion:** Crush's multi-agent architecture is real but not yet wired into a usable feature — don't rely on "ask Crush to delegate to a subagent" working today; the `coder`/`task` split is preparatory scaffolding, not a shipped subagent capability like Claude Code's `Task` tool or Goose's `delegate` tool.
 
 ## Multi-Model / Provider Routing
 

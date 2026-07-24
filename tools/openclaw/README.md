@@ -336,6 +336,10 @@ Agents and custom providers are declared in `openclaw.json` (JSON5). Multi-agent
 - **Plugin Hook Access Control:** `plugins.entries.<id>.hooks.allowPromptInjection` controls whether core blocks `before_prompt_build` prompt-mutating fields from legacy `before_agent_start`. `plugins.entries.<id>.hooks.allowConversationAccess` gates raw conversation access in typed hooks.
 - **Supported Channels:** Discord, Slack, WhatsApp, Telegram, Google Chat, iMessage, Signal, Microsoft Teams, Matrix, IRC, Feishu, LINE, Mattermost, Nextcloud Talk, Nostr, Synology Chat, Tlon, Twitch, Zalo, Zalo Personal, WeChat, QQ, WebChat.
 
+## Testing Status
+
+**Not live-tested as of 2026-07-23.** As part of a pass that live-verified hooks and subagent behavior for Goose, Crush, Continue CLI, OpenHands, Codex CLI, Aider, OpenCode, and Pi Agent (each confirmed against real installs, not just docs), OpenClaw was skipped: it's a gateway/routing product rather than a standalone CLI agent, and setting it up requires its own bootstrapping flow (`openclaw onboard`, channel/gateway configuration) beyond what a single OpenAI API key covers in a short session. Everything in this page's Hooks section still reflects documentation review only, not confirmed live behavior — treat it with the same caution as any other doc-derived (rather than live-verified) content in this catalog.
+
 ## Sources
 
 | Topic | URL | Fetched | Label |

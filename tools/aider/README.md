@@ -75,6 +75,8 @@ Loading via `--read` / `/read-only` marks the file as read-only and enables prom
 
 Aider does not feature a native pre/post tool use hook system like Claude Code or Cursor.
 
+> **Live-verified 2026-07-23:** Confirmed on v0.86.2 with `--lint-cmd`/`--auto-lint`: after aider edited `app.py` to add a function, the configured lint script fired automatically with the edited filename as its sole argument (`args=app.py`), exactly as documented below. Also confirmed there is no subagent/delegation mechanism of any kind — no CLI flag, config key, or in-chat command for spawning a second agent; Aider is single-agent by design.
+
 ### Git Hooks Integration
 
 - **Skip pre-commit:** Aider runs with `--no-verify` by default to avoid triggering slow pre-commit git hooks during auto-commits.

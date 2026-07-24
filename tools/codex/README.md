@@ -125,6 +125,8 @@ Event-specific shapes:
 - **Stop / SubagentStop** — `"decision": "block"` prompts continuation
 - **SubagentStart** — `"continue": false` is parsed but does NOT actually prevent subagent startup (effectively non-blocking)
 
+> **Live-verified 2026-07-23** on Ubuntu 24.04, codex-cli v0.145.0, with an OpenAI API key (note: `OPENAI_API_KEY` alone is **not** picked up automatically — you must run `printenv OPENAI_API_KEY | codex login --with-api-key` once to persist it to `~/.codex/auth.json`; without it, requests fail with a 401 even though the env var is exported). Confirmed: the real `tool_name` for the shell tool is exactly `"Bash"` (matches this page's matcher examples). A `PreToolUse` hook that denies via **`exit 2` + stderr text** correctly blocks the tool call (`"PreToolUse Blocked"` in the log, command never runs). However, the documented **stdout-JSON path — `{"permissionDecision":"deny", ...}` — did NOT block the call** in this test; the hook fired (confirmed via its own side-effect log) but the tool executed anyway. Until this is re-verified against a newer build, prefer `exit 2` for reliable blocking rather than trusting the JSON `permissionDecision` field alone.
+
 Exit code `2` with stderr text also signals blocking/denial for some events.
 
 ### Hook Security Model
@@ -193,10 +195,14 @@ Use `"*"`, `""`, or omit `matcher` to match all.
 
 | Tool | Description |
 |------|-------------|
-| `shell` | Execute shell commands |
+| `shell` (hook-visible name: `Bash`) | Execute shell commands — confirmed live 2026-07-23 that hooks see this tool as `"tool_name": "Bash"`, not `shell` |
 | `apply_patch` | Apply code edits (file creation, modification, deletion via unified diff) |
 
 MCP servers provide additional tools to the agent at runtime.
+
+## Subagents
+
+> **Live-verified 2026-07-23:** Codex has a real, working subagent mechanism, internally called **"collab"**. Asking `codex exec` to "Spawn a subagent to create subagent-test.txt..." produced a visible `collab: SpawnAgent` → `collab: SendInput` → `collab: Wait` sequence in the transcript, and the file was created correctly by the spawned agent — this is what the `SubagentStart`/`SubagentStop` hook events (documented above) actually correspond to. This "collab" tool/mechanism is not otherwise documented on this page or (as far as this research went) on the official docs site — treat it as a confirmed-but-undocumented capability, comparable to Claude Code's `Task` tool, Goose's `delegate` tool, or OpenHands' `delegate`/`task` tools.
 
 ## MCP Support
 

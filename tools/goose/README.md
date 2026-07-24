@@ -111,7 +111,7 @@ Only `PreToolUse` and `Stop` can actually block/deny the action; all other event
 {
   "event": "PreToolUse",
   "session_id": "identifier",
-  "tool_name": "developer__shell",
+  "tool_name": "shell",
   "tool_input": { "command": "..." },
   "working_dir": "/path/to/directory"
 }
@@ -137,7 +137,7 @@ Failed or timed-out hooks are logged but do not crash goose (fail-open for non-b
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "developer__shell",
+        "matcher": "shell",
         "hooks": [
           { "type": "command", "command": "${PLUGIN_ROOT}/scripts/block-sudo.sh", "timeout": 10 }
         ]
@@ -160,7 +160,9 @@ Failed or timed-out hooks are logged but do not crash goose (fail-open for non-b
 
 Notes: `matcher` is a **regular expression** (not a glob) tested against the tool name / file path / shell command depending on event; omit it (or use `".*"`) to match everything for that event. `${PLUGIN_ROOT}` (also exposed as the `PLUGIN_ROOT` env var) resolves to the plugin's own directory so scripts don't hardcode absolute paths.
 
-> ❓ Because the hooks feature and the Open Plugins spec are recent additions (blog post dated 2026-05-14), some edge-case behavior (e.g. cross-platform script execution, full list of blockable events beyond `PreToolUse`/`Stop`) may still evolve — verify against the live docs for the version installed.
+> **Live-verified 2026-07-23:** Built a real `block-sudo` plugin at `~/.agents/plugins/block-sudo/` (per the exact structure above) on a fresh Ubuntu 24.04 box running goose v1.44.0 with `gpt-4o-mini`, and confirmed end-to-end: the plugin loads at startup (`"Loaded plugin hooks", rule_count:1`), a `PreToolUse` hook targeting the shell tool correctly intercepts `sudo ls /root`, and returns exactly the documented denial message (*"Tool call denied by policy hook `block-sudo`: ...  Do not retry; this is a policy denial, not a transient failure."*). **One real discrepancy found:** the official docs' own example payload shows `"tool_name": "developer__shell"`, but the live payload for the built-in shell tool is actually `"tool_name": "shell"` (bare, no `developer__` prefix) — a matcher of `"developer__shell"` silently never matches and the hook never fires. Use `"shell"` (or omit the matcher / use `".*"`) instead. This page has been corrected accordingly; the official docs themselves still show the stale `developer__` prefix as of the fetch date above.
+>
+> Because the hooks feature and the Open Plugins spec are recent additions (blog post dated 2026-05-14), other edge-case behavior may still evolve — re-verify tool-name matchers against your installed version rather than trusting either this page or the official docs blindly.
 
 ## Built-in Tools
 
@@ -212,9 +214,23 @@ extensions:
 
 Goose can also itself be run as an MCP-compatible server (`goose mcp <name>`) or as an **Agent Client Protocol (ACP)** server over stdio (`goose acp`) for integration with ACP clients like Zed.
 
+## Subagents
+
+Goose's primary subagent mechanism is a built-in `delegate` tool (provided by the always-on "summon" platform extension), not something you configure — you just ask for it in natural language ("use a subagent to...", "use 2 subagents in parallel to..."). goose autonomously decides when to spawn one, but **only in `autonomous` permission mode** — subagents are disabled in manual-approval, smart-approve, and chat-only modes.
+
+> **Live-verified 2026-07-23:** On the same test box, a plain natural-language request ("Use 2 subagents in parallel to create hello.txt/goodbye.txt") did **not** trigger subagent use with `gpt-4o-mini` under the default permission mode — the main agent just wrote the files itself. Setting `GOOSE_MODE=auto` (autonomous mode) and explicitly asking to "use the delegate tool to spawn a subagent" worked immediately: the transcript showed a `delegate` tool call with `instructions`/`max_turns`, followed by `[subagent:6] write` and `[subagent:6] todo_write | todo` lines — exactly matching the `[subagent:N] tool_name | extension` format the official docs describe. **Practical takeaway not obvious from the docs:** with a small/cheap model like `gpt-4o-mini`, don't assume "autonomous subagent creation" will trigger on its own from a vague prompt — set `GOOSE_MODE=auto` and/or explicitly reference "the delegate tool" or "a subagent" if you need to guarantee delegation happens.
+
+Two ways to configure what a subagent does:
+- **Direct prompts** — one-off natural-language instructions; the main agent configures the subagent automatically (default max 25 turns, 5-minute timeout, inherits the parent session's extensions).
+- **Recipes** — reusable YAML configs (see below) referenced by name ("Use the 'code-reviewer' recipe to...").
+
+Subagents are restricted: they cannot spawn further subagents (no recursion), cannot enable/disable extensions, and cannot manage scheduled tasks — they can only use tools from extensions already inherited or specified in a recipe.
+
+**External subagents:** goose can also delegate to a *different* CLI agent entirely, by configuring that agent as an MCP server under a `subagent:` block in `config.yaml` (e.g. running `codex mcp-server` as goose's subagent, with `OPENAI_API_KEY` passed through `env_keys`) — letting goose orchestrate other agents rather than only itself.
+
 ## Recipes
 
-**Recipes** are goose's reusable-workflow / "agent config as code" mechanism: a YAML file bundling a prompt/instructions, the extensions (MCP servers) it needs, parameters, and model/provider settings, so a workflow can be shared and rerun reproducibly. Recipes can be composed of **subrecipes** — each subrecipe is effectively an independent goose agent (its own extensions, plugins, provider, system prompt) that runs in an isolated session with no shared conversation history, invoked sequentially or in parallel by the parent recipe, functioning as goose's subagent mechanism.
+**Recipes** are goose's reusable-workflow / "agent config as code" mechanism: a YAML file bundling a prompt/instructions, the extensions (MCP servers) it needs, parameters, and model/provider settings, so a workflow can be shared and rerun reproducibly. Recipes can be composed of **subrecipes** — each subrecipe is effectively an independent goose agent (its own extensions, plugins, provider, system prompt) that runs in an isolated session with no shared conversation history, invoked sequentially or in parallel by the parent recipe, functioning as an alternate, config-driven subagent mechanism.
 
 **Example `recipe.yaml`:**
 ```yaml
