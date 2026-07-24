@@ -20,7 +20,7 @@ Trae CN is the Chinese-market edition of [Trae IDE](../trae/README.md). The arch
 
 | Aspect | Trae (Global) | Trae CN |
 |--------|--------------|---------|
-| Default models | Claude, GPT-4o | Dola-Seed-2.0-Code, GPT-5.x variants |
+| Default models | GPT-5.x, Dola-Seed-2.0-Code (see [Trae Global README](../trae/README.md#supported-models-2026) — Claude/GPT-4o are stale, no longer built-in) | Doubao-Seed-2.0-Code, GPT-5.x variants |
 | API endpoints | Global Anthropic/OpenAI | ByteDance domestic endpoints |
 | Compliance | Standard | Chinese data residency |
 | UI language | English (primary) | Chinese (primary) |
@@ -55,7 +55,7 @@ Trae IDE supports three MCP transport types:
 ## Supported Models (CN edition, 2026)
 
 Built-in defaults (no additional API key required):
-- Dola-Seed-2.0-Code (ByteDance)
+- Doubao-Seed-2.0-Code (ByteDance) — the CN-branded name for the same model shipped globally as "Dola-Seed-2.0-Code"
 - GPT-5.x variants
 - MiniMax-M3 / MiniMax-M2.7
 - Kimi-K2.5
@@ -87,10 +87,11 @@ Additional providers configurable via custom model settings.
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| CN portal (canonical) | https://www.trae.cn | 2026-07-23 | [official] — `trae.com.cn` still 301-redirects here |
-| Rules documentation | https://docs.trae.ai/ide/rules?_lang=en | 2026-06-13 | [official] |
+| CN portal (canonical) | https://www.trae.cn | 2026-07-23 | [official] — confirmed live, promotes "TRAE Work" and "TRAE IDE"; redirect from `trae.com.cn` not independently re-verified this pass |
+| Rules documentation | https://docs.trae.ai/ide/rules?_lang=en | 2026-07-23 | [official] |
 | MCP documentation | https://docs.trae.ai/ide/model-context-protocol | 2026-07-23 | [official] — transport types unchanged |
 | Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-07-23 | [official] — config format unchanged |
-| Models / custom models | https://docs.trae.ai/ide/models | 2026-06-13 | [official] ❓ — CN-specific model list not independently re-verified this pass; see [Trae Global README](../trae/README.md) for the confirmed current global built-in list, which now overlaps heavily with the CN list below |
+| Models / custom models | https://docs.trae.ai/ide/models | 2026-07-23 | [official] — CN built-in model corrected from "Dola-Seed-2.0-Code" to **Doubao-Seed-2.0-Code** (the CN-branded name; "Dola" is the global-edition rebrand only), confirmed via Volcengine/TRAE CN forum posts |
 | Agent guide | https://docs.trae.ai/ide/agent | 2026-06-13 | [official] |
 | Trae v1.3.0 MCP + .rules release notes | https://traeide.com/news/6 | 2026-06-13 | [community] |
+| Doubao-Seed-2.0-Code CN launch confirmation | https://developer.volcengine.com/articles/7610263055960916014 | 2026-07-23 | [vendor-adjacent, Volcengine] — confirms CN naming "Doubao-Seed-2.0-Code" |

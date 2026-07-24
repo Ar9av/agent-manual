@@ -106,6 +106,8 @@ SOLO is Trae's autonomous multi-agent mode for end-to-end task execution. Unlike
 
 SOLO is designed for larger, self-contained tasks where you want minimal interruption. Full documentation: https://docs.trae.ai/ide/solo-mode
 
+> **Update (2026-07-23):** Since March 31, 2026, SOLO is also available as a **standalone app** (desktop + web, currently beta/invite), independent of the IDE plugin, with two modes: **Code** (the agentic coding loop described above) and **MTC** ("More Than Coding," aimed at non-coding roles like requirements/design/data/ops). The in-IDE SOLO mode described above still exists unchanged; this is an additional surface, not a replacement.
+
 ## Slash Commands (v3.5.54+)
 
 Custom slash commands can be defined in `.trae/commands/`. Up to 3 levels of nesting are supported, enabling structured command hierarchies (e.g., `/project/setup/database`).
@@ -209,17 +211,18 @@ See [trae-cn/](../trae-cn/README.md) — the Chinese-market version of Trae with
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Main docs | https://docs.trae.ai | 2026-06-13 | [official] |
+| Main docs | https://docs.trae.ai | 2026-07-23 | [official] — SPA content not directly renderable via fetch; nav structure cross-checked via search |
 | Rules | https://docs.trae.ai/ide/rules | 2026-07-23 | [official] — rule filenames confirmed user-defined, not `project_rules.md` |
 | Skills | https://docs.trae.ai/ide/skills | 2026-07-23 | [official] |
-| SOLO mode | https://docs.trae.ai/ide/solo-mode | 2026-06-13 | [official] |
+| SOLO mode | https://docs.trae.ai/ide/solo-mode | 2026-07-23 | [official] — in-IDE mode unchanged; standalone SOLO app (Code/MTC) added March 31 2026, see note above |
+| SOLO standalone app launch | https://www.trae.ai/blog/new_solo_beta_0331 | 2026-07-23 | [official blog] — confirms standalone desktop/web app, beta/invite, Code + MTC modes |
 | MCP protocol / transport types | https://docs.trae.ai/ide/model-context-protocol | 2026-07-23 | [official] — stdio/SSE/Streamable HTTP unchanged |
 | Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-07-23 | [official] — `mcpServers` JSON format unchanged |
 | Models | https://docs.trae.ai/ide/models | 2026-07-23 | [official] — built-in model list changed significantly, see table above |
-| Agent guide | https://docs.trae.ai/ide/agent | 2026-06-13 | [official] |
-| IDE settings overview | https://docs.trae.ai/ide/ide-settings-overview | 2026-06-13 | [official] |
+| Agent guide | https://docs.trae.ai/ide/agent | 2026-07-23 | [official] ❓ — SPA content not directly renderable via fetch this pass; no contradicting info found via search |
+| IDE settings overview | https://docs.trae.ai/ide/ide-settings-overview | 2026-07-23 | [official] ❓ — SPA content not directly renderable via fetch this pass; no contradicting info found via search |
 | Changelog | https://docs.trae.ai/ide/changelog | 2026-07-23 | [official] — no entries currently listed ("No update record yet") |
-| Trae IDE GitHub (official) | https://github.com/Trae-AI/Trae | 2026-06-13 | [github] |
-| trae-agent GitHub (separate CLI) | https://github.com/bytedance/trae-agent | 2026-06-13 | [github] |
+| Trae IDE GitHub (official) | https://github.com/Trae-AI/Trae | 2026-07-23 | [github] — active, 913 stars/49 forks, not archived |
+| trae-agent GitHub (separate CLI) | https://github.com/bytedance/trae-agent | 2026-07-23 | [github] — active, MIT license, confirmed separate from Trae IDE; open feature request (#397) shows trae-agent itself still lacks native lifecycle hooks |
 | v1.3.0 MCP + rules announcement | https://traeide.com/news/6 | 2026-06-13 | [third-party] |
-| Hooks (new feature, unverified) | https://docs.trae.ai | 2026-07-23 | [official] ❓ — confirmed present in docs nav, page content not yet verified |
+| Hooks (new feature, unverified) | https://docs.trae.ai | 2026-07-23 | [official] ❓ — confirmed present in docs nav ("Skills, Rules, Memories, Commands, Hooks"), exact event names/config format still unverified — dedicated page slug not discoverable via fetch or search this pass |

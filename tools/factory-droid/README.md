@@ -14,6 +14,7 @@
 - Plugins: https://docs.factory.ai/cli/configuration/plugins
 - Building plugins: https://docs.factory.ai/guides/building/building-plugins
 - Quickstart: https://docs.factory.ai/cli/getting-started/quickstart
+- MCP configuration: https://docs.factory.ai/cli/configuration/mcp
 
 ---
 
@@ -224,7 +225,8 @@ Or manage interactively with `/plugins`. Plugin manifests live at `.factory-plug
 | Hooks guide | https://docs.factory.ai/cli/configuration/hooks-guide | 2026-07-23 | [official] — added settings.json fallback + scope-root migration note |
 | Hooks reference | https://docs.factory.ai/reference/hooks-reference | 2026-07-23 | [official] — 9 events unchanged, org-level scope added |
 | CLI reference | https://docs.factory.ai/reference/cli-reference | 2026-07-23 | [official] — `droid mcp add`/`plugin` commands unchanged |
+| MCP configuration | https://docs.factory.ai/cli/configuration/mcp | 2026-07-23 | [official] — MCP lives in dedicated `mcp.json`, not `settings.json` (README corrected) |
 | Custom droids (subagents) | https://docs.factory.ai/cli/configuration/custom-droids | 2026-07-23 | [official] — added personal scope `~/.factory/droids/` |
-| Plugins | https://docs.factory.ai/cli/configuration/plugins | 2026-06-13 | [official] |
+| Plugins | https://docs.factory.ai/cli/configuration/plugins | 2026-07-23 | [official] — scopes/manifest path unchanged |
 | Building plugins | https://docs.factory.ai/guides/building/building-plugins | 2026-06-13 | [official] |
-| Logging and analytics (hooks) | https://docs.factory.ai/guides/hooks/logging-analytics | 2026-06-13 | [official] |
+| Logging and analytics (hooks) | https://docs.factory.ai/guides/hooks/logging-analytics | 2026-07-23 | [official] — unchanged |

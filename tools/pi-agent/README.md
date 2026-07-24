@@ -204,11 +204,11 @@ Pi does **not** ship subagents as a first-class built-in tool. Per pi.dev: "No s
 
 | Topic | Source type | URL | Fetched |
 |-------|-------------|-----|---------|
-| Installation & feature overview | Vendor (pi.dev) | https://pi.dev | 2026-06-13 [official] |
+| Installation & feature overview | Vendor (pi.dev) | https://pi.dev | 2026-07-23 [official] — install commands, MIT license, "No MCP"/"No sub-agents" stance all confirmed unchanged |
 | pi-yaml-hooks package | Vendor index (pi.dev) | https://pi.dev/packages/pi-yaml-hooks | 2026-07-23 [official] (now at v2026.7.19) |
-| pi-yaml-hooks source | Community (KristjanPikhof) | https://github.com/KristjanPikhof/pi-yaml-hooks | 2026-06-13 [github] |
-| Hooks docs (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md | 2026-06-13 [github] |
-| Extensions docs | Vendor (GitHub) | https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md | 2026-07-23 [github] (old `badlogic/pi-mono` path 301s here) |
-| GitHub (pi-mono) — primary | Vendor | https://github.com/earendil-works/pi | 2026-07-23 [github] |
-| GitHub (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi | — [github] |
-| Awesome Pi Agent | Community | https://github.com/qualisero/awesome-pi-agent | 2026-06-13 ⚠️ Archived Jun 3 2026 |
+| pi-yaml-hooks source | Community (KristjanPikhof) | https://github.com/KristjanPikhof/pi-yaml-hooks | 2026-07-23 [github] — maintainer, MIT license, and dot-notation event list confirmed |
+| Hooks docs (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md | 2026-07-23 [github] — snake_case events confirmed, not archived |
+| Extensions docs | Vendor (GitHub) | https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md | 2026-07-23 [github] (old `badlogic/pi-mono` path 301s here); `after_provider_response` event confirmed present |
+| GitHub (pi-mono) — primary | Vendor | https://github.com/earendil-works/pi | 2026-07-23 [github] — active, MIT, not archived |
+| GitHub (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi | 2026-07-23 [github] — active, not archived |
+| Awesome Pi Agent | Community | https://github.com/qualisero/awesome-pi-agent | 2026-07-23 ⚠️ Archived Jun 3 2026, confirmed still read-only |
