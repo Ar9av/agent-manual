@@ -52,6 +52,7 @@ droid
 | `~/.factory/settings.json` | Global | User settings |
 | `.factory/hooks.json` | Project | Project-scoped hook definitions |
 | `.factory/settings.json` | Project | Project settings |
+| — (Enterprise Controls) | Organization | Org-level managed hook policy |
 | `$FACTORY_PROJECT_DIR` | Env var | Project root reference |
 
 ## Hooks
@@ -76,7 +77,7 @@ Hooks provide deterministic control over Droid's behavior — actions that alway
 
 ### Configuration Example
 
-Hooks are defined in `hooks.json` (not inside `settings.json`):
+Hooks are defined in `hooks.json` at the scope root (`~/.factory/hooks.json` user-level, `.factory/hooks.json` project-level, plus an org-level policy via Enterprise Controls). If no `hooks.json` is found, Droid falls back to a `hooks` key inside the matching `settings.json`. The older nested path `.factory/hooks/hooks.json` is still read for backward compatibility, but any new save now writes to `hooks.json` at the scope root:
 
 ```json
 {
@@ -194,11 +195,11 @@ Event-specific JSON fields:
 
 ## MCP Support
 
-Configure MCP servers under `mcpServers` in `settings.json`, or use `droid mcp add` interactively.
+MCP servers are configured in dedicated `mcp.json` files (an `mcpServers` object) — **not** `settings.json`: `~/.factory/mcp.json` (user scope) or `.factory/mcp.json` (project scope, also honored from any ancestor directory). Add servers via `droid mcp add <name> <url> --type <http|sse|stdio>` (goes to user config) or interactively via `/mcp`, which also browses a 40+ server registry.
 
 ## Custom Droids (Subagents)
 
-Define specialized sub-agents in `.factory/droids/` with custom system prompts, tool access, and hooks. Manage via `/droids` in the CLI.
+Define specialized sub-agents as Markdown files with custom system prompts, tool access, and hooks. Two scopes: project (`<repo>/.factory/droids/`, shared via git) and personal (`~/.factory/droids/`, follows you across workspaces). They're exposed as `subagent_type` targets for the Task tool. Manage via `/droids` in the CLI.
 
 ## Plugins
 
@@ -219,11 +220,11 @@ Or manage interactively with `/plugins`. Plugin manifests live at `.factory-plug
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Quickstart / Installation | https://docs.factory.ai/cli/getting-started/quickstart | 2026-06-13 | [official] |
-| Hooks guide | https://docs.factory.ai/cli/configuration/hooks-guide | 2026-06-13 | [official] |
-| Hooks reference | https://docs.factory.ai/reference/hooks-reference | 2026-06-13 | [official] |
-| CLI reference | https://docs.factory.ai/reference/cli-reference | 2026-06-13 | [official] |
-| Custom droids (subagents) | https://docs.factory.ai/cli/configuration/custom-droids | 2026-06-13 | [official] |
+| Quickstart / Installation | https://docs.factory.ai/cli/getting-started/quickstart | 2026-07-23 | [official] — install commands unchanged |
+| Hooks guide | https://docs.factory.ai/cli/configuration/hooks-guide | 2026-07-23 | [official] — added settings.json fallback + scope-root migration note |
+| Hooks reference | https://docs.factory.ai/reference/hooks-reference | 2026-07-23 | [official] — 9 events unchanged, org-level scope added |
+| CLI reference | https://docs.factory.ai/reference/cli-reference | 2026-07-23 | [official] — `droid mcp add`/`plugin` commands unchanged |
+| Custom droids (subagents) | https://docs.factory.ai/cli/configuration/custom-droids | 2026-07-23 | [official] — added personal scope `~/.factory/droids/` |
 | Plugins | https://docs.factory.ai/cli/configuration/plugins | 2026-06-13 | [official] |
 | Building plugins | https://docs.factory.ai/guides/building/building-plugins | 2026-06-13 | [official] |
 | Logging and analytics (hooks) | https://docs.factory.ai/guides/hooks/logging-analytics | 2026-06-13 | [official] |

@@ -62,7 +62,7 @@ Hermes provides three hook systems at different lifecycle points:
 
 Shell hooks require no Python authoring — they run as subprocesses and communicate over stdin/stdout JSON.
 
-### Plugin Hook Events (15 events — CLI + Gateway)
+### Plugin Hook Events (17 events — CLI + Gateway)
 
 | Event | When |
 |-------|------|
@@ -72,6 +72,7 @@ Shell hooks require no Python authoring — they run as subprocesses and communi
 | `transform_terminal_output` | Inside `terminal` tool, pre-truncation/redaction |
 | `pre_llm_call` | Once per turn, before tool loop; injects context via `{"context": str}` |
 | `post_llm_call` | Once per turn, after tool loop completes |
+| `pre_verify` | Before the agent finishes after editing code |
 | `on_session_start` | New session created (first turn only) |
 | `on_session_end` | End of every `run_conversation()` call |
 | `on_session_finalize` | Session teardown before identity is discarded |
@@ -79,12 +80,13 @@ Shell hooks require no Python authoring — they run as subprocesses and communi
 | `pre_gateway_dispatch` | After internal-event guard, before auth/dispatch |
 | `pre_approval_request` | Before approval shown to user; observer-only |
 | `post_approval_response` | After user responds to approval prompt |
+| `subagent_start` | Before a child agent (via `delegate_task`) is constructed and run |
 | `subagent_stop` | After `delegate_task` child exits |
 | `transform_llm_output` | After tool loop, before final response delivery |
 
 > **Note:** The event previously listed as `on_subagent_complete` does not exist. The correct name is `subagent_stop`.
 
-### Gateway-Exclusive Events (8 events)
+### Gateway-Exclusive Events (10 events)
 
 | Event | When |
 |-------|------|
@@ -95,6 +97,8 @@ Shell hooks require no Python authoring — they run as subprocesses and communi
 | `agent:start` | Agent begins processing a message |
 | `agent:step` | Each tool-calling loop iteration |
 | `agent:end` | Agent finishes processing |
+| `reaction:added` | Emoji reaction added to a message (Slack) |
+| `reaction:removed` | Emoji reaction removed from a message |
 | `command:*` | Any slash command executed (wildcard matching supported) |
 
 ### Shell Hook Configuration
@@ -171,9 +175,11 @@ hermes hooks doctor                        # Audit exec bit, allowlist, mtime dr
 ## `hermes config` CLI
 
 ```sh
-hermes config           # View current configuration
+hermes config           # (show) View current configuration
 hermes config edit      # Open config.yaml in your editor
 hermes config set KEY VAL  # Set specific values
+hermes config path      # Print the config file path
+hermes config env-path  # Print the .env file path
 hermes config check     # Verify all options after updates
 hermes config migrate   # Interactively add missing options
 ```
@@ -195,10 +201,10 @@ Place `AGENTS.md` at repo root for persistent natural-language instructions that
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Installation | https://hermes-agent.nousresearch.com/docs/getting-started/installation | 2026-06-13 | [official] |
-| Event hooks | https://hermes-agent.nousresearch.com/docs/user-guide/features/hooks | 2026-06-13 | [official] |
-| CLI commands reference | https://hermes-agent.nousresearch.com/docs/reference/cli-commands | 2026-06-13 | [official] |
-| Configuration | https://hermes-agent.nousresearch.com/docs/user-guide/configuration | 2026-06-13 | [official] |
+| Installation | https://hermes-agent.nousresearch.com/docs/getting-started/installation | 2026-07-23 | [official] |
+| Event hooks | https://hermes-agent.nousresearch.com/docs/user-guide/features/hooks | 2026-07-23 | [official] |
+| CLI commands reference | https://hermes-agent.nousresearch.com/docs/reference/cli-commands | 2026-07-23 | [official] |
+| Configuration | https://hermes-agent.nousresearch.com/docs/user-guide/configuration | 2026-07-23 | [official] |
 | Hooks (GitHub source) | https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/hooks.md | — | [github] |
 | CLI config example | https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example | — | [github] |
 | AGENTS.md | https://github.com/NousResearch/hermes-agent/blob/main/AGENTS.md | — | [github] |

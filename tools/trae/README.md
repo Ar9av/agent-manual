@@ -28,7 +28,7 @@ Download from https://www.trae.ai — available for Mac, Windows, and Linux (.de
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `.trae/rules/project_rules.md` | Project | Project-level agent rules (see Rules section) |
+| `.trae/rules/<name>.md` | Project | Project-level agent rules (see Rules section) — as of 2026-07, filenames are user-defined at creation time; there is no single canonical `project_rules.md` file |
 | `user_rules.md` | Global | User-level agent rules — IDE-managed, auto-created via Settings UI (not manually placed) |
 | `.trae/mcp.json` | Project | MCP server configuration |
 | `.trae/skills/{skill_name}/SKILL.md` | Project | IDE-managed skill definitions (see Skills section) |
@@ -44,7 +44,7 @@ Download from https://www.trae.ai — available for Mac, Windows, and Linux (.de
 
 ### Project Rules
 
-Stored at `.trae/rules/project_rules.md` (with the subdirectory `.trae/rules/`, not directly in `.trae/`). Multiple rules files are supported; the IDE creates and manages the `.trae/rules/` folder.
+Stored under `.trae/rules/` (subdirectory of the project root, not directly in `.trae/`). Per current docs, when you create a project rule via Settings > Rules, you name the file yourself and the IDE creates it in `.trae/rules/`  — there is no fixed `project_rules.md` filename. Multiple rules files are supported.
 
 Trae also reads `.trae/rules/` folders in project subdirectories, enabling modular per-component rules.
 
@@ -112,11 +112,9 @@ Custom slash commands can be defined in `.trae/commands/`. Up to 3 levels of nes
 
 ## Hooks
 
-> **Note:** Trae does not have a native pre/post tool use hook system. Lifecycle control is achieved through:
-> 1. **MCP servers** — expose custom tools and side effects
-> 2. **Rules files** — instruct the agent on what to do/avoid
+> **Update (2026-07-23):** Trae now ships a native **Hooks** feature — "Hooks" appears as its own top-level entry (alongside Skills, Rules, Memories, Commands) in the official docs sidebar under "AI coding essentials." The dedicated docs page could not be reached directly during this audit (JS-rendered SPA, slug not discoverable), so exact event names/config format are ❓ unverified — do not assume the MCP-only workaround below is still the only option. Treat the rest of this section as historical/fallback guidance until the native Hooks docs are confirmed.
 
-### MCP-Based Hook Patterns
+### MCP-Based Hook Patterns (fallback / pre-Hooks-feature approach)
 
 Use MCP server tools to implement hook-like behavior:
 
@@ -174,19 +172,21 @@ Custom agents are configured via the IDE UI with:
 
 ## Supported Models (2026)
 
-Built-in models as of mid-2026:
+Built-in models as of 2026-07-23 (per live docs — this list churns frequently, treat as a snapshot):
 
 | Model | Status |
 |-------|--------|
-| GPT-4o | Available built-in |
-| GPT-5 | Available built-in |
-| Gemini 2.5 Pro | Available built-in |
-| DeepSeek R1 | Available built-in |
-| DeepSeek V3 / Chat V3 | Available built-in |
-| Kimi-K2 | Available built-in |
-| Claude models | Removed from built-in November 2025 (Anthropic regional restrictions); re-enable via custom provider with personal API key |
+| GPT-5.4 | Available built-in (not available to US users) |
+| GPT-5.2 | Available built-in (not available to US users) |
+| Dola-Seed-2.0-Code | Available built-in |
+| MiniMax-M3 | Available built-in (not available to US users) |
+| MiniMax-M2.7 | Available built-in (not available to US users) |
+| Kimi-K2.5 | Available built-in |
+| Gemini-3.1-Pro-Preview | Available built-in |
+| Gemini-3-Flash-Preview | Available built-in |
+| Claude models | Not in the built-in list; add via custom provider (Anthropic Messages API format) with a personal API key |
 
-See https://docs.trae.ai/ide/models for the current authoritative list.
+GPT-4o, Gemini 2.5 Pro, DeepSeek R1/V3, and Kimi-K2 (non-.5) are no longer on the built-in list — superseded by the models above. See https://docs.trae.ai/ide/models for the current authoritative list.
 
 ## Trae CN
 
@@ -202,7 +202,7 @@ See [trae-cn/](../trae-cn/README.md) — the Chinese-market version of Trae with
 - Skills (v3.5.41+) load on demand only — unlike Rules which are always-on — saving tokens on large contexts.
 - SOLO mode is the autonomous multi-agent mode for end-to-end task execution without step-by-step confirmation.
 - Custom slash commands live in `.trae/commands/` (v3.5.54+, up to 3 nesting levels).
-- No native hook API; MCP is the primary extensibility path.
+- As of 2026-07-23, docs.trae.ai lists a native "Hooks" feature in its sidebar (previously Trae had no native hook API and relied on MCP as the primary extensibility path — see the Hooks section above for details/caveats).
 - `bytedance/trae-agent` on GitHub is a separate CLI tool, not the Trae IDE. The official Trae IDE repo is `Trae-AI/Trae`.
 
 ## Sources
@@ -210,15 +210,16 @@ See [trae-cn/](../trae-cn/README.md) — the Chinese-market version of Trae with
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
 | Main docs | https://docs.trae.ai | 2026-06-13 | [official] |
-| Rules | https://docs.trae.ai/ide/rules | 2026-06-13 | [official] |
-| Skills | https://docs.trae.ai/ide/skills | 2026-06-13 | [official] |
+| Rules | https://docs.trae.ai/ide/rules | 2026-07-23 | [official] — rule filenames confirmed user-defined, not `project_rules.md` |
+| Skills | https://docs.trae.ai/ide/skills | 2026-07-23 | [official] |
 | SOLO mode | https://docs.trae.ai/ide/solo-mode | 2026-06-13 | [official] |
-| MCP protocol / transport types | https://docs.trae.ai/ide/model-context-protocol | 2026-06-13 | [official] |
-| Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-06-13 | [official] |
-| Models | https://docs.trae.ai/ide/models | 2026-06-13 | [official] |
+| MCP protocol / transport types | https://docs.trae.ai/ide/model-context-protocol | 2026-07-23 | [official] — stdio/SSE/Streamable HTTP unchanged |
+| Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-07-23 | [official] — `mcpServers` JSON format unchanged |
+| Models | https://docs.trae.ai/ide/models | 2026-07-23 | [official] — built-in model list changed significantly, see table above |
 | Agent guide | https://docs.trae.ai/ide/agent | 2026-06-13 | [official] |
 | IDE settings overview | https://docs.trae.ai/ide/ide-settings-overview | 2026-06-13 | [official] |
-| Changelog | https://docs.trae.ai/ide/changelog | 2026-06-13 | [official] |
+| Changelog | https://docs.trae.ai/ide/changelog | 2026-07-23 | [official] — no entries currently listed ("No update record yet") |
 | Trae IDE GitHub (official) | https://github.com/Trae-AI/Trae | 2026-06-13 | [github] |
 | trae-agent GitHub (separate CLI) | https://github.com/bytedance/trae-agent | 2026-06-13 | [github] |
 | v1.3.0 MCP + rules announcement | https://traeide.com/news/6 | 2026-06-13 | [third-party] |
+| Hooks (new feature, unverified) | https://docs.trae.ai | 2026-07-23 | [official] ❓ — confirmed present in docs nav, page content not yet verified |

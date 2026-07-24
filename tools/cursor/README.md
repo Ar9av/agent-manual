@@ -173,8 +173,7 @@ The following hooks are **unavailable** in cloud/background agents: `sessionStar
 | `Run Shell Commands` | Execute terminal commands and monitor output |
 | `Read Files` | Read file contents (supports image files: .png, .jpg, .gif, .webp, .svg) |
 | `Edit Files` | Suggest and apply edits to files |
-| `Search Files and Folders` | Locate files by name, explore directories, search for patterns |
-| `Semantic Search` | Search codebase by meaning (not just exact matches) |
+| `Search Files and Folders` | Locate files by name, explore directories, and find exact keywords/patterns — as of the 2026 search-architecture update this tool now also covers semantic (meaning-based) search; "Semantic Search" no longer appears as a separate tool entry |
 | `Web Search` | Generate queries and perform web searches |
 | `Browser` | Control a browser: screenshots, navigation, element interaction |
 | `Image Generation` | Generate images from text or reference images |
@@ -220,10 +219,10 @@ Cursor loads MCP servers from two locations:
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
 | Rules (MDC format, globs) | https://cursor.com/docs/rules | 2026-06-13 | [official] |
-| Rules (context path) | https://cursor.com/context/rules | 2026-06-13 | [official] |
-| Hooks (all events, stdin fields, env vars) | https://cursor.com/docs/hooks | 2026-06-13 | [official] |
-| Agent tools list | https://cursor.com/docs/agent/tools | 2026-06-13 | [official] |
-| MCP setup | https://cursor.com/docs/mcp | — | [official] |
+| Rules (context path) | https://cursor.com/context/rules | 2026-07-23 | [official] |
+| Hooks (all events, stdin fields, env vars) | https://cursor.com/docs/hooks | 2026-07-23 | [official] |
+| Agent tools list | https://cursor.com/docs/agent/tools | 2026-07-23 | [official] |
+| MCP setup | https://cursor.com/docs/mcp | 2026-07-23 | [official] |
 | Agent best practices | https://cursor.com/blog/agent-best-practices | — | [official] |
 | Changelog | https://cursor.com/changelog | — | [official] |
 | Main docs | https://cursor.com/docs | — | [official] |

@@ -4,6 +4,8 @@
 
 **Vendor:** Google | **License:** Apache 2.0 | **Runtime:** Node.js
 
+> **⚠️ Maintenance status:** Google is discontinuing Gemini CLI for unpaid-tier and Google AI Pro/Ultra users in favor of **Antigravity CLI** (see `tools/google-antigravity/`). As of June 18, 2026, Gemini CLI and the Gemini Code Assist IDE extension stopped serving requests for those users. Standard/Enterprise license holders with paid API keys are unaffected and continue to receive updates. Source: [Google blog](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/).
+
 ## Links
 
 - Docs: https://geminicli.com/docs
@@ -247,14 +249,15 @@ Extensions can provide additional tools and hook configurations. Hooks from inst
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Hooks overview | https://geminicli.com/docs/hooks/ | 2026-06-26 | [official] |
+| Hooks overview | https://geminicli.com/docs/hooks/ | 2026-07-23 | [official] |
 | Hooks reference | https://geminicli.com/docs/hooks/reference/ | 2026-06-26 | [official] |
 | Writing hooks | https://geminicli.com/docs/hooks/writing-hooks/ | 2026-06-26 | [official] |
-| Configuration reference | https://geminicli.com/docs/reference/configuration/ | 2026-06-26 | [official] |
+| Configuration reference | https://geminicli.com/docs/reference/configuration/ | 2026-07-23 | [official] |
 | Hooks index (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/index.md | 2026-06-26 | [github] |
 | Hooks reference (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/reference.md | 2026-06-26 | [github] |
 | Writing hooks (GitHub) | https://github.com/google-gemini/gemini-cli/blob/main/docs/hooks/writing-hooks.md | 2026-06-26 | [github] |
 | Tools reference | https://geminicli.com/docs/tools/file-system/ | 2026-06-26 | [official] |
 | Google blog (hooks intro) | https://developers.googleblog.com/tailor-gemini-cli-to-your-workflow-with-hooks/ | 2026-06-26 | [official] |
-| Main docs | https://geminicli.com/docs/ | 2026-06-26 | [official] |
-| GitHub repo | https://github.com/google-gemini/gemini-cli | 2026-06-26 | [github] |
+| Main docs | https://geminicli.com/docs/ | 2026-07-23 | [official] |
+| GitHub repo | https://github.com/google-gemini/gemini-cli | 2026-07-23 | [github] |
+| Google blog (Gemini CLI → Antigravity CLI transition) | https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/ | 2026-07-23 | [official] |

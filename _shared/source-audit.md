@@ -1,6 +1,24 @@
 # Source Coverage Audit
 
-Audit of source coverage across the repo as of 2026-06-26, with a 2026-07-23 addendum covering 9 newly added tools (Amazon Q Developer CLI, Amp, Goose, OpenHands, Crush, Continue CLI, Auggie, Qwen Code, Warp).
+Audit of source coverage across the repo as of 2026-06-26, with a 2026-07-23 addendum covering 9 newly added tools (Amazon Q Developer CLI, Amp, Goose, OpenHands, Crush, Continue CLI, Auggie, Qwen Code, Warp), followed by a same-day full re-verification pass across all 26 tool pages against their live sources.
+
+**2026-07-23 re-verification pass — real drift found and fixed in:**
+- `tools/claude-code` — matcher-pattern charset, canonical-URL redirect chain
+- `tools/codex` — docs domain moved to learn.chatgpt.com; fixed a real config error (`[mcp_servers.<id>]`, not `[mcp]`)
+- `tools/cursor` — "Semantic Search" built-in tool folded into "Search Files and Folders"
+- `tools/devin-cli` — hook stdin schema gained `session_id`/`prompt_id`; `decision` field no longer documents `"deny"`
+- `tools/factory-droid` — hooks config fallback to `settings.json`, org-level Enterprise Controls scope, personal Custom Droids scope added
+- `tools/gemini-cli`, `tools/github-copilot` — hook event count/list updates (Copilot: 13→14 events, added `userPromptTransformed`)
+- `tools/google-antigravity` — corrected hook input JSON schema; formalized `force_ask` decision value
+- `tools/hermes` — plugin hook event count 15→17, gateway-exclusive events 8→10, missing CLI subcommands added
+- `tools/kimi-code` — corrected project config filename (`local.toml`, not `config.toml`); hooks no longer marked Beta
+- `tools/openclaw` — Node.js version requirement updated; `TOOLS.md`/`HEARTBEAT.md` bootstrap files confirmed
+- `tools/opencode` — removed a `todowrite` permission key no longer in official docs
+- `tools/openhands` — corrected the real settings filename (`agent_settings.json`, not `settings.json`) and documented `--override-with-envs`, both confirmed via live install + smoke test on a real box, not just docs
+- `tools/pi-agent` — dependency version bump, repo-move redirect (`badlogic/pi-mono` → `earendil-works/pi`)
+- `tools/trae`, `tools/trae-cn` — built-in model list refreshed; project rule filenames no longer fixed to `project_rules.md`; flagged (❓) that Trae now appears to ship a native Hooks feature not yet fully documented in this repo
+
+No changes were needed for `tools/aider`, `tools/kiro`, `tools/amazon-q-dev-cli`, `tools/amp`, `tools/goose`, `tools/crush`, `tools/continue-cli`, `tools/auggie`, `tools/qwen-code`, or `tools/warp` — all re-verified accurate as-is.
 
 ## Status Key
 

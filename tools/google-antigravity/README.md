@@ -66,27 +66,35 @@ The execution pipeline runs: **Decide → Execute → Inspect/PostToolCall**. Tr
 
 ```json
 {
-  "hook_event_name": "PreToolUse",
-  "tool_name": "run_command",
-  "tool_input": { "command": "npm test" },
-  "workspacePaths": ["/home/user/project"],
-  "transcriptPath": "/home/user/.gemini/antigravity-cli/transcripts/session.json",
-  "session_id": "session-12345"
+  "toolCall": {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "npm test",
+      "Cwd": "/workspace/project",
+      "WaitMsBeforeAsync": 5000
+    }
+  },
+  "stepIdx": 19,
+  "conversationId": "ec33ebf9-0cba-4100-8142-c61503f6c587",
+  "workspacePaths": ["/workspace/project"],
+  "transcriptPath": "~/.gemini/antigravity/brain/ec33ebf9-0cba-4100-8142-c61503f6c587/.system_generated/logs/transcript.jsonl",
+  "artifactDirectoryPath": "~/.gemini/antigravity/brain/ec33ebf9-0cba-4100-8142-c61503f6c587"
 }
 ```
 
-> Note: `workspacePaths` and `transcriptPath` are confirmed in live docs. `session_id` is unverified ❓ — treat as provisional.
+> Note: All hooks receive `conversationId`, `workspacePaths`, `transcriptPath`, and `artifactDirectoryPath`. Event-specific fields vary: `PreToolUse` adds `toolCall` (`name`/`args`) and `stepIdx`; `PostToolUse` adds `stepIdx` and optional `error`; `PreInvocation`/`PostInvocation` add `invocationNum` and `initialNumSteps`; `Stop` adds `executionNum`, `terminationReason`, `error`, and `fullyIdle`. There is no flat `tool_name`/`tool_input`/`session_id` shape — those fields do not exist in the live schema.
 
 ### Hook Output (stdout JSON, optional)
 
 ```json
 {
   "decision": "deny",
-  "reason": "Security policy violation"
+  "reason": "Security policy violation",
+  "permissionOverrides": ["command(npm test)"]
 }
 ```
 
-Valid decision values: `"allow"`, `"deny"`, `"ask"`. (`"block"` is not a valid value.) The `"ask"` value was added with the Unified Permission System (April 2026) and prompts the user for confirmation before the agent proceeds.
+Valid decision values for `PreToolUse`: `"allow"`, `"deny"`, `"ask"` (prompts while respecting cached permissions), and `"force_ask"` (always prompts, ignoring cached permissions). (`"block"` is not a valid value.) For `Stop`, `"continue"` re-enters the execution loop; any other value allows termination.
 
 ### Exit Code Behavior
 
@@ -202,7 +210,7 @@ Antigravity 2.0 (I/O 2026) added a native Browser subagent that operates via hea
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
 | Docs home | https://antigravity.google/docs/home | 2026-06-13 | [official] |
-| Lifecycle Hooks | https://antigravity.google/docs/hooks | 2026-06-13 | [official] |
+| Lifecycle Hooks | https://antigravity.google/docs/hooks | 2026-07-23 | [official] |
 | Workflows & Rules | https://antigravity.google/docs/rules-workflows | 2026-06-13 | [official] |
 | Community forum | https://discuss.ai.google.dev/t/does-antigravity-support-hooks-similar-to-the-hook-functionality-in-windsurf/121062 | 2026-06-13 | [community] |
 | Migrating to Antigravity CLI (hook deny value, skills path) | https://medium.com/google-cloud/migrating-to-antigravity-cli-a841c6964f37 | 2026-06-13 | [community] |

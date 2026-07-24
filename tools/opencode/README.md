@@ -213,7 +213,7 @@ Config key is `permission` (singular). Valid values: `"allow"`, `"ask"`, `"deny"
 }
 ```
 
-Permission keys include: `read`, `edit`, `glob`, `grep`, `bash`, `task`, `external_directory`, `todowrite`, `webfetch`, `websearch`, `lsp`, `skill`, `question`, `doom_loop`.
+Permission keys include: `read`, `edit`, `glob`, `grep`, `bash`, `task`, `external_directory`, `webfetch`, `websearch`, `lsp`, `skill`, `question`, `doom_loop`. (`todowrite` no longer appears in the official permissions doc as of 2026-07-23 — may have been removed or folded into another key.)
 
 | Permission Key | Description |
 |----------------|-------------|
@@ -228,7 +228,6 @@ Permission keys include: `read`, `edit`, `glob`, `grep`, `bash`, `task`, `extern
 | `webfetch` | Fetching a URL (matches the URL) |
 | `websearch` | Web search (matches the query) |
 | `external_directory` | Triggered when a tool touches paths outside the project working directory |
-| `todowrite` | Writing to the todo list |
 | `question` | Asking the user questions during execution |
 | `doom_loop` | Triggered when the same tool call repeats 3 times with identical input |
 
@@ -259,7 +258,7 @@ Custom slash commands go in `.opencode/commands/`.
 | Agents reference | https://opencode.ai/docs/agents/ | 2026-06-26 | [official] |
 | Skills reference | https://opencode.ai/docs/skills/ | 2026-06-26 | [official] |
 | Plugins reference | https://opencode.ai/docs/plugins/ | 2026-06-26 | [official] |
-| Permissions reference | https://opencode.ai/docs/permissions/ | 2026-06-26 | [official] |
+| Permissions reference | https://opencode.ai/docs/permissions/ | 2026-07-23 | [official] |
 | GitHub repo | https://github.com/anomalyco/opencode | 2026-06-26 | [github] |
 | Awesome OpenCode | https://github.com/awesome-opencode/awesome-opencode | 2026-06-26 | [community] |
 | Plugin guide (gist) | https://gist.github.com/johnlindquist/0adf1032b4e84942f3e1050aba3c5e4a | 2026-06-26 | [community] |

@@ -38,7 +38,7 @@ The `.trae/rules/` folder can also be placed in any project subdirectory to scop
 
 ## Hooks
 
-Same situation as Trae global — no native pre/post tool use hooks. Use MCP servers for lifecycle extensibility.
+> **Update (2026-07-23):** Trae global's docs now show a native "Hooks" entry in the sidebar (see [Trae (Global) README](../trae/README.md#hooks)). Since Trae CN shares the same codebase, this likely also applies to Trae CN, but it was not independently confirmed on the CN docs portal during this audit — treat as ❓ pending verification, rather than assuming the old MCP-only workaround is still the only option.
 
 ## SOLO Mode
 
@@ -87,10 +87,10 @@ Additional providers configurable via custom model settings.
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| CN portal (canonical) | https://www.trae.cn | 2026-06-13 | [official] |
+| CN portal (canonical) | https://www.trae.cn | 2026-07-23 | [official] — `trae.com.cn` still 301-redirects here |
 | Rules documentation | https://docs.trae.ai/ide/rules?_lang=en | 2026-06-13 | [official] |
-| MCP documentation | https://docs.trae.ai/ide/model-context-protocol | 2026-06-13 | [official] |
-| Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-06-13 | [official] |
-| Models / custom models | https://docs.trae.ai/ide/models | 2026-06-13 | [official] |
+| MCP documentation | https://docs.trae.ai/ide/model-context-protocol | 2026-07-23 | [official] — transport types unchanged |
+| Add MCP servers | https://docs.trae.ai/ide/add-mcp-servers | 2026-07-23 | [official] — config format unchanged |
+| Models / custom models | https://docs.trae.ai/ide/models | 2026-06-13 | [official] ❓ — CN-specific model list not independently re-verified this pass; see [Trae Global README](../trae/README.md) for the confirmed current global built-in list, which now overlaps heavily with the CN list below |
 | Agent guide | https://docs.trae.ai/ide/agent | 2026-06-13 | [official] |
 | Trae v1.3.0 MCP + .rules release notes | https://traeide.com/news/6 | 2026-06-13 | [community] |

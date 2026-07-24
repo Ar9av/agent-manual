@@ -38,7 +38,7 @@ gh extension install github/gh-copilot
 
 ## Hooks
 
-Copilot has a fully-documented official hook system ([docs](https://docs.github.com/en/copilot/reference/hooks-reference)) with **13 events**. Both camelCase (`preToolUse`) and PascalCase (`PreToolUse`) naming are supported; they differ in field naming conventions (see stdin schema below).
+Copilot has a fully-documented official hook system ([docs](https://docs.github.com/en/copilot/reference/hooks-reference)) with **14 events**. Both camelCase (`preToolUse`) and PascalCase (`PreToolUse`) naming are supported; they differ in field naming conventions (see stdin schema below).
 
 ### Hook Events
 
@@ -46,6 +46,7 @@ Copilot has a fully-documented official hook system ([docs](https://docs.github.
 |-------|-----------------|------|-----------|
 | `preToolUse` | `PreToolUse` | Before tool call — can allow, deny, or mutate args | ✅ |
 | `postToolUse` | `PostToolUse` | After tool completes — can modify result or inject context | ❌ |
+| `userPromptTransformed` | — | Fires after the runtime transforms a submitted prompt into its model-facing content — mutation only, camelCase-only | ❌ |
 | `postToolUseFailure` | `PostToolUseFailure` | After tool fails | ❌ |
 | `permissionRequest` | — | Before permission service runs — can approve/deny (CLI only) | ✅ |
 | `agentStop` | `Stop` | When main agent finishes — can force another turn | ✅ |
@@ -257,8 +258,8 @@ Cloud agent sessions run autonomously. Hooks load only from `.github/hooks/*.jso
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
 | Hooks concepts (cloud agent) | https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks | 2026-06-13 | [official] |
-| Hooks reference | https://docs.github.com/en/copilot/reference/hooks-reference | 2026-06-13 | [official] |
-| Use hooks (CLI) | https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks | 2026-06-13 | [official] |
+| Hooks reference | https://docs.github.com/en/copilot/reference/hooks-reference | 2026-07-23 | [official] |
+| Use hooks (CLI) | https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-hooks | 2026-07-23 | [official] |
 | Use hooks (cloud agent) | https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/use-hooks | 2026-06-13 | [official] |
 | Error handling hook (SDK) | https://docs.github.com/en/copilot/how-tos/copilot-sdk/use-hooks/error-handling | 2026-06-13 | [official] |
 | VS Code Copilot overview | https://code.visualstudio.com/docs/copilot/overview | — | [official] |

@@ -10,7 +10,7 @@
 - GitHub (oh-my-pi): https://github.com/can1357/oh-my-pi
 - Pi YAML hooks package: https://pi.dev/packages/pi-yaml-hooks
 - Hook docs (oh-my-pi): https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md
-- Extensions docs: https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/extensions.md
+- Extensions docs: https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md (repo formerly `badlogic/pi-mono`, which now 301-redirects here)
 - Awesome Pi Agent: https://github.com/qualisero/awesome-pi-agent ⚠️ **Archived June 3, 2026 — outdated, read-only**
 
 ---
@@ -187,7 +187,7 @@ Pi does **not** ship subagents as a first-class built-in tool. Per pi.dev: "No s
 
 ## Notes
 
-- `pi-yaml-hooks` (v2026.5.12) is the recommended no-code hook approach; install with `pi install npm:pi-yaml-hooks`.
+- `pi-yaml-hooks` (v2026.7.19) is the recommended no-code hook approach; install with `pi install npm:pi-yaml-hooks`.
 - TypeScript extensions give full access to agent internals.
 - The `bash` tool's `spawn` hook lets you mutate command, cwd, and env before execution.
 - Pi includes browser automation and LSP integration as first-party tools.
@@ -205,10 +205,10 @@ Pi does **not** ship subagents as a first-class built-in tool. Per pi.dev: "No s
 | Topic | Source type | URL | Fetched |
 |-------|-------------|-----|---------|
 | Installation & feature overview | Vendor (pi.dev) | https://pi.dev | 2026-06-13 [official] |
-| pi-yaml-hooks package | Vendor index (pi.dev) | https://pi.dev/packages/pi-yaml-hooks | 2026-06-13 [official] |
+| pi-yaml-hooks package | Vendor index (pi.dev) | https://pi.dev/packages/pi-yaml-hooks | 2026-07-23 [official] (now at v2026.7.19) |
 | pi-yaml-hooks source | Community (KristjanPikhof) | https://github.com/KristjanPikhof/pi-yaml-hooks | 2026-06-13 [github] |
 | Hooks docs (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md | 2026-06-13 [github] |
-| Extensions docs | Vendor (GitHub) | https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/extensions.md | — [github] |
-| GitHub (pi-mono) — primary | Vendor | https://github.com/earendil-works/pi | — [github] |
+| Extensions docs | Vendor (GitHub) | https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md | 2026-07-23 [github] (old `badlogic/pi-mono` path 301s here) |
+| GitHub (pi-mono) — primary | Vendor | https://github.com/earendil-works/pi | 2026-07-23 [github] |
 | GitHub (oh-my-pi) | Community | https://github.com/can1357/oh-my-pi | — [github] |
 | Awesome Pi Agent | Community | https://github.com/qualisero/awesome-pi-agent | 2026-06-13 ⚠️ Archived Jun 3 2026 |

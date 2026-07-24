@@ -6,10 +6,12 @@
 
 ## Links
 
-- Docs: https://developers.openai.com/codex
-- CLI reference: https://developers.openai.com/codex/cli/reference
-- Hooks: https://developers.openai.com/codex/hooks
-- Skills: https://developers.openai.com/codex/skills
+> **Note:** OpenAI moved the Codex docs off `developers.openai.com/codex` to `learn.chatgpt.com/docs` (permanent 308 redirects) as of mid-2026. Old links below still resolve via redirect.
+
+- Docs: https://developers.openai.com/codex (→ https://learn.chatgpt.com/docs)
+- CLI reference: https://developers.openai.com/codex/cli/reference (→ https://learn.chatgpt.com/docs/developer-commands)
+- Hooks: https://developers.openai.com/codex/hooks (→ https://learn.chatgpt.com/docs/hooks)
+- Skills: https://developers.openai.com/codex/skills (→ https://learn.chatgpt.com/docs/build-skills)
 - AGENTS.md guide: https://developers.openai.com/codex/guides/agents-md
 - GitHub: https://github.com/openai/codex
 - Config schema: https://github.com/openai/codex/blob/main/docs/config.md
@@ -198,7 +200,7 @@ MCP servers provide additional tools to the agent at runtime.
 
 ## MCP Support
 
-- Configure MCP servers in `config.toml` under `[mcp]`
+- Configure MCP servers in `config.toml` under `[mcp_servers.<id>]` (one table per server, keyed by a unique id — not a single `[mcp]` table)
 - Servers provide additional tools to the agent
 
 ## Agent Skills
@@ -218,15 +220,15 @@ https://developers.openai.com/codex/github-action
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Hooks reference | https://developers.openai.com/codex/hooks | 2026-06-26 | [official] |
-| CLI reference | https://developers.openai.com/codex/cli/reference | 2026-06-26 | [official] |
+| Hooks reference | https://developers.openai.com/codex/hooks (redirects to https://learn.chatgpt.com/docs/hooks) | 2026-07-23 | [official] |
+| CLI reference | https://developers.openai.com/codex/cli/reference (redirects to https://learn.chatgpt.com/docs/developer-commands) | 2026-07-23 | [official] |
 | CLI features | https://developers.openai.com/codex/cli/features | 2026-06-26 | [official] |
-| Config reference | https://developers.openai.com/codex/config-reference | 2026-06-26 | [official] |
+| Config reference | https://developers.openai.com/codex/config-reference (redirects to https://learn.chatgpt.com/docs/config-file/config-reference) | 2026-07-23 | [official] |
 | Advanced config | https://developers.openai.com/codex/config-advanced | 2026-06-26 | [official] |
-| Config file schema | https://github.com/openai/codex/blob/main/docs/config.md | 2026-06-26 | [github] |
+| Config file schema | https://github.com/openai/codex/blob/main/docs/config.md | 2026-07-23 | [github] |
 | AGENTS.md guide | https://developers.openai.com/codex/guides/agents-md | 2026-06-26 | [official] |
-| Skills | https://developers.openai.com/codex/skills | 2026-06-26 | [official] |
-| GitHub Action | https://developers.openai.com/codex/github-action | 2026-06-26 | [official] |
-| Main docs | https://developers.openai.com/codex | 2026-06-26 | [official] |
-| GitHub repo | https://github.com/openai/codex | 2026-06-26 | [github] |
+| Skills | https://developers.openai.com/codex/skills (redirects to https://learn.chatgpt.com/docs/build-skills) | 2026-07-23 | [official] |
+| GitHub Action | https://developers.openai.com/codex/github-action (redirects to https://learn.chatgpt.com/docs/github-action) | 2026-07-23 | [official] |
+| Main docs | https://developers.openai.com/codex (redirects to https://learn.chatgpt.com/docs) | 2026-07-23 | [official] |
+| GitHub repo | https://github.com/openai/codex | 2026-07-23 | [github] |
 | Issue: hooks not firing for `apply_patch` / MCP (closed; fixed in PR `#18391`) | https://github.com/openai/codex/issues/16732 | 2026-06-26 | [github] |

@@ -42,7 +42,7 @@ On macOS, the app may need to be allowed under System Settings → Privacy & Sec
 
 **Docker (agent server / sandbox):**
 ```sh
-# Configure ~/.openhands/settings.json with LLM settings first, then:
+# Configure ~/.openhands/agent_settings.json with LLM settings first, then:
 docker run -it --rm \
   -e SANDBOX_VOLUMES=$PWD:/workspace:rw \
   -e SANDBOX_USER_ID=$(id -u) \
@@ -58,15 +58,19 @@ openhands --headless -t "Your task here"
 openhands --headless -f task.txt          # load task from a file
 openhands --headless --json -t "Add unit tests" > output.jsonl   # JSONL event stream
 ```
-Headless mode always runs in "always-approve" mode — the agent executes all actions without confirmation prompts; `--llm-approve` is not available in this mode.
+Headless mode always runs in "always-approve" mode — the agent executes all actions without confirmation prompts; `--llm-approve` is not available in this mode. Headless mode also **requires existing saved settings** — running it before any interactive first-run configuration exits immediately with "Headless mode requires existing settings." To bypass interactive setup entirely (e.g. in CI), pass `--override-with-envs` with `LLM_MODEL`, `LLM_API_KEY`, and optionally `LLM_BASE_URL` set as environment variables:
+```sh
+LLM_MODEL=openai/gpt-4o-mini LLM_API_KEY=sk-... openhands --headless --override-with-envs -t "Your task here"
+```
+Verified live on 2026-07-23: this successfully runs a full headless session against the OpenAI API without any prior `openhands` interactive setup.
 
-On first run, the CLI walks you through LLM configuration, saved to `~/.openhands/settings.json`.
+On first run, the CLI walks you through LLM configuration, saved to `~/.openhands/agent_settings.json`.
 
 ## Configuration Files
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `~/.openhands/settings.json` | Global | LLM provider/model settings, saved on first run |
+| `~/.openhands/agent_settings.json` | Global | LLM provider/model settings, saved on first run (confirmed via `openhands_cli/locations.py`'s `AGENT_SETTINGS_PATH`; earlier drafts of this page incorrectly called it `settings.json`) |
 | `~/.openhands/conversations/` | Global | Saved conversation history |
 | `~/.openhands/mcp.json` | Global | MCP server registrations (JSON; TOML format used pre-1.0.0 is no longer supported) |
 | `.openhands/hooks.json` | Project | Lifecycle hook definitions |
@@ -333,5 +337,7 @@ The Software Agent SDK is explicitly "a composable Python library" for building 
 | GitHub LICENSE file | https://raw.githubusercontent.com/OpenHands/OpenHands/main/LICENSE | 2026-07-23 | [official] |
 | GitHub CLI repo README | https://github.com/OpenHands/OpenHands-CLI | 2026-07-23 | [official] |
 | Community skills registry | https://github.com/OpenHands/skills | 2026-07-23 | [official] |
+| `openhands_cli/locations.py` source (real settings filename `agent_settings.json`) | pip package `openhands` v1.21.0, installed via `uv tool install openhands` | 2026-07-23 | [live-verified] |
+| Live headless smoke test on a real box (`ubuntu 24.04`, `uv tool install openhands`, `--override-with-envs` + OpenAI key) | n/a — first-hand verification, not a doc URL | 2026-07-23 | [live-verified] |
 | SecurityAnalyzer discussion (GitHub issue) | https://github.com/OpenHands/OpenHands/issues/10525 | 2026-07-23 | [community] |
 | OpenHands blog: "One Year of OpenHands" (rename/history context) | https://www.openhands.dev/blog/one-year-of-openhands-a-journey-of-open-source-ai-development | 2026-07-23 | [official] |

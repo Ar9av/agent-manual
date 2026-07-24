@@ -25,7 +25,7 @@ npm install -g openclaw@latest
 curl -fsSL https://openclaw.ai/install | bash
 ```
 
-Requires Node 24 (recommended) or Node 22 LTS (22.19+) and an API key from your chosen provider. After install:
+Requires Node 24.15.0+ (recommended default) or Node 22 LTS (22.22.3+); Node 25.9.0+ is also supported. Node 23 is unsupported. Requires an API key from your chosen provider. After install:
 ```sh
 openclaw onboard --install-daemon
 openclaw dashboard
@@ -57,7 +57,8 @@ OpenClaw loads natural-language system instructions and steering prompts from wo
 | `SOUL.md` | Agent persona, tone, and core behavioral boundaries |
 | `IDENTITY.md` | Agent name, ID, role label, and routing metadata |
 | `USER.md` | User preferences and context collected during bootstrap |
-| `TOOLS.md` | Tool usage instructions injected at bootstrap ❓ (confirmed in GitHub repo, not official start/bootstrapping page) |
+| `TOOLS.md` | Tool usage instructions injected at bootstrap (confirmed in official bootstrapping docs) |
+| `HEARTBEAT.md` | Seeded during onboard bootstrap; used for heartbeat/background-cycle context |
 | `BOOTSTRAP.md` | First-run ritual orchestrator; removed after bootstrap completes |
 
 > **BOOT.md is not confirmed in live docs.** It appears in a bundled hook example (`boot-md`) but is not a standard instruction file. Removed from the primary list.
@@ -346,5 +347,6 @@ Agents and custom providers are declared in `openclaw.json` (JSON5). Multi-agent
 | Configuration Reference | https://docs.openclaw.ai/gateway/configuration-reference | 2026-06-26 | [official] |
 | Tools & Custom Providers Config | https://docs.openclaw.ai/gateway/config-tools | 2026-06-26 | [official] |
 | Agent Loop Concepts | https://docs.openclaw.ai/concepts/agent-loop | 2026-06-26 | [official] |
-| Agent Bootstrapping | https://docs.openclaw.ai/start/bootstrapping | 2026-06-26 | [official] |
-| GitHub Repository | https://github.com/openclaw/openclaw | 2026-06-26 | [github] |
+| Agent Bootstrapping | https://docs.openclaw.ai/start/bootstrapping | 2026-07-23 | [official] |
+| Node.js version requirements | https://docs.openclaw.ai/install/node | 2026-07-23 | [official] |
+| GitHub Repository | https://github.com/openclaw/openclaw | 2026-07-23 | [github] |

@@ -45,14 +45,14 @@ kimi
 | `~/.kimi-code/config.toml` | Global | Agent settings, model, hooks (TOML) |
 | `~/.kimi-code/tui.toml` | Global | TUI/UI preferences (TOML) |
 | `~/.kimi-code/mcp.json` | Global | MCP server declarations (JSON) |
-| `.kimi-code/config.toml` | Project | Project-level overrides |
+| `.kimi-code/local.toml` | Project | Project-level overrides (machine-specific, e.g. extra workspace dirs; recommended to `.gitignore`) |
 | `.kimi-code/mcp.json` | Project | Project-local MCP servers |
 
 Config format is TOML. Override the default directory with `KIMI_CODE_HOME`. Use `/reload` inside the CLI to apply config changes without restarting; `/reload-tui` for UI preferences only.
 
-## Hooks (Beta)
+## Hooks
 
-> Hooks are in **Beta** as of May 2026. Schema may change. Fail-open: hook failures do not interrupt workflows.
+> As of 2026-07-23, the official hooks docs no longer carry a Beta/schema-may-change notice. Fail-open: hook failures do not interrupt workflows.
 
 ### Supported Events (16 total)
 
@@ -161,7 +161,7 @@ Kimi Code CLI speaks the [Agent Client Protocol](https://agentclientprotocol.com
 
 ## Notes
 
-- Hooks are Beta as of May 2026.
+- Hooks are no longer marked Beta in the official docs (checked 2026-07-23).
 - Config is TOML; there is no documented JSON auto-migration from a prior format.
 - Uses same skill format as Claude Code.
 - `kimi-cli` repo (MoonshotAI/kimi-cli) is being wound down; canonical repo is MoonshotAI/kimi-code.
@@ -170,10 +170,10 @@ Kimi Code CLI speaks the [Agent Client Protocol](https://agentclientprotocol.com
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Hooks event reference | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/hooks.html | 2026-06-26 | [official] |
-| Config files | https://www.kimi.com/code/docs/en/kimi-code-cli/configuration/config-files.html | 2026-06-26 | [official] |
-| Config files (mirror) | https://moonshotai.github.io/kimi-code/en/configuration/config-files | 2026-06-26 | [official mirror] |
-| Getting started / npm install | https://moonshotai.github.io/kimi-code/en/guides/getting-started | 2026-06-26 | [official mirror] |
+| Hooks event reference | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/hooks.html | 2026-07-23 | [official] |
+| Config files | https://www.kimi.com/code/docs/en/kimi-code-cli/configuration/config-files.html | 2026-07-23 | [official] |
+| Config files (mirror) | https://moonshotai.github.io/kimi-code/en/configuration/config-files | 2026-07-23 | [official mirror] |
+| Getting started / npm install | https://moonshotai.github.io/kimi-code/en/guides/getting-started | 2026-07-23 | [official mirror] |
 | Agents & subagents | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/agents.html | 2026-06-26 | [official] |
 | Skills | https://www.kimi.com/code/docs/en/kimi-code-cli/customization/skills.html | 2026-06-26 | [official] |
 | Kimi Code intro | https://www.kimi.com/resources/kimi-code-introduction | 2026-06-26 | [official] |

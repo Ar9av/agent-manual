@@ -277,8 +277,8 @@ Add `"asyncRewake": true` to run in the background and re-wake Claude if the hoo
 | Pattern | Evaluated as |
 |---------|-------------|
 | `*`, `""`, or omitted | Match all occurrences |
-| Letters/digits/`_`/`\|` only | Exact string or `\|`-separated list |
-| Any other characters | JavaScript regex |
+| Letters/digits/`_`/`-`/spaces/`,`/`\|` only | Exact string, or list of exact strings separated by `\|` or `,` (optional surrounding whitespace) |
+| Any other characters | JavaScript regex (unanchored) |
 
 MCP tool format: `mcp__<server>__<tool>` (e.g. `mcp__memory__create_entities`; all tools from a server: `mcp__memory__.*`).
 
@@ -383,7 +383,7 @@ The **Claude Desktop app and claude.ai web app do NOT read your local `.claude/s
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| Hooks reference | https://code.claude.com/docs/en/hooks | 2026-06-13 | [official] |
-| Overview / installation | https://code.claude.com/docs/en/overview | 2026-06-13 | [official] |
-| Settings reference | https://code.claude.com/docs/en/settings | 2026-06-13 | [official] |
-| Canonical docs redirect | https://docs.anthropic.com/en/docs/claude-code → https://code.claude.com/docs | 2026-06-13 | [official] |
+| Hooks reference | https://code.claude.com/docs/en/hooks | 2026-07-23 | [official] |
+| Overview / installation | https://code.claude.com/docs/en/overview | 2026-07-23 | [official] |
+| Settings reference | https://code.claude.com/docs/en/settings | 2026-07-23 | [official] |
+| Canonical docs redirect | https://docs.anthropic.com/en/docs/claude-code → https://platform.claude.com/docs/en/claude-code → https://code.claude.com/docs | 2026-07-23 | [official] |

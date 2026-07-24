@@ -63,7 +63,7 @@ Files containing `.local.` are auto-excluded from git.
 | `PreToolUse` | Before a tool executes | ✅ (exit 2 or stdout JSON) |
 | `PostToolUse` | After a tool finishes | ❌ (cannot block — post-execution) |
 | `PermissionRequest` | When a permission decision is needed | ✅ |
-| `UserPromptSubmit` | When the user submits a message | ✅ (exit 2 blocks the prompt) |
+| `UserPromptSubmit` | When the user submits a message | ❓ (overview page marks it blockable; the dedicated lifecycle-hooks page documents no blocking behavior for it — unconfirmed) |
 | `Stop` | When the agent wants to stop | ✅ |
 | `SessionStart` | When a session begins | ❌ (cannot block — lifecycle event) |
 | `SessionEnd` | When a session ends | ❌ (cannot block — lifecycle event) |
@@ -116,10 +116,14 @@ When embedded in `.devin/config.json` (project) or `~/.config/devin/config.json`
 ```json
 {
   "hook_event_name": "PreToolUse",
+  "session_id": "abc123",
+  "prompt_id": "p1",
   "tool_name": "exec",
   "tool_input": { "command": "rm -rf /" }
 }
 ```
+
+`session_id` (stable per session) and `prompt_id` (rotates per user prompt) are included on every event as of the July 2026 stable release; earlier docs showed only `hook_event_name`/`tool_name`/`tool_input`.
 
 ### stdout Schema (optional)
 
@@ -127,7 +131,7 @@ When embedded in `.devin/config.json` (project) or `~/.config/devin/config.json`
 { "decision": "block", "reason": "Destructive command blocked by policy" }
 ```
 
-Valid `decision` values: `"approve"`, `"block"`, `"deny"`.
+Valid `decision` values: `"approve"`, `"block"`. (Docs do not document a `"deny"` value — ❓ if one exists.)
 
 ### Exit Code Behavior
 
@@ -216,13 +220,15 @@ Custom subagent profiles in `.devin/agents/` with distinct system prompts, tool 
 - `config.local.json` pattern allows personal overrides without committing credentials.
 - User-level config at `~/.config/devin/` applies across all projects.
 - Background auto-updates on macOS/Linux: new releases download while Devin runs; next invocation picks up the latest version. Homebrew users must upgrade manually via `brew upgrade devin`.
+- A **Plugins system (beta)** shipped 2026-06-16: `devin plugins install|list|info|update|remove` installs skill bundles from GitHub/git/local paths; plugins can require, endorse, or forbid other plugins, with enterprise controls to disable plugins org-wide.
 
 ## Sources
 
 | Topic | URL | Fetched | Label |
 |-------|-----|---------|-------|
-| CLI docs (main) | https://docs.devin.ai/cli | 2026-06-26 | [official] |
-| Hooks overview | https://docs.devin.ai/cli/extensibility/hooks/overview | 2026-06-26 | [official] |
-| Stable changelog | https://docs.devin.ai/cli/changelog/stable | 2026-06-26 | [official] |
-| Unofficial PyPI package (NOT official) | https://pypi.org/project/devin-cli/ | 2026-06-26 | [third-party] |
-| Unofficial PyPI source (NOT official) | https://github.com/revanthpobala/devin-cli | 2026-06-26 | [third-party] |
+| CLI docs (main) | https://docs.devin.ai/cli | 2026-07-23 | [official] |
+| Hooks overview | https://docs.devin.ai/cli/extensibility/hooks/overview | 2026-07-23 | [official] |
+| Lifecycle hooks (event list, stdin fields, PostCompaction) | https://docs.devin.ai/cli/extensibility/hooks/lifecycle-hooks | 2026-07-23 | [official] |
+| Stable changelog | https://docs.devin.ai/cli/changelog/stable | 2026-07-23 | [official] |
+| Unofficial PyPI package (NOT official) | https://pypi.org/project/devin-cli/ | 2026-07-23 | [third-party] |
+| Unofficial PyPI source (NOT official) | https://github.com/revanthpobala/devin-cli | 2026-07-23 | [third-party] |
