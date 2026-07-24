@@ -338,9 +338,32 @@ Agents and custom providers are declared in `openclaw.json` (JSON5). Multi-agent
 
 ## Testing Status
 
-**Not live-tested as of 2026-07-23** (attempted, aborted for safety reasons — see below). As part of a pass that live-verified hooks and subagent behavior for Goose, Crush, Continue CLI, OpenHands, Codex CLI, Aider, OpenCode, and Pi Agent, hooks/subagent testing was attempted for OpenClaw but not completed. Everything in this page's Hooks section still reflects documentation review only, not confirmed live behavior — treat it with the same caution as any other doc-derived (rather than live-verified) content in this catalog.
+**Live-tested 2026-07-23 — hooks and subagents both fully confirmed working**, after an initial `--profile`-based attempt was aborted (see safety finding below) and redone with a fully isolated `$HOME`.
 
-**Real safety-relevant finding from the attempt:** OpenClaw's `--profile <name>` flag is documented as isolating state under `~/.openclaw-<name>/OPENCLAW_STATE_DIR`. On a box with a pre-existing, unrelated OpenClaw install (real Telegram channel config, agent sessions, etc. under `~/.openclaw/`), running `openclaw --profile test-hooks agent --local ...` still triggered a legacy-state "auto-migration" step that reached into and modified a file under the **non-profile, real `~/.openclaw/` directory** (`exec-approvals.json` was renamed to `exec-approvals.json.migrated`) — despite the profile flag supposedly isolating this run. This happened on the very first invocation, before any hooks/subagent testing could begin, and testing was stopped immediately afterward rather than risk further mutation of a real config on a shared box. **Practical takeaway:** don't assume `--profile` fully protects an existing OpenClaw installation's state from side effects — the legacy-state migration path appears to run against the base config directory regardless of `--profile`, at least in v2026.7.1-2. This is based on a single observed instance, not confirmed against source or filed as a reproduced bug report — treat as a caution flag, not a confirmed root cause.
+**Safety finding (still relevant):** OpenClaw's `--profile <name>` flag is documented as isolating state under `~/.openclaw-<name>/`, but on a box with a pre-existing, unrelated OpenClaw install (real Telegram channel config, agent sessions, etc. under `~/.openclaw/`), running `openclaw --profile test-hooks agent --local ...` still triggered a legacy-state "auto-migration" step that reached into and modified a file under the **non-profile, real `~/.openclaw/` directory** (`exec-approvals.json` was renamed to `exec-approvals.json.migrated`). **Don't rely on `--profile` alone to protect an existing installation.** The fix that actually worked: run with a completely separate `$HOME` (e.g. `HOME=/tmp/openclaw-sandbox openclaw ...`) so every `~/...`-based path — not just the ones `--profile` happens to redirect — resolves under a throwaway directory. Verified this fully avoids touching the real `~/.openclaw/` (checked file mtimes before/after: unchanged).
+
+**Getting a working local test agent (undocumented steps, worth recording):**
+1. `openclaw models auth paste-api-key --provider openai` (reads the key from stdin) — plain `OPENAI_API_KEY` env var alone is **not** picked up by `agent --local`, contrary to the `--local` flag's own help text ("requires model provider API keys in your shell"); it actually wants a stored auth profile.
+2. Use a model id from the bundled catalog (`openclaw models list --available`), not just any real provider model name — `gpt-4o-mini` isn't in it; `openai/gpt-5.5` is and worked.
+3. `openclaw agent --local --model openai/gpt-5.5 --message "..." --agent main --json` — the `--agent main` (or any explicit session selector) is required; omitting it errors with "Pass --to / --session-key / --session-id / --agent."
+
+**Hooks — confirmed via a real installed plugin, not just docs.** Scaffolded a plugin with `openclaw plugins init`, then hand-wrote `dist/index.js` using the pattern found in OpenClaw's own bundled extensions (grepped `api.on(` usages in the compiled `dist/*.js` — e.g. `extensions/feishu/subagent-hooks-api.ts`) rather than guessing:
+```js
+import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+export default definePluginEntry({
+  id: "test-hook-plugin", name: "Test Hook Plugin", description: "...",
+  register(api) {
+    api.on("before_tool_call", async (event, ctx) => {
+      if (JSON.stringify(event).includes("forbidden-marker-xyz")) {
+        return { block: true, blockReason: "Blocked by test plugin" };
+      }
+    });
+  }
+});
+```
+Installed with `openclaw plugins install ./test-hook-plugin` (confirmed `enabled` via `openclaw plugins list`, no errors via `openclaw plugins doctor`). Asking the local agent to run a shell command containing the trigger string produced `finalAssistantVisibleText: "Blocked by test plugin: forbidden-marker-xyz present"` — the tool call was genuinely denied, not just logged. **One correction to this page's docs:** the real tool name seen in the `before_tool_call` event for shell execution is **`exec`** (`event.toolName === "exec"`, `event.params.command`) — this page's Tool Hooks table doesn't specify the concrete tool-name values to match against, so use `exec` for shell commands specifically.
+
+**Subagents — confirmed genuinely working.** Prompting the local agent to "spawn a subagent" produced real `sessions_spawn`/`sessions_yield` tool calls, a distinct `childSessionKey` (`agent:main:subagent:<uuid>`) separate from the parent run, and our plugin's `subagent_spawned` hook fired with the child's resolved model/provider — the subagent completed its task (wrote and the parent verified a file) correctly. A non-fatal `GatewayCredentialsRequiredError` warning appeared during subagent-completion delivery/announce (expected in `--local` mode without full gateway auth configured) but did not block the subagent's actual work or the parent's ability to observe the result.
 
 ## Sources
 
