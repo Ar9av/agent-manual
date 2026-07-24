@@ -4,27 +4,35 @@ A unified view of lifecycle hook events across all major agentic tools.
 
 ## Event Matrix
 
-| Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` |
-| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` |
-| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — |
-| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — |
-| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — |
-| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — |
-| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — |
-| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — |
-| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — |
-| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — |
-| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — |
-| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — |
-| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — |
-| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — |
-| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — |
-| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — |
-| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` |
-| **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — |
-| **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — |
+| Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor | Amazon Q Dev CLI | Goose | OpenHands | Continue CLI | Auggie CLI | Qwen Code | Crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` | `preToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` |
+| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` | `postToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | — |
+| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — | `agentSpawn` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | — |
+| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | — |
+| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` | — |
+| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — | — | — | — | — | — | — | — |
+| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — | — | — | — | `PreCompact` | — | `PreCompact` | — |
+| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — | — | — | — | `PostCompact`(❓) | — | `PostCompact` | — |
+| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — | — | — | — | `Notification`(❓) | — | `Notification` | — |
+| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — | — | — | — | `SubagentStart`(❓) | — | `SubagentStart` | — |
+| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — | — | — | — | `SubagentStop`(❓) | — | `SubagentStop` | — |
+| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest`(❓) | — | `PermissionRequest` | — |
+| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` | `stop` | `Stop` | `Stop` | `Stop` | `Stop` | `Stop` | — |
+| **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — | — | — | — | — | — | — | — |
+| **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — | — | — | — | `TeammateIdle`(❓) | — | — | — |
+| **Post Tool Use Failure** | — | — | — | — | — | — | — | — | — | — | — | — | `PostToolUseFailure` | — | `PostToolUseFailure`(❓) | — | `PostToolUseFailure`(❓) | — |
+| **Before Read File** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeReadFile` | — | — | — | — | — |
+| **After File Edit** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterFileEdit` | — | — | — | — | — |
+| **Before Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeShellExecution` | — | — | — | — | — |
+| **After Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterShellExecution` | — | — | — | — | — |
+| **Todo Created/Completed** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `TodoCreated` / `TodoCompleted` | — |
+
+> Amp is excluded from this event-name matrix — it has no declarative hooks table, using a TypeScript Plugin API with lifecycle callbacks (`session.start`, `tool.call`, `tool.result`, `agent.start`, `agent.end`) instead. Warp is excluded — no documented hook/lifecycle-event system was found. Continue CLI's event list is not yet published on its official docs site (three open GitHub issues track the gap); it was reconstructed from CLI source (`[github]`-labeled), so entries marked (❓) are inferred from source rather than confirmed in docs.
 
 ## OpenCode Event Matrix
 
@@ -59,6 +67,15 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | OpenCode | Plugin return value from `tool.execute.before` | `{ block: true }` |
 | GitHub Copilot | stdout JSON in `preToolUse` | `{"permissionDecision": "deny"}` |
 | Google Antigravity | Exit code `2` or `{"decision":"block"}` stdout | `exit 2` or return JSON block |
+| Amazon Q Developer CLI | Exit code `2` in `preToolUse` | `exit 2` + stderr message (no structured JSON decision) |
+| Amp | Plugin API `tool.call` return action | Return `{ action: "reject" }` from TS plugin |
+| Goose | Exit code `2` in `PreToolUse`/`Stop` | `exit 2` (only these two events can block) |
+| OpenHands | Exit code `2` in `PreToolUse`/`UserPromptSubmit`/`Stop` | `exit 2` |
+| Continue CLI | Exit code `2` (multiple events, per source) | `exit 2` |
+| Auggie CLI | Exit code `2` in `PreToolUse`/`Stop` | `exit 2` |
+| Qwen Code | stdout JSON `permissionDecision` in `PreToolUse` | `{"permissionDecision": "deny"}` |
+| Crush | Exit codes `2` (deny) / `49` (halt turn) in `PreToolUse` | `exit 2` or `exit 49` |
+| Warp | ❌ No hook system | N/A (use Agent Profiles/Permissions instead) |
 
 ## Hook Input Format Comparison
 
@@ -75,6 +92,14 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | OpenClaw | TypeScript plugin SDK | in-process event object |
 | Devin CLI | JSON | stdin |
 | Google Antigravity | JSON | stdin |
+| Amazon Q Developer CLI | Plain text/stderr (no structured JSON) | stdin (context) / stderr (block reason) |
+| Amp | TypeScript object | in-process plugin callback |
+| Goose | JSON | stdin |
+| OpenHands | JSON | stdin |
+| Continue CLI | JSON | stdin |
+| Auggie CLI | JSON | stdin |
+| Qwen Code | JSON | stdin |
+| Crush | JSON | stdin |
 
 ## Config File Format Comparison
 
@@ -95,6 +120,15 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Trae | Markdown | `project_rules.md` (no hooks) |
 | OpenCode | JSON + JS | `opencode.json` + plugin files |
 | Google Antigravity | JSON | `hooks.json` |
+| Amazon Q Developer CLI | JSON | Per-agent `cli-agents/*.json` |
+| Amp | TypeScript | `.amp/plugins/*.ts` |
+| Goose | YAML | `config.yaml` (plugin dir for hooks) |
+| OpenHands | JSON | `.openhands/hooks.json` |
+| Continue CLI | JSON | `settings.json` |
+| Auggie CLI | JSON | `settings.json` |
+| Qwen Code | JSON | `settings.json` |
+| Crush | JSON | `crush.json` |
+| Warp | — | ❌ No hooks |
 
 ## Tool Instruction Files
 
@@ -113,6 +147,15 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Kiro | `.kiro/agents/*.yaml` (system prompt) |
 | Aider | `CONVENTIONS.md` |
 | Google Antigravity | `.agents/rules/` and `.agents/workflows/` |
+| Amazon Q Developer CLI | `AmazonQ.md` (also `.amazonq/rules/**/*.md`) |
+| Amp | `AGENTS.md` (also `AGENT.md`, `CLAUDE.md`) |
+| Goose | `.goosehints` |
+| OpenHands | `.openhands/microagents/repo.md` (repo-level microagent) |
+| Continue CLI | `AGENTS.md`(❓ not explicitly confirmed for CLI) |
+| Auggie CLI | `AGENTS.md` / `.augment-guidelines` / `.augment/rules/` |
+| Qwen Code | `QWEN.md` |
+| Warp | `WARP.md` (wins over `AGENTS.md` on conflict) |
+| Crush | `AGENTS.md`(❓) |
 
 ## Sources
 
@@ -129,3 +172,12 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Pi Agent | https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md | 2026-06-26 | [community] |
 | OpenClaw | https://docs.openclaw.ai/automation/hooks | 2026-06-26 | [official] |
 | Google Antigravity | https://antigravity.google/docs/hooks | 2026-06-26 | [official] |
+| Amazon Q Developer CLI | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html | 2026-07-23 | [official] |
+| Amp | https://ampcode.com/manual/plugin-api | 2026-07-23 | [official] |
+| Goose | https://goose-docs.ai/ | 2026-07-23 | [official] |
+| OpenHands | https://docs.openhands.dev/ | 2026-07-23 | [official] |
+| Continue CLI | `extensions/cli/src/hooks/types.ts` (continuedev/continue) | 2026-07-23 | [github] |
+| Auggie CLI | https://docs.augmentcode.com/cli/hooks | 2026-07-23 | [official] |
+| Qwen Code | https://qwenlm.github.io/qwen-code-docs/en/users/overview | 2026-07-23 | [official] |
+| Crush | https://github.com/charmbracelet/crush | 2026-07-23 | [github] |
+| Warp | https://docs.warp.dev/agent-platform/ | 2026-07-23 | [official] |

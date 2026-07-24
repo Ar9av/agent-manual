@@ -23,6 +23,15 @@ Which tools support MCP and how to configure it.
 | Trae CN | ✅ Full (v1.3.0+) | `.trae/mcp.json` | Same as Trae |
 | Google Antigravity | ✅ Full | `~/.gemini/config/mcp_config.json` | Shared with Gemini CLI, remote requires `serverUrl` |
 | Aider | ❌ None | — | Not supported |
+| Amazon Q Developer CLI | ✅ Full | Per-agent `mcpServers`, or legacy `~/.aws/amazonq/mcp.json` | Two config layers; opt-in legacy path via `useLegacyMcpJson` |
+| Amp | ✅ Full | `settings.json` → `amp.mcpServers` | Also `amp mcp add/list/approve` CLI; local + remote |
+| Goose | ✅ Full | `config.yaml` → `extensions:` | Called "extensions"; 70+ available |
+| OpenHands | ✅ Full | `~/.openhands/mcp.json` | FastMCP-standard schema; also `mcp_config` param in SDK |
+| Crush | ✅ Full | `crush.json` → `mcp` | stdio/http/sse; OAuth supported |
+| Continue CLI | ✅ Full | `.continue/mcpServers/*.yaml` or `*.json` | stdio/sse/streamable-http |
+| Auggie CLI | ✅ Full | `settings.json` → `mcpServers`, or `--mcp-config` | Also `--mcp` (acts as MCP server) and `--acp` mode |
+| Qwen Code | ✅ Full | `settings.json` → `mcpServers` | stdio/HTTP/SSE, OAuth support |
+| Warp | ✅ Full | `.warp/.mcp.json` (project) / `~/.warp/.mcp.json` (global) | Also reads Claude Code/Codex-style MCP config for compat |
 
 ## Standard MCP Config Format
 
@@ -111,3 +120,12 @@ In Cursor, use **Settings > Tools & MCP** to see all loaded servers and toggle i
 | Pi Agent | https://github.com/earendil-works/pi | 2026-06-26 | [github] |
 | GitHub Copilot | https://code.visualstudio.com/docs/copilot/overview | 2026-06-26 | [official] |
 | OpenCode | https://opencode.ai/docs/config/ | 2026-06-26 | [official] |
+| Amazon Q Developer CLI | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html | 2026-07-23 | [official] |
+| Amp | https://ampcode.com/manual | 2026-07-23 | [official] |
+| Goose | https://goose-docs.ai/ | 2026-07-23 | [official] |
+| OpenHands | https://docs.openhands.dev/ | 2026-07-23 | [official] |
+| Crush | https://github.com/charmbracelet/crush | 2026-07-23 | [github] |
+| Continue CLI | https://docs.continue.dev/cli/quickstart | 2026-07-23 | [official] |
+| Auggie CLI | https://docs.augmentcode.com/cli/overview | 2026-07-23 | [official] |
+| Qwen Code | https://qwenlm.github.io/qwen-code-docs/en/users/overview | 2026-07-23 | [official] |
+| Warp | https://docs.warp.dev/agent-platform/ | 2026-07-23 | [official] |

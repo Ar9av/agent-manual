@@ -8,7 +8,7 @@
 
 # Agentic Tools Almanac ☤
 
-**The ultimate developer's index for AI coding agents.** A community-driven reference for configuring, extending, and intercepting every major agentic development tool. Easily compare lifecycle hooks (e.g., `PreToolUse` and `PostToolUse`), built-in capabilities, Model Context Protocol (MCP) servers, system instruction file paths, and customized skills across 17+ different developer agents.
+**The ultimate developer's index for AI coding agents.** A community-driven reference for configuring, extending, and intercepting every major agentic development tool. Easily compare lifecycle hooks (e.g., `PreToolUse` and `PostToolUse`), built-in capabilities, Model Context Protocol (MCP) servers, system instruction file paths, and customized skills across 26+ different developer agents.
 
 <table>
 <tr><td><b>Universal Hooks Index</b></td><td>Standardized naming, exit-code blocking rules, and in-depth event execution behaviors for intercepting actions.</td></tr>
@@ -40,8 +40,19 @@
 | [Trae CN](tools/trae-cn/) | ByteDance | Markdown rules | ⚠️ Via MCP only | ✅ | [docs.trae.ai](https://docs.trae.ai) |
 | [Aider](tools/aider/) | Aider-AI | YAML | ❌ Not shipped | ❌ | [aider.chat/docs](https://aider.chat/docs/) |
 | [Google Antigravity](tools/google-antigravity/) | Google | JSON / TOML | ✅ Full (5 events) | ✅ | [antigravity.google](https://antigravity.google) |
+| [Amazon Q Developer CLI](tools/amazon-q-dev-cli/) | AWS | JSON | ✅ Full (5 events) | ✅ | [docs.aws.amazon.com](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line-installing.html) |
+| [Amp](tools/amp/) | Amp (ex-Sourcegraph) | JSON/JSONC | ⚠️ Plugin API (lifecycle events, no declarative hooks table) | ✅ | [ampcode.com/manual](https://ampcode.com/manual) |
+| [Goose](tools/goose/) | Agentic AI Foundation (ex-Block) | YAML | ✅ Full (11 events) | ✅ | [goose-docs.ai](https://goose-docs.ai/) |
+| [OpenHands](tools/openhands/) | All Hands AI | JSON | ✅ Full (6 events) | ✅ | [docs.openhands.dev](https://docs.openhands.dev/) |
+| [Crush](tools/crush/) | Charmbracelet | JSON | ⚠️ Partial (`PreToolUse` only) | ✅ | [github.com/charmbracelet/crush](https://github.com/charmbracelet/crush) |
+| [Continue CLI](tools/continue-cli/) | Continue Dev (acquired by Cursor) | YAML/JSON | ✅ Full (17 events, undocumented officially) | ✅ | [docs.continue.dev](https://docs.continue.dev/cli/quickstart) |
+| [Auggie CLI](tools/auggie/) | Augment Code | JSON | ✅ Full (5 events) | ✅ | [docs.augmentcode.com](https://docs.augmentcode.com/cli/overview) |
+| [Qwen Code](tools/qwen-code/) | Alibaba (QwenLM) | JSON | ✅ Full (16 events) | ✅ | [qwenlm.github.io/qwen-code-docs](https://qwenlm.github.io/qwen-code-docs/en/users/overview) |
+| [Warp (Agent Mode)](tools/warp/) | Warp | JSON/Markdown | ❌ Not shipped (permissions/rules instead) | ✅ | [docs.warp.dev](https://docs.warp.dev/agent-platform/) |
 
 **Legend:** ✅ Full = shipped, documented hook system with blocking · ⚠️ = partial or workaround · ❌ = not available · ❓ = unknown
+
+> **Notes:** Warp is primarily a GUI terminal app with an embedded agent (plus a separate `oz` CLI for headless/cloud use) — included here as a borderline entry, not a pure install-anywhere CLI like the others. Amazon Q Developer CLI is marked unmaintained by AWS as of this writing, with development moved to the closed-source Kiro CLI. Continue was acquired by Cursor/Anysphere in June 2026; its GitHub repo is now read-only. Goose was donated by Block to the Agentic AI Foundation (Linux Foundation) in 2026.
 
 ---
 
