@@ -34,6 +34,23 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Composio | Composio | ComposioHQ | Tool integration platform for AI agents | Python, TypeScript | `pip install composio-core` |
 | Instructor | Instructor | jxnl | Structured LLM output extraction library | Python, TypeScript, Go, Ruby | `pip install instructor` |
 | Marvin | Marvin | PrefectHQ | Ambient AI library for structured outputs and tasks | Python | `pip install marvin` |
+| Strands Agents SDK | Strands Agents | AWS / Amazon | Agent SDK / runtime | Python, TypeScript | `pip install strands-agents strands-agents-tools` |
+| AG2 | AG2 | ag2ai (AutoGen community fork) | Multi-agent framework | Python | `pip install 'ag2[openai]'` |
+| Griptape | Griptape | Griptape AI | Multi-agent / agentic workflow framework | Python | `pip install griptape` |
+| Swarms | Swarms | kyegomez / Swarm Corporation | Multi-agent orchestration framework | Python | `pip3 install -U swarms` |
+| Atomic Agents | Atomic Agents | Eigenwise (formerly BrainBlend-AI) | Lightweight, schema-driven agent framework | Python | `pip install atomic-agents` |
+| uAgents | uAgents | Fetch.ai | Agent SDK / runtime (decentralized agents) | Python | `pip install uagents` |
+| Parlant | Parlant | Emcie | Conversational agent behavior/guardrail framework | Python | `pip install parlant` |
+| Restack | Restack | Restack | Agent workflow orchestration engine (Temporal-based) | Python | `pip install restack_ai` |
+| Inngest AgentKit | AgentKit | Inngest | Agent SDK / multi-agent toolkit | TypeScript | `npm install @inngest/agent-kit inngest` |
+| Relevance AI | Relevance AI | Relevance AI | Low-code AI agent platform | Python (SDK) | `pip install relevanceai` |
+| Dify | Dify | LangGenius | Low-code LLM app/agent platform | Python, TypeScript | `git clone https://github.com/langgenius/dify` + Docker Compose |
+| Botpress | Botpress | Botpress Inc. | Agent SDK / hybrid low-code conversational agent platform | TypeScript | `npm install --save @botpress/sdk` |
+| elizaOS | elizaOS | elizaOS (rebranded from ai16z) | Agentic operating system / multi-agent runtime | TypeScript | `bun add -g elizaos@beta` |
+| LangChain | LangChain | LangChain, Inc. | LLM application / component framework | Python, TypeScript | `pip install langchain` |
+| AutoGPT | AutoGPT Platform | Significant Gravitas | Agent building/deployment platform | Python (core), TypeScript (UI) | `curl -fsSL https://setup.agpt.co/install.sh \| bash` |
+| n8n | n8n | n8n GmbH | Workflow automation platform with AI Agent nodes | TypeScript | `npm install n8n -g` |
+| Herdr | Herdr | herdrdev | Terminal-based agent multiplexer / orchestration platform | Rust | `curl -fsSL https://herdr.dev/install.sh \| sh` |
 
 ## Comparison
 
@@ -65,6 +82,23 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Composio | Tool integration and orchestration platform for AI agents | 1000+ app/tool integrations, MCP server architecture, managed auth, sandboxed workbench, integrates with Claude Code/Cursor/VS Code, tool search and context management | https://docs.composio.dev/ |
 | Instructor | Structured LLM output extraction library | Pydantic model-based schema definition, 15+ provider support, automatic validation and retries, streaming (Iterables/Partial), TypeScript/Go/Ruby ports, 3M+ monthly downloads | https://python.useinstructor.com/ |
 | Marvin | Ambient AI library for structured outputs and task-based workflows | Tasks as fundamental unit, multi-agent assignment, Threads for workflow orchestration, Pydantic AI backend, SQLite message history, cast/classify/extract/generate primitives | https://askmarvin.ai/ |
+| Strands Agents SDK | AWS's model-driven agent SDK | Decorator-based tools (`@tool`), conversation-manager memory (sliding-window/summarizing), multi-agent patterns (Agent-as-Tool, Swarm), native MCP client support, hook-based guardrails, built-in decision tracing, multi-provider (Bedrock, Anthropic, OpenAI, Gemini) | https://strandsagents.com/ |
+| AG2 | AutoGen community fork focused on agent networks | Protocol-driven Network (Hub + typed channels), `@tool`-decorated tools, persistent memory/knowledge stores, human-in-the-loop, structured outputs, telemetry, eval framework, MCP integration | https://ag2.ai/ |
+| Griptape | Modular Python framework for agents, pipelines, and workflows | Agents/pipelines/workflows, conversation/task/meta memory, large Driver ecosystem (LLM/embedding/vector/search), RAG/extraction/eval engines, Rulesets, MCP tool support, observability drivers | https://docs.griptape.ai/ |
+| Swarms | Enterprise-grade multi-agent orchestration framework | 60+ orchestration structures, agents, tool integration, multiple memory implementations, native MCP support, observability/dashboard, interop with LangChain/AutoGen/CrewAI agents | https://github.com/kyegomez/swarms |
+| Atomic Agents | Schema-first, lightweight agent-pipeline framework | Schema-validated agent I/O (Instructor + Pydantic), pluggable memory (`BaseChatHistory`), tool library ("Atomic Forge"), multi-agent chaining via schema alignment, hooks for monitoring/retries, multimodal | https://github.com/Eigenwise/atomic-agents |
+| uAgents | Fetch.ai's SDK for decentralized autonomous agents | Agents register on the Almanac, cryptographically secured agent-to-agent messaging, multi-agent composition, LLM-wrapped agents via ASI:One | https://uagents.fetch.ai/docs |
+| Parlant | Behavioral control framework for conversational agents | Guidelines/Journeys/Relationships for behavioral control, context-aware Tools, Glossary/variables for state, full OpenTelemetry tracing; used in regulated-industry production | https://github.com/emcie-co/parlant |
+| Restack | Durable execution engine for agent workflows | Event-driven workflows on a Temporal-based durable execution core with Kubernetes deploy, agents, tool/integration connectors, MCP support, real-time logs/audit trails | https://docs.restack.io/ |
+| Inngest AgentKit | TypeScript multi-agent toolkit built on Inngest | Single agents through multi-agent "Networks," Router (deterministic/autonomous), shared Network State (memory), Tools, MCP integration, visual debugging via Inngest dev server | https://agentkit.inngest.com/ |
+| Relevance AI | Hosted "AI workforce" agent platform | Visual builder (Invent) plus Python SDK, multi-agent coordination (per-agent memory/tools/scope), MCP support, SOC 2/SSO enterprise controls, 2000+ integrations | https://relevanceai.com/docs/changelog |
+| Dify | Low-code platform combining visual workflows, RAG, and agents | Visual workflow canvas plus RAG and agent capabilities, LLM function-calling/ReAct agents with 50+ prebuilt tools, MCP Registry, workflow-based context/memory, observability integrations (Opik, Langfuse, Arize Phoenix) | https://github.com/langgenius/dify |
+| Botpress | Code-first and visual platform for conversational agents | Code-first ADK/SDK plus a visual Studio for conversational agents, channel/service integrations, hosted Cloud + API | https://botpress.com/docs |
+| elizaOS | Plugin-based agentic operating system | Plugin/app-based multi-agent runtime, personal-assistant memory, document RAG, browser/computer-use tooling, non-custodial crypto wallet support, MCP-related app catalog; rebranded from "ai16z" | https://github.com/elizaOS/eliza |
+| LangChain | Component library for LLM applications | Model I/O, retrieval, vector store, and chat abstractions with 1000+ integrations; official docs position it as complementary to LangGraph (LangChain = components, LangGraph = orchestration) | https://github.com/langchain-ai/langchain |
+| AutoGPT | Agent building and deployment platform | Conversational/visual agent builder, scheduled/triggered/on-demand execution, 45+ integrations, 100+ model support, agent marketplace, dashboard; the older `classic/` autonomous-loop package is retired | https://github.com/Significant-Gravitas/AutoGPT |
+| n8n | Workflow automation platform with a native AI Agent node | LangChain-powered "Tools Agent" node consolidating ReAct/Plan-and-Execute patterns, dedicated memory nodes (Simple/Window Buffer Memory); core identity remains general workflow automation, not a dedicated agent framework | https://docs.n8n.io/ |
+| Herdr | Terminal multiplexer that runs and manages many coding agents from one session | Persistent PTY sessions that survive detach/SSH disconnect, real terminal panes with mouse support/tabs/workspaces, per-agent state tracking (blocked/working/done/idle), pure socket API so agents can spawn panes and coordinate with each other, plugin marketplace, single Rust binary; works with 150+ terminal-based coding agents out of the box | https://herdr.dev/ |
 
 ## Notes By Project
 
@@ -244,6 +278,109 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 - Verified backend: Pydantic AI; verified persistence: SQLite-based message history.
 - Multi-agent assignment is built in; designed to integrate naturally with Prefect workflows.
 
+### Strands Agents SDK
+
+- AWS's official model-driven agent SDK, open-sourced under `strands-agents` on GitHub.
+- Verified features: decorator-based tools, sliding-window and summarizing conversation managers for memory, Agent-as-Tool and Swarm multi-agent patterns, native MCP client support, hook-based guardrails, and built-in decision tracing.
+- Multi-provider by design: works with Amazon Bedrock, Anthropic, OpenAI, and Gemini models.
+
+### AG2
+
+- Community fork of Microsoft's AutoGen, now maintained by the independent `ag2ai` organization under the `ag2.ai` brand — explicitly distinct from Microsoft's `autogen-agentchat` line already tracked above.
+- v1.0 rearchitected the framework around a protocol-driven Network (a Hub plus typed channels) rather than the older group-chat model.
+- Verified features: `@tool`-decorated tools, persistent memory/knowledge stores, human-in-the-loop, structured outputs, telemetry, an eval framework, and MCP integration (including running AG2 itself as an MCP server).
+
+### Griptape
+
+- Griptape AI's modular Python framework for building agents, pipelines, and workflows around a "Driver" abstraction layer.
+- Verified features: conversation/task/meta memory, a large Driver ecosystem (LLM, embedding, vector store, web search), RAG and extraction/eval engines, Rulesets for behavior constraints, MCP tool support (v1.10.0+), and observability drivers.
+- Positions itself as enterprise-oriented, with structured data handling as a first-class concern.
+
+### Swarms
+
+- kyegomez / Swarm Corporation's enterprise-grade multi-agent orchestration framework, one of the older and more actively iterated community agent frameworks.
+- Verified features: 60+ named orchestration structures, tool integration, multiple memory implementations, native MCP support, an observability dashboard, and interoperability with agents built on LangChain, AutoGen, and CrewAI.
+- GitHub's Releases tab looks stale relative to the live commit/PyPI history — treat commit activity, not the Releases tab, as the freshness signal.
+
+### Atomic Agents
+
+- Eigenwise's (formerly BrainBlend-AI) lightweight, schema-first agent framework built on Instructor and Pydantic.
+- Verified features: schema-validated agent input/output, pluggable chat-history memory, a tool library called "Atomic Forge," multi-agent chaining via schema alignment, hooks for monitoring and retries, and multimodal support.
+- Deliberately minimal core, designed to stay auditable rather than accumulate framework magic.
+
+### uAgents
+
+- Fetch.ai's SDK for building autonomous, decentralized agents that register on Fetch.ai's Almanac and communicate over cryptographically secured messaging.
+- Verified features: multi-agent composition and LLM-wrapped agents via ASI:One.
+- No documented built-in memory, guardrail, or MCP layer — it is closer to an agent-to-agent networking/identity SDK than a full agent-application framework.
+
+### Parlant
+
+- Emcie's framework for controlling conversational agent behavior in production, aimed at regulated industries.
+- Core primitives: Guidelines, Journeys, and Relationships for behavioral control, plus context-aware Tools and a Glossary/variables system for state.
+- Verified features: full OpenTelemetry tracing. No documented multi-agent orchestration or MCP support.
+
+### Restack
+
+- Restack's agent workflow orchestration engine, built on Temporal-style durable execution with Kubernetes-based deployment.
+- Verified features: event-driven workflows, agents, tool/integration connectors, MCP support, and real-time logs/audit trails.
+- Positions itself as infrastructure for long-running, fault-tolerant agent workflows rather than a prompting/agent-loop library.
+
+### Inngest AgentKit
+
+- Inngest's TypeScript toolkit for building single agents and multi-agent "Networks" on top of the Inngest event-driven runtime.
+- Verified features: a Router supporting both deterministic and autonomous routing, shared Network State as memory, Tools, MCP integration, and visual debugging via the Inngest dev server.
+- Ships as two packages together: `@inngest/agent-kit` and `inngest`.
+
+### Relevance AI
+
+- Relevance AI's hosted "AI workforce" platform, combining a visual builder (Invent) with a Python SDK.
+- Verified features: multi-agent coordination with per-agent memory/tools/scope, MCP support, SOC 2/SSO enterprise controls, and 2000+ integrations.
+- More of a managed agent platform than an open-source framework — no self-hosted install path documented beyond the SDK client.
+
+### Dify
+
+- LangGenius's low-code platform combining a visual workflow canvas, RAG pipelines, and agent capabilities.
+- Verified features: LLM function-calling/ReAct agents with 50+ prebuilt tools, an MCP Registry, workflow-based context/memory, and observability integrations (Opik, Langfuse, Arize Phoenix).
+- No pip/npm package — self-hosted via `git clone` plus Docker Compose, or used as a hosted cloud product.
+
+### Botpress
+
+- Botpress Inc.'s platform for conversational agents, offering both a code-first Agent Development Kit/SDK and a visual Studio.
+- Verified features: channel/service integrations and a hosted Cloud + API.
+- Memory, multi-agent orchestration, MCP, and guardrail primitives were not explicitly confirmed in the docs checked — treat as conversational-agent-focused rather than a general agent framework.
+
+### elizaOS
+
+- Formerly branded "ai16z," now a fully rebranded "agentic operating system" maintained by the elizaOS organization.
+- Verified features: a plugin/app-based multi-agent runtime, personal-assistant memory, document RAG, browser/computer-use tooling, non-custodial crypto wallet support, and an MCP-related app catalog.
+- Retains roots in the Web3/crypto-agent space but has broadened scope considerably since its ai16z origins.
+
+### LangChain
+
+- LangChain, Inc.'s original component library for building LLM applications — distinct from LangGraph (already tracked above), which handles orchestration.
+- Verified features: model I/O, retrieval, vector store, and chat-model abstractions across 1000+ integrations.
+- Official docs explicitly position LangChain and LangGraph as complementary rather than competing: LangChain supplies components, LangGraph supplies the stateful orchestration layer.
+
+### AutoGPT
+
+- Significant Gravitas's agent building and deployment platform — the actively maintained "AutoGPT Platform," not the original 2023 autonomous-loop experiment.
+- The original `classic/` package (the famous "give it a goal and let it loop" AutoGPT) is explicitly retired by the maintainers as "an experiment that has concluded."
+- Verified features on the current platform: a conversational/visual agent builder, scheduled/triggered/on-demand execution, 45+ integrations, 100+ model support, an agent marketplace, and a dashboard.
+
+### n8n
+
+- n8n GmbH's general-purpose workflow automation platform, included here because it ships an official, LangChain-powered AI Agent node rather than treating agents as an afterthought.
+- Verified features: a "Tools Agent" node consolidating ReAct/Plan-and-Execute-style patterns, and dedicated memory nodes (Simple Memory, Window Buffer Memory).
+- Its core identity remains general workflow automation — list this as an agent-capable automation platform, not a dedicated agent framework.
+
+### Herdr
+
+- herdrdev's terminal-based multiplexer for running many coding agents (Claude Code, Codex, OpenCode, Cursor, Copilot, and 150+ others) from a single terminal, including over SSH.
+- Verified features: persistent sessions that outlive the terminal/laptop closing, real PTY panes with mouse support/tabs/workspaces, per-agent state tracking (blocked/working/done/idle), a mobile-friendly remote UI, and a pure socket API letting agents spawn panes and coordinate with each other.
+- Distinct from the agent frameworks/SDKs above — it doesn't build or run agent logic itself, it's session/process orchestration for existing terminal-based agents. Ships as a single Rust binary; extensible via a community plugin marketplace (GitHub-tagged `herdr-plugin`).
+- No pip/npm package — install via curl script, Homebrew, mise, or direct binary download; Windows support is beta.
+
 ## Sources
 
 | Project | Source | Fetched | Label |
@@ -274,3 +411,20 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Composio | https://docs.composio.dev/ | 2026-06-27 | [official] |
 | Instructor | https://python.useinstructor.com/ | 2026-06-27 | [official] |
 | Marvin | https://askmarvin.ai/ | 2026-06-27 | [official] |
+| Strands Agents SDK | https://strandsagents.com/ | 2026-07-24 | [official] |
+| AG2 | https://github.com/ag2ai/ag2 | 2026-07-24 | [github] |
+| Griptape | https://docs.griptape.ai/ | 2026-07-24 | [official] |
+| Swarms | https://github.com/kyegomez/swarms | 2026-07-24 | [github] |
+| Atomic Agents | https://github.com/Eigenwise/atomic-agents | 2026-07-24 | [github] |
+| uAgents | https://uagents.fetch.ai/docs | 2026-07-24 | [official] |
+| Parlant | https://github.com/emcie-co/parlant | 2026-07-24 | [github] |
+| Restack | https://docs.restack.io/ | 2026-07-24 | [official] |
+| Inngest AgentKit | https://agentkit.inngest.com/ | 2026-07-24 | [official] |
+| Relevance AI | https://relevanceai.com/docs/changelog | 2026-07-24 | [official] |
+| Dify | https://github.com/langgenius/dify | 2026-07-24 | [github] |
+| Botpress | https://botpress.com/docs | 2026-07-24 | [official] |
+| elizaOS | https://github.com/elizaOS/eliza | 2026-07-24 | [github] |
+| LangChain | https://github.com/langchain-ai/langchain | 2026-07-24 | [github] |
+| AutoGPT | https://github.com/Significant-Gravitas/AutoGPT | 2026-07-24 | [github] |
+| n8n | https://docs.n8n.io/ | 2026-07-24 | [official] |
+| Herdr | https://herdr.dev/ | 2026-07-30 | [official] |
