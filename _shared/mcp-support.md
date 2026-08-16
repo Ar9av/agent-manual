@@ -32,6 +32,14 @@ Which tools support MCP and how to configure it.
 | Auggie CLI | ✅ Full | `settings.json` → `mcpServers`, or `--mcp-config` | Also `--mcp` (acts as MCP server) and `--acp` mode |
 | Qwen Code | ✅ Full | `settings.json` → `mcpServers` | stdio/HTTP/SSE, OAuth support |
 | Warp | ✅ Full | `.warp/.mcp.json` (project) / `~/.warp/.mcp.json` (global) | Also reads Claude Code/Codex-style MCP config for compat |
+| Cline | ✅ Full | `~/.cline/mcp.json` (CLI) / `cline_mcp_settings.json` (extension) | |
+| Kilo Code | ✅ Full | `kilo.jsonc` → `mcp` | Servers also installable from Kilo Marketplace |
+| Junie | ✅ Full | `.junie/mcp/mcp.json` (project) / `~/.junie/mcp/mcp.json` (user) | All MCP tools trusted; no per-tool allowlisting yet |
+| Grok Build | ✅ Full | `~/.grok/config.toml` / `.grok/config.toml` → `[mcp_servers.*]` | Compat fallback: `.mcp.json`, `.cursor/mcp.json`, `~/.claude.json` |
+| Muse Code | ✅ Full | `~/.config/muse/settings.json` → `mcp_servers` | Transports: `stdio`, `streamable_http` (no `sse`) |
+| DeepSeek Harness | ✅ Full | `cordis.yml` via `@deepseek-ai/dsh-mcp-client` plugin | One plugin instance = one server; stdio + streamable-http |
+| jcode | ✅ Full | `~/.jcode/mcp.json` (global) / `.jcode/mcp.json` (project) | Accepts both `mcpServers` and legacy `servers` key |
+| QM | ✅ Full (admin-gated) | Admin-registered via REST API, org-wide | Not per-user; auth modes `none`/`bearer`/`client-credentials` |
 
 ## Standard MCP Config Format
 
@@ -129,3 +137,11 @@ In Cursor, use **Settings > Tools & MCP** to see all loaded servers and toggle i
 | Auggie CLI | https://docs.augmentcode.com/cli/overview | 2026-07-23 | [official] |
 | Qwen Code | https://qwenlm.github.io/qwen-code-docs/en/users/overview | 2026-07-23 | [official] |
 | Warp | https://docs.warp.dev/agent-platform/ | 2026-07-23 | [official] |
+| Cline | https://docs.cline.bot | 2026-08-15 | [official] |
+| Kilo Code | https://kilo.ai/docs | 2026-08-15 | [official] |
+| Junie | https://junie.jetbrains.com/docs/ | 2026-08-15 | [official] |
+| Grok Build | https://docs.x.ai/build/overview | 2026-08-15 | [official] |
+| Muse Code | https://dev.meta.ai/docs/muse-code/configuration.md | 2026-08-15 | [official] |
+| DeepSeek Harness | https://github.com/deepseek-ai/deepseek-harness | 2026-08-15 | [github] |
+| jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
+| QM | https://github.com/yc-software/qm | 2026-08-15 | [github] |

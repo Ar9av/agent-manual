@@ -1152,3 +1152,231 @@ Specialized top-level hook keys (alongside event handlers):
 
 ### Skills
 - Location: `~/.config/opencode/skills/*/SKILL.md`
+
+---
+
+## Cline
+
+**Vendor:** Cline Bot Inc. | **Config format:** JSON + Markdown rules | **Instruction file:** `.clinerules` / `.clinerules/*.md` (project), `~/Documents/Cline/Rules/` (global)
+**Sources:** https://docs.cline.bot [official] · https://docs.cline.bot/cline-cli/getting-started [official]
+**Note:** doc-only pass (2026-08-15) — not yet sandbox live-verified.
+
+### Config Files
+| File / Directory | Scope | Purpose |
+|---|---|---|
+| `~/.cline/data/settings/global-settings.json` | Global | General settings |
+| `~/.cline/mcp.json` | Global (CLI) | MCP server config (CLI) |
+| `~/.cline/data/settings/cline_mcp_settings.json` | Global | MCP server config (extension) |
+
+### Hook Events (Unix-only, off by default)
+| Event | When | Can Block |
+|-------|------|-----------|
+| `TaskStart` | New task starts | ✅ (`cancel: true`) |
+| `TaskResume` | Task resumed | ✅ |
+| `TaskCancel` | Task cancelled | ❌ |
+| `TaskComplete` | Task marked complete | ✅ ❓ ("coming soon" per source README) |
+| `UserPromptSubmit` | Prompt submitted | ✅ |
+| `PreToolUse` | Before a tool executes | ✅ (cannot alter already-decided params) |
+| `PostToolUse` | After a tool completes | ❌ (informational) |
+| `PreCompact` | Before context compaction | ❓ ("coming soon") |
+
+Scripts live in `~/Documents/Cline/Hooks/<HookName>` (global) or `.clinerules/hooks/<HookName>` (project), named exactly after the event, executable, with a shebang line.
+
+### Skills
+- Location: `.clinerules/workflows/*.md` (Workflows / slash commands), `SKILL.md`-based Skills — see `tools/cline/README.md` for full detail.
+
+---
+
+## Kilo Code
+
+**Vendor:** Kilo-Org | **Config format:** JSONC | **Instruction file:** `AGENTS.md` (plus `.claude/`/`.agents/` compat dirs)
+**Sources:** https://kilo.ai/docs [official] · https://kilo.ai/docs/code-with-ai/platforms/cli [official]
+**Note:** doc-only pass, re-verified 2026-08-15 — not yet sandbox live-verified. Config merge precedence (remote well-known → global → `KILO_CONFIG` env → project → `.kilo/` → `KILO_CONFIG_CONTENT` → managed/MDM, deep-merged) now confirmed.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.config/kilo/kilo.json[c]` | Global | Settings, providers, MCP servers, agents |
+| `./kilo.json[c]` or `./.kilo/` | Project | Overrides, takes precedence over global |
+| `.kilo/agents/*.md` (project) / `~/.config/kilo/agents/` (global) | Project / Global | Markdown+YAML custom agent/mode definitions |
+
+### Hooks — no exit-code contract; TypeScript Plugin API instead
+| Hook / Event | When | Can Block |
+|---|---|---|
+| `event` | Fires for every internal bus event (session/message/tool/permission/file/LSP) | ❌ (observational) |
+| `tool.execute.before` / `.after` | Intercept tool execution | ✅ (before) |
+| `chat.message` / `.params` / `.headers` | Inspect/mutate outgoing chat request | ❌ (no block mechanism documented) |
+| `permission.ask` | Custom permission decision | ✅ |
+| `command.execute.before` | Before a **slash command** executes (not shell/bash) | ❌ (no block mechanism documented) |
+
+### Skills
+- Location: `~/.kilo/skills/<name>/`, `.kilo/skills/<name>/` (path forms documented inconsistently)
+
+---
+
+## Junie
+
+**Vendor:** JetBrains s.r.o. | **Config format:** JSON | **Instruction file:** `.junie/AGENTS.md` (preferred), `.junie/guidelines.md` (legacy)
+**Sources:** https://junie.jetbrains.com/docs/ [official] · https://junie.jetbrains.com/docs/junie-cli.html [official]
+**Note:** doc-only pass, re-verified 2026-08-15 — not yet sandbox live-verified. Hooks are **confirmed CLI-only** (official docs state ACP and server hosts do not yet invoke any hooks; the IDE plugin docs never mention a hook system).
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.junie/config.json` | Global | Default model/provider, flags, hook definitions |
+| `.junie/config.json` | Project | Team-shared config; trusted projects only |
+| `~/.junie/allowlist.json` | Global | Action Allowlist — commands that skip permission prompts |
+| `.junie/mcp/mcp.json` / `~/.junie/mcp/mcp.json` | Project / Global | MCP server config |
+
+### Hook Events
+| Event | When | Can Block | Hosts |
+|-------|------|-----------|-------|
+| `SessionStart` | Session begins | ❌ | TUI, Batch |
+| `UserPromptSubmit` | Prompt submitted | ✅ | TUI only |
+| `PreToolUse` | Before a tool executes | ✅ | TUI, Batch |
+| `PermissionRequest` | Permission dialog shown | ✅ | TUI, Batch |
+| `Stop` | Before task submission finalized | ✅ (`blockOnError`) | TUI, Batch |
+| `StopFailure` | LLM/API call fails | ❌ | TUI, Batch |
+| `SessionEnd` | Session terminates | ❌ | TUI, Batch |
+
+Project-local hook config is **ignored by default** for security — hooks must come from user-scope/global config.
+
+---
+
+## Grok Build
+
+**Vendor:** xAI | **Config format:** TOML | **Instruction file:** `AGENTS.md` (Claude Code `CLAUDE.md` compat ❓ scope unconfirmed)
+**Sources:** https://docs.x.ai/build/overview [official] · https://github.com/xai-org/grok-build [github]
+**Note:** doc-only pass (2026-08-15) — not yet sandbox live-verified.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.grok/config.toml` | Global | Model/API config, MCP servers, UI prefs, skills/plugins paths |
+| `.grok/config.toml` | Project | Limited to MCP servers, plugins, permission rules |
+| `~/.grok/managed_config.toml` | Enterprise | Admin-served defaults |
+| `~/.grok/requirements.toml` | Policy | Highest-precedence policy pins |
+
+### Hook Events
+| Event | When | Can Block |
+|-------|------|-----------|
+| `SessionStart` / `SessionEnd` | Session lifecycle | ❌ |
+| `UserPromptSubmit` | Prompt submitted | ❌ |
+| `PreToolUse` | Tool about to run | ✅ (exit 2 denies) |
+| `PostToolUse` / `PostToolUseFailure` | Tool call completes/fails | ❌ |
+| `PermissionDenied` | Permission system denies a tool call | ❌ |
+| `Stop` / `StopFailure` | Turn ends (normal/API error) | ❌ |
+| `Notification` | Agent sends a notification | ❌ |
+| `SubagentStart` / `SubagentStop` | Subagent lifecycle | ❌ |
+| `PreCompact` / `PostCompact` | Context compaction | ❌ |
+
+Managed via `/hooks` in the TUI; discovered from `~/.grok/hooks/`, project `.grok/hooks/`, and enabled plugins.
+
+---
+
+## Muse Code
+
+**Vendor:** Meta (Meta Superintelligence Labs) | **Config format:** JSON | **Instruction file:** `AGENTS.md` (preferred), `CLAUDE.md` (fallback)
+**Sources:** https://developer.meta.com/ai/products/muse-code/ [official] · https://dev.meta.ai/docs/muse-code [official, partially unreachable]
+**Note:** doc-only pass, re-verified 2026-08-15 — not yet sandbox live-verified. Hooks/MCP reference sub-pages are reachable via a `.md` URL suffix (e.g. `/docs/muse-code/extending.md`); all specifics below are now confirmed.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.config/muse/settings.json` | Global | Model defaults, terminal UI prefs, tool/MCP config (`mcp_servers` block), `hooks` block; requires `"schema_version": 1` |
+| `.muse/hooks.json` | Project | Project-scoped hook definitions |
+| `.agents/memory/MEMORY.md` + topic files | Project | Persistent project memory system |
+
+### Hook Events (12 confirmed)
+| Event | Notes |
+|-------|-------|
+| `SessionStart` | |
+| `UserPromptSubmit` | |
+| `PreToolUse` | |
+| `PermissionRequest` | |
+| `PostToolUse` | |
+| `PreLLMCall` | |
+| `PostLLMCall` | |
+| `PreCompact` | |
+| `PostCompact` | |
+| `SubagentStart` | |
+| `SubagentStop` | |
+| `Stop` | |
+
+JSON fixture shape: `{"event": ..., "stdin": {}}`. Loaded from `.muse/hooks.json` (project), `settings.json` → `hooks` block (user), or a `managed_hooks_path`-pointed file. `muse exec` exit codes: `0`/`1`/`2`/`130`/`143`.
+
+### MCP
+Config in `~/.config/muse/settings.json` → `mcp_servers` block. Transports: `stdio`, `streamable_http` (no `sse`). Fields: `enabled`, `mode` (default `required`), `framing`.
+
+### Skills
+- Location: built-in, `$XDG_CONFIG_HOME/muse/skills` / `~/.agents/skills` (user), `<repo>/.agents/skills/<id>/SKILL.md` (project); also scans `.codex/skills`/`.claude/skills` for interop.
+
+---
+
+## DeepSeek Harness
+
+**Vendor:** DeepSeek | **Config format:** YAML (Cordis profile → bundle → patch) | **Instruction file:** ❓ not confirmed
+**Sources:** https://deepseek.com/harness/en/ [official] · https://github.com/deepseek-ai/deepseek-harness [github]
+**Note:** doc-only pass (2026-08-15) — v0.1 developer preview released 2026-08-13, only 2 days before this write-up; not sandbox live-verified.
+
+### Config Files
+DeepSeek Harness composes config via a layered Cordis **profile → bundle → patch** model rather than a single settings file (`package.json` `dsh` field points at profile/bundle; `<profile>/cordis.patch.yml` layers user patches).
+
+### Hooks — native Cordis typed plugin-event system, not shell-script hooks
+Bridge plugins translate other tools' hook formats onto Cordis interception points:
+| Bridge | Source format | Coverage |
+|--------|---------------|----------|
+| `@deepseek-ai/dsh-hooks-claude-code` | Claude Code `hooks.json` | 7 of ~30 Claude Code events (`SessionStart`, `UserPromptSubmit`, `PreToolUse`, ...) |
+| `@deepseek-ai/dsh-hooks-codex` | Codex-style hooks | ❓ event-mapping unconfirmed |
+
+### MCP
+Via `@deepseek-ai/dsh-mcp-client` plugin (one plugin instance = one MCP server, mounted in `cordis.yml`). Transports: `stdio`, `streamable-http`.
+
+---
+
+## jcode
+
+**Vendor:** Solo Systems (YC-backed) | **Config format:** TOML | **Instruction file:** ❓ not confirmed
+**Sources:** https://jcode.sh [official] · https://jcode.sh/docs [official, several stub subpages] · https://github.com/1jehuang/jcode [github]
+**Note:** doc-only pass (2026-08-15) — not yet sandbox live-verified.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.jcode/config.toml` | Global | Providers, display, hooks, terminal spawn, safety rules |
+| `~/.jcode/mcp.json` / `.jcode/mcp.json` | Global / Project | MCP server definitions |
+
+### Hook Events (`docs/HOOKS.md`)
+| Event | When | Can Block | Type |
+|-------|------|-----------|------|
+| `session_start` | Session becomes active | ❌ | Observer (fire-and-forget) |
+| `session_end` | Session closes normally | ❌ | Observer |
+| `turn_end` | Agent turn completes | ❌ | Observer |
+| `post_tool` | After every tool call | ❌ | Observer |
+| `pre_tool` | Before every tool call | ✅ (exit 2 blocks) | Gate (synchronous) |
+
+Hooks run external commands directly (not through a shell), communicating via env vars + JSON payload. A separate **spawn hook** (`[terminal] spawn_hook`) controls headed-window placement only — it does not gate agent behavior.
+
+---
+
+## QM (Quartermaster)
+
+**Vendor:** Y Combinator (yc-software) | **Config format:** JSONC + env | **Instruction file:** ❓ not confirmed for deployed agents (repo's own `AGENTS.md`/`CLAUDE.md` is contributor-facing only)
+**Sources:** https://github.com/yc-software/qm [github] · https://qm.ycombinator.com [official]
+**Note:** doc-only pass (2026-08-15) — not yet sandbox live-verified. Self-hosted service, not a local CLI.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `qm.config.jsonc` | Deployment | Main deployment configuration |
+| `.env` | Deployment | Secrets/runtime settings (`HARNESS`, `HARNESS_SECURITY_POSTURE`, `ORG_ID`, Slack tokens, etc.) |
+| `deploy/layers/<org>/` | Org | Org customization layer, isolated from upstream |
+
+### Hooks — none shipped; security postures instead
+No `PreToolUse`/`PostToolUse`-style event API. Interception is via:
+- **Security postures** (`HARNESS_SECURITY_POSTURE`): `strict` (human approval required), `auto` (default — screens external content), `dangerous` (no screening)
+- **Command policy**: per-sandbox-tool `approvals` field in `sandbox/tools/<id>/tool.json`
+- **Approval is human-only by design** — kept out of the agent's self-API to block prompt-injection self-approval
+
+### MCP
+First-class MCP client support, **admin-registered org-wide** (not per-user). Auth modes: `none`, `bearer`, `client-credentials`.

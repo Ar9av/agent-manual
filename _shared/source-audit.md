@@ -85,6 +85,33 @@ These remain intentionally marked rather than guessed:
 | `_shared/activity-agent-matrix.md` not yet extended to the 9 tools added 2026-07-23 | N/A | Adding accurate per-activity columns (file ops, shell, browser, etc.) for Amazon Q Dev CLI, Amp, Goose, OpenHands, Crush, Continue CLI, Auggie, Qwen Code, Warp requires deeper per-tool verification than the initial pass did; each new tool's own README already documents its built-in tools |
 | `_shared/agent-tools-hooks-config.md` not yet extended to the 9 tools added 2026-07-23 | N/A | Same reason — the unified per-tool spec table is large (1150+ lines) and wasn't backfilled in this pass; each tool's own `tools/<name>/README.md` is the authoritative source in the meantime |
 
+## 2026-08-15 Addendum: 8 new tools + 1 framework, doc-only pass
+
+Added `tools/cline/`, `tools/kilo-code/`, `tools/junie/`, `tools/grok-build/`, `tools/muse-code/`, `tools/deepseek-harness/`, `tools/jcode/`, `tools/qm/`, plus a `Microsoft Agent Framework` section in `frameworks/README.md`. This was an explicit **doc-only pass** at the user's direction — none of these 9 entries have been sandbox live-verified (no real install, no isolated `$HOME` test run, no `## Testing Status` section), unlike `tools/claude-code/` or `tools/openclaw/`. Master `README.md` (Tools Covered table, Frameworks & SDKs table, Hook Event Cross-Reference) and `_shared/agent-tools-hooks-config.md`, `_shared/hook-event-comparison.md`, `_shared/mcp-support.md`, `_shared/config-file-locations.md` were all updated with rows/columns for the 8 new tools.
+
+| Page | Status | Notes |
+|---|---|---|
+| `tools/muse-code/README.md` | `mixed` | Beta product (2026-08-05); dedicated hooks/MCP reference sub-pages 404'd on automated fetch — most technical specifics marked ❓, launch/pricing facts cite `[press]` (VentureBeat/TechCrunch/CNBC) |
+| `tools/deepseek-harness/README.md` | `mixed` | v0.1 developer preview, only 2 days old at write-up; official docs are thin, many fields ❓ |
+| `tools/jcode/README.md` | `github` | No dedicated docs site beyond `jcode.sh/docs`, several subpages are stubs; solo-founder/YC-backed project |
+| `tools/qm/README.md` | `github` | Verified as `yc-software/qm` ("Quartermaster") via GitHub repo + `qm.ycombinator.com`; self-hosted service, not a CLI |
+| `tools/grok-build/README.md` | `official` + `github` | Source-available (no external PRs), Apache-2.0; exact built-in tool names not enumerated officially |
+| `tools/cline/README.md`, `tools/kilo-code/README.md`, `tools/junie/README.md` | `official` | Cleaner official-doc coverage than the others in this batch |
+| `frameworks/README.md#microsoft-agent-framework` | `official` | GA date now confirmed via primary source (Harness devblog post, 2026-07-22) — resolved in the 2026-08-15 re-verification pass below |
+
+**Not extended in this pass:** `_shared/activity-agent-matrix.md` (same reason as the 2026-07-23 addendum below — per-activity columns need deeper per-tool verification than a doc-only pass provides; each new tool's own README documents its built-in tools in the meantime).
+
+## 2026-08-15 Re-verification pass: all 8 new tools + Microsoft Agent Framework re-checked
+
+At the user's request, every entry added in the addendum above was re-verified: every Sources URL re-fetched, every high-value claim spot-checked against fresh official sources, and corrections applied in place. Findings:
+
+- **Muse Code** — the hooks/MCP documentation sub-pages that 404'd in the initial pass are reachable via a `.md` URL suffix (e.g. `.../extending.md`). All 12 hook events and full MCP config are now confirmed (`✅ Full` in both, up from `❓ Documented, unconfirmed`). Propagated to `README.md`, `_shared/agent-tools-hooks-config.md`, `_shared/mcp-support.md`, `_shared/config-file-locations.md`, and both hook-event cross-reference matrices.
+- **Junie** — hooks confirmed CLI-only (official docs: "ACP and server hosts do not yet invoke any hooks"). MCP config path corrected from `~/.junie/config.json` → `mcpServers` to the actual `.junie/mcp/mcp.json` (project) / `~/.junie/mcp/mcp.json` (user).
+- **Kilo Code** — `command.execute.before` hook corrected: it fires on **slash commands**, not shell/bash commands, and (like `chat.message`/`.params`/`.headers`) has no documented block mechanism — both were previously marked ✅ can-block in error.
+- **Microsoft Agent Framework** — both previously-flagged ❓s resolved with primary Microsoft sources: Harness GA = 2026-07-22, orchestration patterns (sequential/concurrent/handoff/group/Magentic) reached 1.0 on 2026-07-08.
+- **Cline, Grok Build, DeepSeek Harness, jcode, QM** — sources all still valid; corrections were additive/clarifying only (e.g. Cline's `-y` CLI flag renamed to `--auto-approve`, Grok Build's hook `type` field confirmed to support `http` in addition to `command`) — no vendor/license/config-format/hook-count/MCP-path changes, so nothing further propagated to shared tables for these five.
+- One dead link found and flagged (not removed, content corroborated elsewhere): `junie.jetbrains.com/docs/junie-plugin-settings.html` (404).
+
 ## Audit Outcome
 
 - Every tool page now has a visible sources section.

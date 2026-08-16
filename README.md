@@ -49,10 +49,18 @@
 | [Auggie CLI](tools/auggie/) | Augment Code | JSON | ✅ Full (5 events) | ✅ | [docs.augmentcode.com](https://docs.augmentcode.com/cli/overview) |
 | [Qwen Code](tools/qwen-code/) | Alibaba (QwenLM) | JSON | ✅ Full (16 events) | ✅ | [qwenlm.github.io/qwen-code-docs](https://qwenlm.github.io/qwen-code-docs/en/users/overview) |
 | [Warp (Agent Mode)](tools/warp/) | Warp | JSON/Markdown | ❌ Not shipped (permissions/rules instead) | ✅ | [docs.warp.dev](https://docs.warp.dev/agent-platform/) |
+| [Cline](tools/cline/) | Cline Bot Inc. | JSON + Markdown rules | ✅ Full (8 events, Unix-only) | ✅ | [docs.cline.bot](https://docs.cline.bot) |
+| [Kilo Code](tools/kilo-code/) | Kilo-Org | JSONC | ⚠️ Via Plugin API (no exit-code hook contract) | ✅ | [kilo.ai/docs](https://kilo.ai/docs) |
+| [Junie](tools/junie/) | JetBrains s.r.o. | JSON | ✅ Full (7 events, CLI-only, confirmed) | ✅ | [junie.jetbrains.com/docs](https://junie.jetbrains.com/docs/) |
+| [Grok Build](tools/grok-build/) | xAI | TOML | ✅ Full (14 events) | ✅ | [docs.x.ai/build](https://docs.x.ai/build/overview) |
+| [Muse Code](tools/muse-code/) | Meta (Meta Superintelligence Labs) | JSON | ✅ Full (12 events) | ✅ | [dev.meta.ai/docs/muse-code](https://dev.meta.ai/docs/muse-code) |
+| [DeepSeek Harness](tools/deepseek-harness/) | DeepSeek | YAML (Cordis patches) | ⚠️ Via bridge plugin only (7 of ~30 Claude Code events) | ✅ | [deepseek.com/harness](https://deepseek.com/harness/en/) |
+| [jcode](tools/jcode/) | Solo Systems | TOML | ✅ Full (5 events, 1 blocking) | ✅ | [jcode.sh/docs](https://jcode.sh/docs) |
+| [QM](tools/qm/) | Y Combinator (yc-software) | JSONC + env (self-hosted) | ❌ Not shipped (security postures instead) | ✅ (admin-gated) | [qm.ycombinator.com](https://qm.ycombinator.com) |
 
 **Legend:** ✅ Full = shipped, documented hook system with blocking · ⚠️ = partial or workaround · ❌ = not available · ❓ = unknown
 
-> **Notes:** Warp is primarily a GUI terminal app with an embedded agent (plus a separate `oz` CLI for headless/cloud use) — included here as a borderline entry, not a pure install-anywhere CLI like the others. Amazon Q Developer CLI is marked unmaintained by AWS as of this writing, with development moved to the closed-source Kiro CLI. Continue was acquired by Cursor/Anysphere in June 2026; its GitHub repo is now read-only. Goose was donated by Block to the Agentic AI Foundation (Linux Foundation) in 2026.
+> **Notes:** Warp is primarily a GUI terminal app with an embedded agent (plus a separate `oz` CLI for headless/cloud use) — included here as a borderline entry, not a pure install-anywhere CLI like the others. Amazon Q Developer CLI is marked unmaintained by AWS as of this writing, with development moved to the closed-source Kiro CLI. Continue was acquired by Cursor/Anysphere in June 2026; its GitHub repo is now read-only. Goose was donated by Block to the Agentic AI Foundation (Linux Foundation) in 2026. Cline, Kilo Code, Junie, Grok Build, Muse Code, DeepSeek Harness, jcode, and QM were added 2026-08-15 as a **doc-only pass** (sourced from official docs/GitHub, not yet sandbox live-verified like the earlier entries) — several are brand-new (DeepSeek Harness shipped 2 days prior as a v0.1 preview) so expect more ❓s than the older pages; see `_shared/source-audit.md`.
 
 ---
 
@@ -84,6 +92,7 @@ These are tracked separately from the coding-agent matrices because they are dev
 | [Pydantic AI](frameworks/README.md#pydantic-ai) | Pydantic | Python agent framework with typed outputs | https://pydantic.dev/docs/ai/overview/ |
 | [Claude Code Agent SDK](frameworks/README.md#claude-code-agent-sdk) | Anthropic | Official product name for the requested "Anthropic Agent SDK" | https://code.claude.com/docs/en/agent-sdk/overview |
 | [Google ADK](frameworks/README.md#adk) | Google | Agent Development Kit | https://adk.dev/ |
+| [Microsoft Agent Framework](frameworks/README.md#microsoft-agent-framework) | Microsoft | Direct successor to Semantic Kernel + AutoGen; Harness reached GA 2026-07-22, orchestration patterns reached 1.0 on 2026-07-08 | https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview |
 
 ---
 
@@ -114,20 +123,20 @@ These are tracked separately from the coding-agent matrices because they are dev
 
 How the same lifecycle moment is named across tools:
 
-| Lifecycle moment | Claude Code | Codex | Gemini CLI | GitHub Copilot | Kimi Code | Factory Droid | Cursor | Devin CLI | Pi Agent |
-|---|---|---|---|---|---|---|---|---|---|
-| Before any tool | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `preToolUse` | `PreToolUse` | `tool.before.*` |
-| After any tool | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `postToolUse` | `PostToolUse` | `tool.after.*` |
-| After tool fails | `PostToolUseFailure` | — | — | `postToolUseFailure` | `PostToolUseFailure` | — | `postToolUseFailure` | — | — |
-| Prompt submitted | `UserPromptSubmit` | `UserPromptSubmit` | `BeforeAgent` | `userPromptSubmitted` | `UserPromptSubmit` | `UserPromptSubmit` | `beforeSubmitPrompt` | `UserPromptSubmit` | — |
-| Agent turn ends | `Stop` | `Stop` | `AfterAgent` | `agentStop` | `Stop` | `Stop` | `stop` | `Stop` | — |
-| Subagent starts | `SubagentStart` | `SubagentStart` | — | `subagentStart` | `SubagentStart` | — | `subagentStart` | — | — |
-| Session starts | `SessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `session.created` |
-| Session ends | `SessionEnd` | — | `SessionEnd` | `sessionEnd` | — | `SessionEnd` | `sessionEnd` | — | — |
-| Context compacted | `PreCompact` | `PreCompact` | `PreCompress` | `preCompact` | `PreCompact` | `PreCompact` | `preCompact` | — | — |
-| Permission request | `PermissionRequest` | `PermissionRequest` | — | `permissionRequest` | — | — | — | `PermissionRequest` | — |
-| LLM call | — | — | `BeforeModel` / `AfterModel` | — | — | — | — | — | — |
-| Notification | `Notification` | — | `Notification` | `notification` | — | `Notification` | — | — | — |
+| Lifecycle moment | Claude Code | Codex | Gemini CLI | GitHub Copilot | Kimi Code | Factory Droid | Cursor | Devin CLI | Pi Agent | Cline | Junie | Grok Build | jcode | Muse Code |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Before any tool | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `preToolUse` | `PreToolUse` | `tool.before.*` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool` | `PreToolUse` |
+| After any tool | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `postToolUse` | `PostToolUse` | `tool.after.*` | `PostToolUse` | — | `PostToolUse` | `post_tool` | `PostToolUse` |
+| After tool fails | `PostToolUseFailure` | — | — | `postToolUseFailure` | `PostToolUseFailure` | — | `postToolUseFailure` | — | — | — | — | `PostToolUseFailure` | — | — |
+| Prompt submitted | `UserPromptSubmit` | `UserPromptSubmit` | `BeforeAgent` | `userPromptSubmitted` | `UserPromptSubmit` | `UserPromptSubmit` | `beforeSubmitPrompt` | `UserPromptSubmit` | — | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` |
+| Agent turn ends | `Stop` | `Stop` | `AfterAgent` | `agentStop` | `Stop` | `Stop` | `stop` | `Stop` | — | — | `Stop` | `Stop` | `turn_end` | `Stop` |
+| Subagent starts | `SubagentStart` | `SubagentStart` | — | `subagentStart` | `SubagentStart` | — | `subagentStart` | — | — | — | — | `SubagentStart` | — | `SubagentStart` |
+| Session starts | `SessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `SessionStart` | `sessionStart` | `SessionStart` | `session.created` | — | `SessionStart` | `SessionStart` | `session_start` | `SessionStart` |
+| Session ends | `SessionEnd` | — | `SessionEnd` | `sessionEnd` | — | `SessionEnd` | `sessionEnd` | — | — | — | `SessionEnd` | `SessionEnd` | `session_end` | — |
+| Context compacted | `PreCompact` | `PreCompact` | `PreCompress` | `preCompact` | `PreCompact` | `PreCompact` | `preCompact` | — | — | `PreCompact` ❓ | — | `PreCompact` | — | `PreCompact` |
+| Permission request | `PermissionRequest` | `PermissionRequest` | — | `permissionRequest` | — | — | — | `PermissionRequest` | — | — | `PermissionRequest` | `PermissionDenied` | — | `PermissionRequest` |
+| LLM call | — | — | `BeforeModel` / `AfterModel` | — | — | — | — | — | — | — | — | — | — | `PreLLMCall` / `PostLLMCall` |
+| Notification | `Notification` | — | `Notification` | `notification` | — | `Notification` | — | — | — | — | — | `Notification` | — | — |
 
 ---
 

@@ -19,6 +19,7 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Vercel AI SDK | Vercel AI SDK | Vercel | AI app SDK | TypeScript | `npm install ai` |
 | LlamaIndex | LlamaIndex | LlamaIndex | Data / agent framework | Python, TypeScript | `pip install llama-index` |
 | Semantic Kernel | Semantic Kernel | Microsoft | Agent SDK / app framework | C# (.NET), Python, Java | `pip install semantic-kernel` / NuGet / Maven |
+| Microsoft Agent Framework | Microsoft Agent Framework | Microsoft | Agent framework / runtime (successor to Semantic Kernel + AutoGen) | Python, .NET (C#), Go (public preview) | `pip install agent-framework` / `dotnet add package Microsoft.Agents.AI` |
 | smolagents | smolagents | Hugging Face | Lightweight agent framework | Python | `pip install 'smolagents[toolkit]'` |
 | Agno | Agno | Agno AGI (formerly Phidata) | Agent platform SDK | Python | `pip install agno` |
 | Haystack | Haystack | deepset | AI pipeline framework | Python | `pip install haystack-ai` |
@@ -67,6 +68,7 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | Vercel AI SDK | TypeScript SDK for building AI-powered web and server applications | Streaming text and structured output, multi-step agents, tool use, built-in providers (100+ models via OpenAI, Anthropic, Google, etc.), React hooks, built-in fallbacks | https://ai-sdk.dev/ |
 | LlamaIndex | Framework for building LLM applications over custom data | Data loaders/connectors, vector stores, query engines, agents, workflows, RAG pipelines, multi-modal support, TypeScript counterpart LlamaIndex.TS | https://developers.llamaindex.ai/python/framework/ |
 | Semantic Kernel | Enterprise-grade SDK for integrating AI models into applications | Agents, plugins, planners, memory/vector stores, function calling, process framework, multi-agent orchestration, .NET/Python/Java support | https://learn.microsoft.com/en-us/semantic-kernel/overview/ |
+| Microsoft Agent Framework | Open, multi-language framework for building/orchestrating/deploying AI agents and multi-agent workflows; direct successor to Semantic Kernel and AutoGen, built by the same teams | Agents, GA "Harness" (opinionated batteries-included agent loop: planning/todo tracking, context compaction, file memory, tool approval, telemetry), functional/graph-based Workflows (sequential, concurrent, handoff, group, Magentic pattern), middleware, OpenTelemetry, MCP client/hosted-MCP-tool support, Foundry-hosted agent deployment, declarative YAML agents | https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview |
 | smolagents | Minimal, code-first agent framework from Hugging Face | Code agents (write Python to act), tool-calling agents, multi-agent orchestration, MCP tool support, guided generation, model-agnostic | https://huggingface.co/docs/smolagents/ |
 | Agno | High-performance agent platform SDK | Agents, teams (multi-agent), sessions, memory, knowledge bases, tools, reasoning models, multimodal support, evals, built-in observability | https://docs.agno.com/ |
 | Haystack | Composable AI pipeline framework | Pipelines, components, document stores, RAG, agents, tool calling, async support, YAML pipeline serialization, 60+ integrations | https://docs.haystack.deepset.ai/ |
@@ -171,6 +173,16 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 - Verified features: plugins (wrapping functions or OpenAPI specs as AI tools), planners, kernel memory / vector store connectors, function calling, and a process framework for stateful workflows.
 - Official docs also cover multi-agent orchestration via the Agent framework, and deep Azure OpenAI integration.
 - Primary install paths: NuGet (`Microsoft.SemanticKernel`) for .NET, `pip install semantic-kernel` for Python, Maven for Java.
+
+### Microsoft Agent Framework
+
+- This is a framework/SDK for building agents (orchestration, runtime, harness) — same category as LangGraph/CrewAI/ADK, not an end-user coding CLI tracked in the `tools/` directory.
+- Official Microsoft Learn docs state Agent Framework is the **direct successor to both Semantic Kernel and AutoGen, built by the same teams**: it combines AutoGen's simple single-/multi-agent abstractions with Semantic Kernel's enterprise features (session-based state management, type safety, filters/middleware, telemetry, model/embedding support), and adds graph-based Workflows for explicit multi-agent execution control. Official migration guides exist from both predecessor projects (`/agent-framework/migration-guide/from-semantic-kernel/` and `/agent-framework/migration-guide/from-autogen/`). Both Semantic Kernel and AutoGen remain separately documented/maintained projects (also tracked above in this table) — Agent Framework does not replace their repos, it is positioned as "the next generation of both."
+- Four primary areas per the official overview: **Agents** (LLM-driven, tool/MCP-calling, supports Microsoft Foundry, Anthropic, Azure OpenAI, OpenAI, Ollama, and more), **Harness Agent** (an opinionated, "batteries-included" agent for long multi-step tasks), **Workflows** (functional and graph-based, connecting agents/functions via explicit execution paths), and **Integrations** (model providers, agent services, tools, context providers, middleware, eval services, UI frameworks).
+- The **Harness** reached general availability on **July 22, 2026**, per the official devblog post "The Microsoft Agent Framework Harness is now released" (devblogs.microsoft.com/agent-framework, dated 2026-07-22). Verified Harness capabilities from that post: function invocation with iteration limits, per-service-call history persistence for crash recovery, context-window compaction, todo/agent-mode planning providers, durable file memory, progressive-discovery "Skills," web search integration, tool approval (including auto-approval), and OpenTelemetry telemetry. The post also frames this as giving developers a "claw"-like experience for building custom domain assistants (e.g., "a personal-finance claw").
+- Orchestration patterns (sequential, concurrent, handoff, group chat, and the Magentic pattern — per the Microsoft Learn Magentic page, "designed based on the Magentic-One system invented by AutoGen") reached stable/1.0 status in both the Python and .NET SDKs on **July 8, 2026**, per the official devblog post "Agent Framework's Orchestration Patterns Reach 1.0" (devblogs.microsoft.com/agent-framework/agent-frameworks-orchestration-patterns-reach-1-0/). Each pattern is exposed via its own builder (e.g. `MagenticWorkflowBuilder`, `MagenticBuilder`) that produces a `Workflow`, so teams can pick a coordination pattern without dropping to lower-level workflow APIs.
+- Supported languages per Microsoft Learn: **Python** (`pip install agent-framework`, or granular packages like `agent-framework-core`, `agent-framework-foundry`), **.NET/C#** (`dotnet add package Microsoft.Agents.AI`), and **Go** (public preview only — declarative agents, RAG, CodeAct, and functional workflows are explicitly not yet available for Go per the docs).
+- Official repo: `github.com/microsoft/agent-framework` (MIT license per repo metadata); PyPI package `agent-framework`.
 
 ### smolagents
 
@@ -428,3 +440,7 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 | AutoGPT | https://github.com/Significant-Gravitas/AutoGPT | 2026-07-24 | [github] |
 | n8n | https://docs.n8n.io/ | 2026-07-24 | [official] |
 | Herdr | https://herdr.dev/ | 2026-07-30 | [official] |
+| Microsoft Agent Framework | https://learn.microsoft.com/en-us/agent-framework/overview/agent-framework-overview | 2026-08-15 | [official] |
+| Microsoft Agent Framework | https://github.com/microsoft/agent-framework | 2026-08-15 | [github] |
+| Microsoft Agent Framework | https://devblogs.microsoft.com/agent-framework/the-microsoft-agent-framework-harness-is-now-released/ | 2026-08-15 | [official] |
+| Microsoft Agent Framework | https://devblogs.microsoft.com/agent-framework/agent-frameworks-orchestration-patterns-reach-1-0/ | 2026-08-15 | [official] |

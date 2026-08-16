@@ -31,6 +31,14 @@ Quick reference for where each agentic tool stores its configuration.
 | Auggie CLI | `~/.augment/settings.json` (system-wide: `/etc/augment/settings.json`) |
 | Qwen Code | `~/.qwen/settings.json` |
 | Warp | ❓ GUI Settings (no documented global settings file; rules via `~/.warp/.mcp.json` for MCP) |
+| Cline | `~/.cline/data/settings/global-settings.json` |
+| Kilo Code | `~/.config/kilo/kilo.json[c]` |
+| Junie | `~/.junie/config.json` |
+| Grok Build | `~/.grok/config.toml` |
+| Muse Code | `~/.config/muse/settings.json` |
+| DeepSeek Harness | ❓ no single global file (Cordis profile/bundle/patch composition) |
+| jcode | `~/.jcode/config.toml` |
+| QM | `qm.config.jsonc` (self-hosted deployment, not per-user) |
 
 ## Project-Level Config
 
@@ -60,6 +68,14 @@ Quick reference for where each agentic tool stores its configuration.
 | Auggie CLI | `.augment/settings.json` (+ git-ignored `.augment/settings.local.json`) |
 | Qwen Code | `.qwen/settings.json` |
 | Warp | `.warp/.mcp.json` (MCP only; rules via `WARP.md`/`AGENTS.md`) |
+| Cline | `.clinerules/` |
+| Kilo Code | `./kilo.json[c]` or `./.kilo/` |
+| Junie | `.junie/config.json` (trusted projects only) |
+| Grok Build | `.grok/config.toml` (limited scope: MCP/plugins/permissions) |
+| Muse Code | `.muse/hooks.json` (project-scoped hook definitions) |
+| DeepSeek Harness | `<profile>/cordis.patch.yml` |
+| jcode | `.jcode/mcp.json` (MCP only; ❓ no separate project settings file confirmed) |
+| QM | `deploy/layers/<org>/` (org customization layer) |
 
 ## MCP Config Locations
 
@@ -84,6 +100,14 @@ Quick reference for where each agentic tool stores its configuration.
 | Auggie CLI | `settings.json` (`mcpServers` key), or `--mcp-config` |
 | Qwen Code | `settings.json` (`mcpServers` key) |
 | Warp | `.warp/.mcp.json` (project) or `~/.warp/.mcp.json` (global) |
+| Cline | `~/.cline/mcp.json` (CLI) / `cline_mcp_settings.json` (extension) |
+| Kilo Code | `kilo.jsonc` (`mcp` key) |
+| Junie | `.junie/mcp/mcp.json` (project) / `~/.junie/mcp/mcp.json` (user) |
+| Grok Build | `~/.grok/config.toml` / `.grok/config.toml` (`[mcp_servers.*]`) |
+| Muse Code | `~/.config/muse/settings.json` → `mcp_servers` |
+| DeepSeek Harness | `cordis.yml` via `@deepseek-ai/dsh-mcp-client` plugin |
+| jcode | `~/.jcode/mcp.json` (global) / `.jcode/mcp.json` (project) |
+| QM | Admin-registered via REST API (org-wide, not a file) |
 
 ## Skills Directories
 
@@ -112,6 +136,14 @@ These paths are sourced directly from installer scripts and verified directories
 | Crush | `~/.config/crush/skills/` (also reads `.claude/skills/` for compat) | `.crush/skills/` |
 | Warp | ❓ not documented (global) | `.agents/skills/` |
 | OpenHands | ❓ not documented (global) | `.openhands/microagents/` (being renamed "skills") |
+| Cline | `~/.cline/skills/` | project-level skill directories |
+| Kilo Code | `~/.kilo/skills/<name>/` | `.kilo/skills/<name>/` |
+| Junie | `~/.junie/skills/<name>/SKILL.md` | `.junie/skills/<name>/SKILL.md` (takes precedence) |
+| Grok Build | `~/.grok/skills/` | `./.grok/skills/` (walked up to repo root) |
+| Muse Code | `$XDG_CONFIG_HOME/muse/skills` / `~/.agents/skills` | `<repo>/.agents/skills/<id>/SKILL.md` (also scans `.codex/skills`/`.claude/skills`) |
+| DeepSeek Harness | ❓ user/bundled roots not fully confirmed | `.dsh/skills/` and `.agents/skills/` |
+| jcode | `~/.jcode/skills/` | ❓ not confirmed |
+| QM | n/a (self-hosted, org-scoped) | `sandbox/skills/<id>/SKILL.md` (deployed) |
 
 **Key finding:** Antigravity and Codex both use `.agents/skills/` — they share the same skill registration convention.
 
@@ -137,6 +169,13 @@ These paths are sourced directly from installer scripts and verified directories
 | Amp | `.amp/plugins/*.ts` (project) or `~/.config/amp/plugins/*.ts` (global) | TypeScript Plugin API |
 | Goose | `~/.agents/plugins/<name>/` (global) or `<project>/.agents/plugins/<name>/` (project); hook config at `<plugin>/hooks/hooks.json` | Plugin scripts (Open Plugins spec) — confirmed by live test 2026-07-23 |
 | OpenHands | `.openhands/hooks.json` | JSON hooks config |
+| Cline | `~/Documents/Cline/Hooks/<HookName>` (global) or `.clinerules/hooks/<HookName>` (project) | Named shell scripts, Unix-only |
+| Kilo Code | TypeScript Plugin API (no dedicated hook directory) | JS/TS plugin modules |
+| Junie | Hooks configured under `"hooks"` key in `~/.junie/config.json` (user-scope only) | JSON config, not script directory |
+| Grok Build | `~/.grok/hooks/` (global) or `.grok/hooks/` (project) | Shell scripts |
+| Muse Code | `.muse/hooks.json` (project) or `settings.json` → `hooks` (user) | JSON config, 12 confirmed events |
+| DeepSeek Harness | `packages/hooks/` (bridge plugins: `hooks-claude-code`, `hooks-codex`) | Cordis TypeScript plugins |
+| jcode | Configured under `[hooks]` in `~/.jcode/config.toml` | External commands via env vars + JSON |
 
 ## Git-Ignored / Personal Override Files
 
@@ -176,3 +215,11 @@ Files meant for personal settings that shouldn't be committed:
 | Auggie CLI | https://docs.augmentcode.com/cli/overview | 2026-07-23 | [official] |
 | Qwen Code | https://qwenlm.github.io/qwen-code-docs/en/users/overview | 2026-07-23 | [official] |
 | Warp | https://docs.warp.dev/agent-platform/ | 2026-07-23 | [official] |
+| Cline | https://docs.cline.bot | 2026-08-15 | [official] |
+| Kilo Code | https://kilo.ai/docs | 2026-08-15 | [official] |
+| Junie | https://junie.jetbrains.com/docs/ | 2026-08-15 | [official] |
+| Grok Build | https://docs.x.ai/build/overview | 2026-08-15 | [official] |
+| Muse Code | https://dev.meta.ai/docs/muse-code/configuration.md | 2026-08-15 | [official] |
+| DeepSeek Harness | https://github.com/deepseek-ai/deepseek-harness | 2026-08-15 | [github] |
+| jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
+| QM | https://github.com/yc-software/qm | 2026-08-15 | [github] |

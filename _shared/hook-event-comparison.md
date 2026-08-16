@@ -4,33 +4,33 @@ A unified view of lifecycle hook events across all major agentic tools.
 
 ## Event Matrix
 
-| Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor | Amazon Q Dev CLI | Goose | OpenHands | Continue CLI | Auggie CLI | Qwen Code | Crush |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` | `preToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` |
-| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` | `postToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | — |
-| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — | `agentSpawn` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | — |
-| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | — |
-| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` | — |
-| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — | — | — | — | — | — | — | — |
-| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — | — | — | — | `PreCompact` | — | `PreCompact` | — |
-| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — | — | — | — | `PostCompact`(❓) | — | `PostCompact` | — |
-| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — | — | — | — | `Notification`(❓) | — | `Notification` | — |
-| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — | — | — | — | `SubagentStart`(❓) | — | `SubagentStart` | — |
-| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — | — | — | — | `SubagentStop`(❓) | — | `SubagentStop` | — |
-| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest`(❓) | — | `PermissionRequest` | — |
-| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` | `stop` | `Stop` | `Stop` | `Stop` | `Stop` | `Stop` | — |
-| **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — | — | — | — | — | — | — | — |
-| **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — | — | — | — | `TeammateIdle`(❓) | — | — | — |
-| **Post Tool Use Failure** | — | — | — | — | — | — | — | — | — | — | — | — | `PostToolUseFailure` | — | `PostToolUseFailure`(❓) | — | `PostToolUseFailure`(❓) | — |
-| **Before Read File** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeReadFile` | — | — | — | — | — |
-| **After File Edit** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterFileEdit` | — | — | — | — | — |
-| **Before Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeShellExecution` | — | — | — | — | — |
-| **After Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterShellExecution` | — | — | — | — | — |
-| **Todo Created/Completed** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `TodoCreated` / `TodoCompleted` | — |
+| Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor | Amazon Q Dev CLI | Goose | OpenHands | Continue CLI | Auggie CLI | Qwen Code | Crush | Cline | Junie | Grok Build | jcode | Muse Code |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` | `preToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool` | `PreToolUse` |
+| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` | `postToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | — | `PostToolUse` | — | `PostToolUse` | `post_tool` | `PostToolUse` |
+| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — | `agentSpawn` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | — | — | `SessionStart` | `SessionStart` | `session_start` | `SessionStart` |
+| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `session_end` | — |
+| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` | — | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` |
+| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `PostLLMCall` |
+| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `PreLLMCall` |
+| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — | — | — | — | `PreCompact` | — | `PreCompact` | — | `PreCompact`(❓) | — | `PreCompact` | — | `PreCompact` |
+| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — | — | — | — | `PostCompact`(❓) | — | `PostCompact` | — | — | — | `PostCompact` | — | `PostCompact` |
+| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — | — | — | — | `Notification`(❓) | — | `Notification` | — | — | — | `Notification` | — | — |
+| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — | — | — | — | `SubagentStart`(❓) | — | `SubagentStart` | — | — | — | `SubagentStart` | — | `SubagentStart` |
+| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — | — | — | — | `SubagentStop`(❓) | — | `SubagentStop` | — | — | — | `SubagentStop` | — | `SubagentStop` |
+| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest`(❓) | — | `PermissionRequest` | — | — | `PermissionRequest` | `PermissionDenied` | — | `PermissionRequest` |
+| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` | `stop` | `Stop` | `Stop` | `Stop` | `Stop` | `Stop` | — | `TaskComplete`(❓) | `Stop` | `Stop` | `turn_end` | `Stop` |
+| **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — | — | — | — | `TeammateIdle`(❓) | — | — | — | — | — | — | — | — |
+| **Post Tool Use Failure** | — | — | — | — | — | — | — | — | — | — | — | — | `PostToolUseFailure` | — | `PostToolUseFailure`(❓) | — | `PostToolUseFailure`(❓) | — | — | — | `PostToolUseFailure` | — | — |
+| **Before Read File** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeReadFile` | — | — | — | — | — | — | — | — | — | — |
+| **After File Edit** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterFileEdit` | — | — | — | — | — | — | — | — | — | — |
+| **Before Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeShellExecution` | — | — | — | — | — | — | — | — | — | — |
+| **After Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterShellExecution` | — | — | — | — | — | — | — | — | — | — |
+| **Todo Created/Completed** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `TodoCreated` / `TodoCompleted` | — | — | — | — | — | — |
 
 > Amp is excluded from this event-name matrix — it has no declarative hooks table, using a TypeScript Plugin API with lifecycle callbacks (`session.start`, `tool.call`, `tool.result`, `agent.start`, `agent.end`) instead. Warp is excluded — no documented hook/lifecycle-event system was found. Continue CLI's event list is not yet published on its official docs site (three open GitHub issues track the gap); it was reconstructed from CLI source (`[github]`-labeled), so entries marked (❓) are inferred from source rather than confirmed in docs.
 
@@ -38,14 +38,14 @@ A unified view of lifecycle hook events across all major agentic tools.
 
 OpenCode uses dot-namespaced event names in its plugin SDK:
 
-| Hook Event | OpenCode |
-|---|---|
-| **Pre Tool Use** | `tool.execute.before` |
-| **Post Tool Use** | `tool.execute.after` |
-| **Session Start** | `session.created` |
-| **Session Idle** | `session.idle` |
-| **Session End** | `session.deleted` |
-| **Context Compact** | `session.compacted` |
+| Hook Event | OpenCode | Cline | Junie | Grok Build | jcode | Muse Code |
+|---|---|---|---|---|---|---|
+| **Pre Tool Use** | `tool.execute.before` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool` | `PreToolUse` |
+| **Post Tool Use** | `tool.execute.after` | `PostToolUse` | — | `PostToolUse` | `post_tool` | `PostToolUse` |
+| **Session Start** | `session.created` | — | `SessionStart` | `SessionStart` | `session_start` | `SessionStart` |
+| **Session Idle** | `session.idle` | — | — | — | — | — |
+| **Session End** | `session.deleted` | — | `SessionEnd` | `SessionEnd` | `session_end` | — |
+| **Context Compact** | `session.compacted` | `PreCompact`(❓) | — | `PreCompact` | — | `PreCompact` |
 
 ## Can-Block Comparison
 
@@ -181,3 +181,7 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Qwen Code | https://qwenlm.github.io/qwen-code-docs/en/users/overview | 2026-07-23 | [official] |
 | Crush | https://github.com/charmbracelet/crush | 2026-07-23 | [github] |
 | Warp | https://docs.warp.dev/agent-platform/ | 2026-07-23 | [official] |
+| Cline | https://docs.cline.bot | 2026-08-15 | [official] |
+| Junie | https://junie.jetbrains.com/docs/ | 2026-08-15 | [official] |
+| Grok Build | https://docs.x.ai/build/overview | 2026-08-15 | [official] |
+| jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
