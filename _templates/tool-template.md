@@ -104,6 +104,15 @@ Config location:
 }
 ```
 
+## Tool Substitution
+
+> Can built-in tools be turned OFF in favor of MCP-provided ones — not just supplemented? See `_shared/mcp-tool-substitution.md` for the cross-tool reference and methodology.
+
+- **Server trust**: does a project-declared MCP server auto-load, or need approval? Can a project-shared config file grant that trust, or only a user-local one?
+- **Native tool disablement**: can built-ins be turned off so only MCP tools remain, or is MCP strictly additive?
+- **MCP tool naming + permissioning**: what is a connected MCP tool called (e.g. `mcp__server__tool`)? How do you pre-allow it without an interactive prompt?
+- **Headless behaviour**: what happens in CI/non-interactive mode when a tool call still needs approval — clean failure, hang, or silent auto-approve?
+
 ## Skills / Commands
 
 - Skills location: 
