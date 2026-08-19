@@ -1,6 +1,8 @@
 # MCP (Model Context Protocol) Support
 
-Which tools support MCP and how to configure it.
+Which tools support MCP and how to configure it. This matrix answers "where does the config go" — for
+"can I turn off the built-ins and replace them with MCP tools, and what does trust/headless require",
+see `_shared/mcp-tool-substitution.md`.
 
 ## Support Matrix
 
@@ -17,7 +19,7 @@ Which tools support MCP and how to configure it.
 | Cursor | ✅ Full | `.cursor/mcp.json` | GUI toggle in Settings > Tools & MCP |
 | Hermes | ✅ Full | `cli-config.yaml` → `mcp_servers` | |
 | GitHub Copilot | ✅ Full | `.github/mcp.json` | Shared with VS Code |
-| Pi Agent | ✅ Full | `settings.json` → `mcp` | |
+| Pi Agent | ⚠️ Via 3rd-party extension | Requires the community `pi-mcp-adapter` package (no first-party MCP support) | Pi's own docs state "No MCP" is intentional; adapter reads `.mcp.json`/`~/.config/mcp/mcp.json` |
 | OpenClaw | ✅ Full | `config.yaml` → `mcpServers` | |
 | Trae | ✅ Full (v1.3.0+) | `.trae/mcp.json` | Added in v1.3.0 |
 | Trae CN | ✅ Full (v1.3.0+) | `.trae/mcp.json` | Same as Trae |
@@ -32,7 +34,7 @@ Which tools support MCP and how to configure it.
 | Auggie CLI | ✅ Full | `settings.json` → `mcpServers`, or `--mcp-config` | Also `--mcp` (acts as MCP server) and `--acp` mode |
 | Qwen Code | ✅ Full | `settings.json` → `mcpServers` | stdio/HTTP/SSE, OAuth support |
 | Warp | ✅ Full | `.warp/.mcp.json` (project) / `~/.warp/.mcp.json` (global) | Also reads Claude Code/Codex-style MCP config for compat |
-| Cline | ✅ Full | `~/.cline/mcp.json` (CLI) / `cline_mcp_settings.json` (extension) | |
+| Cline | ✅ Full | `~/.cline/data/settings/cline_mcp_settings.json` (CLI, live-verified v3.0.55) / `cline_mcp_settings.json` (extension) | Docs elsewhere say `~/.cline/mcp.json` — that path is stale for the CLI |
 | Kilo Code | ✅ Full | `kilo.jsonc` → `mcp` | Servers also installable from Kilo Marketplace |
 | Junie | ✅ Full | `.junie/mcp/mcp.json` (project) / `~/.junie/mcp/mcp.json` (user) | All MCP tools trusted; no per-tool allowlisting yet |
 | Grok Build | ✅ Full | `~/.grok/config.toml` / `.grok/config.toml` → `[mcp_servers.*]` | Compat fallback: `.mcp.json`, `.cursor/mcp.json`, `~/.claude.json` |
