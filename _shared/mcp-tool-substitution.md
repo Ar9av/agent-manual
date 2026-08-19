@@ -51,7 +51,7 @@ which facts are live-observed vs. inferred from source/docs.
 | Trae CN | Docs-only 2026-08-19 | Mirrors Trae exactly | Inferred only | Same as Trae |
 | Junie | Docs-only 2026-08-19 | None on registration; separate project-trust layer skipped entirely headless | **Not possible** — MCP is purely additive | Always trusted, no prompt of any kind |
 | Qwen Code | Docs-only 2026-08-19 | Per-server `trust` boolean, default false | Yes, `coreTools`/`excludeTools` | Real bug (#6131): `--yolo` doesn't cover new-server startup confirmation, freezes CI |
-| QM | Docs-only 2026-08-19 (source-read) | Admin-only, org-wide, no project/user layer at all | **Not possible** — strictly additive | Stalls indefinitely on `pending_approval`, no timeout, under strict posture |
+| QM | Verified 2026-08-19 (local dev-instance harness, mock model) | Admin-REST-only via signed core calls; the shipped Admin **web UI** doesn't even proxy it (no `mcp-servers` route in `plugins/admin`) | **Not possible** — strictly additive, live-confirmed `<serverId>_<tool>` namespacing, no disable-native-tools flag anywhere in source | Live-confirmed: blocked tool call recorded (`blocked: "needs_approval"`), empty assistant reply, run marked "done" but nothing executes; unresolved and unchanged after 15s+, no timeout/TTL field in the approval-store write path |
 | Aider | N/A | — no MCP support at all | — | — |
 
 ## Cross-cutting patterns
@@ -69,7 +69,8 @@ gate on registration either, though it layers a separate, entirely-skipped-in-he
 prompt on top.
 
 **Headless failure modes diverge sharply** — this is probably the most safety-relevant finding:
-- *Hangs with no signal at all*: Continue CLI (confirmed live, worst case — no log line, no exit, nothing), Gemini CLI and Google Antigravity (multiple GitHub issues), QM (stalls on `pending_approval` under strict posture, no timeout found in source).
+- *Hangs with no signal at all*: Continue CLI (confirmed live, worst case — no log line, no exit, nothing), Gemini CLI and Google Antigravity (multiple GitHub issues).
+- *Returns cleanly but produces nothing, indefinitely*: QM — live-confirmed the call itself doesn't hang (the run completes, HTTP responds normally), but the turn ends with a blocked tool call and an empty assistant reply; nothing resolves it but an explicit `POST /api/approvals/:id {approved:true}` from a human, and no timeout/TTL exists anywhere in the approval-store write path to unstick a headless run automatically.
 - *Auto-approves/bypasses the gate silently*: Crush (headless = unconditional yolo, by design, in source), Goose (`GOOSE_MODE` defaults to `auto`), OpenHands (once configured), Kimi Code (`-p` forces an `auto` policy that implicitly skips the trust prompt that gates the same action interactively).
 - *Auto-rejects and continues*: OpenCode is the outlier — a pending permission is auto-denied, fed back to the model as a tool error, and the agent loop continues rather than hanging or silently allowing.
 - *Fails clean and stops, no hang*: Claude Code, Codex CLI, Pi Agent (cleanest — a structured `approval_required_headless` result), DeepSeek Harness, Grok Build (binary-string evidence), jcode (not applicable — nothing to gate).
@@ -127,4 +128,4 @@ about the tools themselves.
 | Junie | https://junie.jetbrains.com/docs/action-allowlist.html, /junie-cli-configuration.html | 2026-08-19 | All-or-nothing MCP trust; headless always-trusted |
 | Qwen Code | https://qwenlm.github.io/qwen-code-docs/en/users/features/mcp/ | 2026-08-19 | Per-server `trust` field, mcp.allowed/excluded |
 | Qwen Code | https://github.com/QwenLM/qwen-code/issues/6131 | 2026-08-19 | `--yolo` doesn't cover new-MCP-server-startup confirmation |
-| QM | https://github.com/yc-software/qm (source, main branch) | 2026-08-19 | Admin-only registration, additive-only tools, approval-gate mechanics |
+| QM | https://github.com/yc-software/qm (main branch, live-run via `scripts/dev-instance.sh` — local Docker, mock harness, no cloud account) | 2026-08-19 | Admin-only registration (REST-only, not even wired into the Admin web UI), additive-only tools, live approval-gate stall |
