@@ -11,8 +11,8 @@ see `_shared/mcp-tool-substitution.md`.
 | Claude Code | ✅ Full | `.claude/mcp.json` | First-class support |
 | Codex CLI | ✅ Full | `config.toml` → `[mcp]` | |
 | Gemini CLI | ✅ Full | `settings.json` → `mcpServers` | Extensions can contribute servers |
-| Kiro | ✅ Full | `.kiro/config.yaml` → `mcpServers` | |
-| Kimi Code | ✅ Full | `config.json` → `mcpServers` | |
+| Kiro | ✅ Full | `.kiro/settings/mcp.json` (workspace) / `~/.kiro/mcp.json` (user) → `mcpServers` | Live-verified 2026-08-19 (`_shared/mcp-tool-substitution.md`); formerly Amazon Q Developer CLI, same product rebranded |
+| Kimi Code | ✅ Full (registration path unconfirmed — see `_shared/mcp-tool-substitution.md`) | `config.toml` (settings, not `config.json`) + separate `mcp.json` → `mcpServers` (project: `.kimi-code/mcp.json`, user: `~/.kimi-code/mcp.json`, also reads Claude-style `.mcp.json`) | Live-tested 2026-08-19: none of the three documented `mcp.json` locations got a server connected in the current npm package version — open finding, may need the TUI's `/mcp-config` flow |
 | Factory Droid | ✅ Full | `settings.json` → `mcpServers` | |
 | OpenCode | ✅ Full | `opencode.json` → `mcp.servers` | |
 | Devin CLI | ✅ Full | `config.json` → `mcpServers` | |
