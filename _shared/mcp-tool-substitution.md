@@ -38,7 +38,7 @@ which facts are live-observed vs. inferred from source/docs.
 | jcode | Verified 2026-08-19 | **None at all** — headline finding | `--disable-base-tools` + `--tools`, one command | N/A — no pending-trust state exists to hit |
 | Devin CLI | Verified 2026-08-19 (blocked by acct auth) | None for stdio servers (diverges from Claude) | Documented (`permissions.deny`), not runtime-verified | Fails at account/login layer, before MCP/permissions even touched |
 | Pi Agent | Verified 2026-08-19 | Gates the whole 3rd-party adapter package, not per-server | Excellent — first-class flags, one-flag full substitution | **Cleanest fail**: `approval_required_headless`, not a hang |
-| Grok Build | Verified 2026-08-19 (blocked by auth) | User-local `--trust`, restrict-not-grant | Flags exist (`--disallowed-tools`), not runtime-verified | Binary evidence: rejects outright, no hang |
+| Grok Build | Verified 2026-08-19 (full agentic runs via a BYOK custom `[model.NAME]` entry — no xAI account needed at all) | User-local `--trust`, restrict-not-grant. Live-confirmed a real MCP server (`grok mcp doctor`) connects and works with zero registration-time prompt | **Nuanced — allowlist works, denylist leaks**: `--disallowed-tools "run_terminal_command,write,..."` live-tested and `run_terminal_command` survived the exclusion anyway (Copilot-style leak); the allowlist form, `--tools "search_tool,use_tool"`, live-confirmed a clean, exact MCP-only tool list with zero built-ins — use allowlist, not denylist, for genuine substitution | Live-confirmed clean: a gated `use_tool` call in headless `-p` mode returned `"stopReason":"cancelled"`, exit 0, in seconds — no hang. `--always-approve` bypasses cleanly to a real success |
 | Muse Code | Verified 2026-08-19 (heavily blocked) | No project config exists — user-local only, registration = trust | Coarse flags only (shell/write/web), no per-tool list | No functional BYOK path at all (Meta-specific wire protocol) |
 | DeepSeek Harness | Verified 2026-08-19 | None at all | First-class, `disabled: true` per plugin row | Fails hard/exits nonzero immediately, no hang |
 | Kimi Code | Verified 2026-08-19 (blocked by infra) | Only gates project-*exclusive* servers; shadow-define at user scope to bypass | `[permission].deny` + agent-profile allowlist | Headless forces `auto` policy — **implicitly bypasses** the trust gate |
@@ -75,7 +75,7 @@ layer.
 - *Auto-approves/bypasses the gate silently*: Crush (headless = unconditional yolo, by design, in source), Goose (`GOOSE_MODE` defaults to `auto`), OpenHands (once configured), Kimi Code (`-p` forces an `auto` policy that implicitly skips the trust prompt that gates the same action interactively).
 - *Auto-rejects and continues*: OpenCode is the outlier — a pending permission is auto-denied, fed back to the model as a tool error, and the agent loop continues rather than hanging or silently allowing.
 - *Silently drops the gated server and continues*: Qwen Code (non-yolo) — a pending project/workspace-scoped server is skipped at discovery (`[MCP] Skipping MCP server pending approval`) with no error surfaced to the model at all; the turn proceeds as if the server were never configured. `--approval-mode yolo` instead connects it, live-confirmed fixing #6131.
-- *Fails clean and stops, no hang*: Claude Code, Codex CLI, Pi Agent (cleanest — a structured `approval_required_headless` result), DeepSeek Harness, Grok Build (binary-string evidence), jcode (not applicable — nothing to gate), Kiro (formerly Amazon Q Dev CLI) — live-confirmed exit 0 with a denied-list rejection message; the old aws/amazon-q-developer-cli#1951/#2195 hang bugs no longer reproduce on the current unified binary. Google Antigravity — live-confirmed a gated MCP tool call denied headlessly in ~3s with a structured error, refuting the doc's prior (weakly-sourced) hang claim.
+- *Fails clean and stops, no hang*: Claude Code, Codex CLI, Pi Agent (cleanest — a structured `approval_required_headless` result), DeepSeek Harness, jcode (not applicable — nothing to gate), Kiro (formerly Amazon Q Dev CLI) — live-confirmed exit 0 with a denied-list rejection message; the old aws/amazon-q-developer-cli#1951/#2195 hang bugs no longer reproduce on the current unified binary. Google Antigravity — live-confirmed a gated MCP tool call denied headlessly in ~3s with a structured error, refuting the doc's prior (weakly-sourced) hang claim. Grok Build — live-confirmed a gated `use_tool` call in `-p` mode returns a clean `"stopReason":"cancelled"` result in seconds, exit 0.
 - *Fails at a layer before MCP/permissions is ever reached*: Devin CLI (account login), Amp (account login), Cursor CLI (when unauthenticated — fails in under a second on `"Authentication required"`) and Auggie CLI (both OAuth-only, no BYOK path exists), Warp (mandatory account login even with a BYOK provider key already stored), Junie (same pattern as Warp — `--anthropic-api-key`/`--litellm-url` are accepted flags but a JetBrains platform `-a/--auth` token is still required; live-confirmed `"Cannot find authorization"` with a real provider key).
 - *Resolves on its own, but slowly enough to look like a hang*: Cursor CLI (once authenticated) — a fresh, unapproved MCP tool call in headless `-p` mode isn't a true hang: live-confirmed it reliably self-resolves in 33-40 seconds across three separate runs, reasoning its way to "this was rejected" without any structured denial signal. That's 5-10x slower than every peer tool that fails clean (Kiro/Copilot/Antigravity all resolve in under 10s), which plausibly explains why third-party reports characterized this as "hanging."
 
@@ -84,18 +84,26 @@ SDK underneath supports it: OpenHands (`include_default_tools` exists in `openha
 into the `openhands` CLI) and Cline (`toolPolicies` exists in `@cline/agents`, no CLI/config surface
 exposes it) are both "coexistence only" in practice. Warp, Junie, QM, and Google Antigravity (binary-string
 search of the shipped `agy` executable found zero matches for any native-tool-wide disablement flag) have
-no such mechanism at any layer — MCP is architecturally additive-only for these four. **GitHub Copilot is a
-distinct case**: the mechanism exists and is exposed (`--available-tools`/`--excluded-tools`/
-`--disable-builtin-mcps`) but is leaky rather than absent — live-tested restricting an agent to two MCP
-tools only, and its baseline `bash` shell tool still executed a real command anyway.
+no such mechanism at any layer — MCP is architecturally additive-only for these four. **GitHub Copilot and
+Grok Build are a distinct case**: the mechanism exists and is exposed, but leaks differently. Copilot's
+allowlist (`--available-tools`, live-tested set to two MCP tools only, plus `--disable-builtin-mcps`) still
+let its baseline `bash` shell tool execute a real command — the leak survives even the allowlist form there.
+Grok Build's *denylist* (`--disallowed-tools`) similarly let `run_terminal_command` survive an explicit
+exclusion, but its own allowlist form (`--tools`, live-tested naming only the MCP wrapper pair) produced a
+genuinely exact MCP-only tool list with zero leaks — so for Grok Build specifically, prefer `--tools` over
+`--disallowed-tools`. The lesson doesn't generalize cleanly across tools: verify the actual exposed schema
+after applying either flag rather than assuming allowlist-implies-safe.
 
 **MCP tool naming is not standardized** even among the tools that copy Claude Code's `mcp__server__tool`
 shape (Codex CLI, jcode, DeepSeek Harness, Kimi Code, Devin CLI per docs). Others use a single underscore
-(Gemini CLI, Crush, OpenCode, Kilo Code, Grok Build), replace hyphens with underscores in both segments
+(Gemini CLI, Crush, OpenCode, Kilo Code), replace hyphens with underscores in both segments
 (Amp), use a triple underscore (Factory Droid), skip prefixing entirely and pass the raw MCP tool name
 through (Continue CLI, Cursor CLI, OpenHands), or route everything through a generic wrapper tool instead
 of exposing individually-named tools at all (Pi Agent's default `mcp` proxy tool, Auggie's
-`find-tool`/`execute-tool` pair, Antigravity's `mcp(server/tool)` policy-pattern selector). A
+`find-tool`/`execute-tool` pair, Antigravity's `mcp(server/tool)` policy-pattern selector, and — live-confirmed,
+correcting a prior naming-shape guess — Grok Build's `search_tool`/`use_tool` pair, where the qualified
+`server__tool` name only ever appears as an argument value passed to `use_tool`, never as a model-facing
+tool name in its own right). A
 catalog entry or allow-list template should never assume `mcp__` — check the specific tool.
 
 ## Known issue: the OpenAI test credential
