@@ -112,8 +112,10 @@ subcommand exists in 0.4.2.
 
 ## Tool Substitution
 
-❌ / ❓ — with no MCP surface and no documented tool-disablement flag, tool
-substitution does not appear to be reachable in 0.4.2.
+**N/A — live-confirmed 2026-09-10.** Tau 0.4.2 has no MCP support: no `tau mcp`
+subcommand exists and nothing in `--help` references MCP. With no MCP surface and
+no documented tool-disablement flag, tool substitution is not reachable on this
+host.
 
 ## Skills / Commands
 

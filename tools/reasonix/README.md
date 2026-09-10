@@ -201,12 +201,23 @@ Timeouts: `mcp_startup_timeout_seconds` (default 30) and
 
 ## Tool Substitution
 
-- **Native tool disablement**: ✅ `[tools] enabled = [...]` is an explicit
-  allowlist — an empty list means all built-ins, so a narrow list plus MCP
-  plugins gets close to MCP-only operation.
-- **Server trust**: plugins are declared in config; `${VAR}` expansion means a
-  project config can reference environment credentials.
-- ❓ MCP tool naming and headless pre-approval not live-verified.
+**Live-verified 2026-09-10 on st3ve.**
+
+- **Server trust**: ❌ **none.** A `[[plugins]]` entry in `config.toml` connected
+  with no prompt; `reasonix mcp list` showed it immediately and a real agentic
+  call succeeded.
+- **Native tool disablement**: ✅ **confirmed working.** `[tools] enabled =
+  ["read_file"]` (an allowlist) live-removed `bash` — the model stated it could
+  not run shell commands.
+- **Permission layer covers MCP tools**: ✅ confirmed —
+  `deny = ["get_forecast"]` blocked a real MCP call with *"the tool is denied by
+  the current permission policy"*. Rules match the **bare tool name**, not a
+  namespaced form.
+- ⚠️ **Asymmetry worth knowing**: with the default `[permissions] mode = "ask"`,
+  an MCP tool call **succeeded headlessly with no prompt** while native `bash`
+  was refused. MCP tools are not treated as writers by the `mode` fallback, so
+  gate them with explicit `deny` / `ask` rules rather than relying on `mode`.
+- **Headless behaviour**: clean, no hang.
 
 ## Permissions and Sandbox
 

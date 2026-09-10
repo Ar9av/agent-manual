@@ -1415,3 +1415,213 @@ No `PreToolUse`/`PostToolUse`-style event API. Interception is via:
 
 ### MCP
 First-class MCP client support, **admin-registered org-wide** (not per-user). Auth modes: `none`, `bearer`, `client-credentials`.
+
+---
+
+## oh-my-pi (omp)
+
+**Vendor:** can1357 (community) | **Config format:** YAML | **Instruction file:** `AGENTS.md` + inherited formats (Cursor MDC, Cline `.clinerules`, Copilot `applyTo`, …)
+**Sources:** https://omp.sh [official] · https://github.com/can1357/oh-my-pi [github]
+**Note:** live-verified on st3ve 2026-09-10 (install, agentic `-p` runs, MCP substitution). Fork of Pi.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.omp/agent/config.yml` | Global | Default model selector, agent settings |
+| `~/.omp/agent/models.yml` | Global | Custom provider/model declarations |
+| `~/.omp/agent/agent.db` | Global | Session/state store (SQLite) |
+| `~/.omp/logs/` | Global | Logs + `*-audit.json` audit sidecar |
+| `.omp/hooks/pre/*.ts` | Project | Hook/extension factories |
+| `.mcp.json` | Project | MCP servers — **loaded with no trust prompt** |
+
+Also inherits rules, skills, and MCP servers from `.claude`, `.cursor`, `.windsurf`, `.gemini`, `.codex`, `.cline`, `.github/copilot`, `.vscode` on first run.
+
+### Built-in Tools
+`bash` · `read` · `write` · `grep` · `todo` (all ✅ live-observed) · `task` · `web_search` · `learn` · `manage_skill` · `orchestrate` · `workflowz` · 14 LSP ops · 28 DAP ops. README claims 31 built-ins total; no closed table published.
+
+### Hooks — TypeScript modules, not shell commands
+`--hook` is an alias for `--extension`. A hook module default-exports a factory taking a `HookAPI`; handlers bind via `pi.on(...)` to the runtime event bus.
+
+| Event | Can Block? |
+|-------|-----------|
+| `tool_call` | ✅ — `return { block: true, reason }` |
+
+❓ No closed event list published. There is no stdin-JSON/exit-code contract to normalize against.
+
+### Permissions / Tool Control
+`--tools=<list>` allowlist · `--no-tools` · `--no-lsp` · `--no-pty`. **Full MCP-only substitution live-confirmed** via `--tools` with only `mcp__*` names.
+
+### MCP
+Tools exposed as `mcp__<server>_<tool>`, hyphens rewritten to underscores (`weather-svc` → `mcp__weather_svc_get_forecast`). No trust gate.
+
+---
+
+## Codewhale
+
+**Vendor:** Hmbown (community) | **Config format:** TOML (+ JSON for MCP) | **Instruction file:** `AGENTS.md` (`codewhale init`)
+**Sources:** https://github.com/Hmbown/Codewhale [github] · https://codewhale.net [official]
+**Note:** live-verified on st3ve 2026-09-10 (install, agentic `exec --auto` runs, MCP substitution).
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.codewhale/config.toml` | Global | Provider, auth mode, hooks, telemetry |
+| `~/.codewhale/mcp.json` | Global | MCP servers (own file; `mcp init` templates it) |
+| `~/.codewhale/secrets/secrets.json` | Global | File-based secret store |
+| `~/.codewhale/builtin-plugins/` | Global | Bundled plugins (ships `computer-use`) |
+
+Credential lookup order: **config → secret store → env**.
+
+### Built-in Tools
+`bash` · `read` · `write` · `tool_search` (✅ live-observed) · `exec_shell` (doc). ❓ Two spellings for the shell tool — hooks gate on `exec_shell`, the runtime emitted `bash`.
+
+### Hooks — 13 events, ⚠️ TUI-only
+Shell commands via `[[hooks.hooks]]` in `config.toml`. **Fires only in the interactive TUI** — `exec`, the CLI dispatcher, app-server, and ACP fire nothing.
+
+| Event | Can Block / Steer? |
+|-------|-------------------|
+| `tool_call_before` | ✅ allow / deny / ask, rewrite input, add context |
+| `message_submit` | ✅ replace or block the text |
+| `shell_env` | ✅ contributes env vars |
+| `session_start` `session_end` `turn_end` `tool_call_after` `mode_change` `on_error` `subagent_spawn` `subagent_complete` `session_idle` `session_error` | observer |
+
+⚠️ `background = true` makes a gate **silently inert**. ⚠️ `[hooks].default_timeout_secs` *overrides* per-hook `timeout_secs`. ❓ Docs say "11 names"; the table lists 13.
+
+### Permissions / Tool Control
+**Native tool disablement not possible** — MCP is strictly additive (binary search: no `disable_builtin`/`available_tools`/`excluded_tools`; `enabled_tools`/`disabled_tools` are per-MCP-server only). `codewhale sandbox check` evaluates approval policy (`--ask unless-trusted|on-failure|on-request|never`).
+
+### MCP
+`mcp list|init|connect|tools|add|login|logout|remove|enable|disable|validate|add-self`. Tools named `mcp_<server>_<tool>` (hyphens preserved). No trust gate.
+
+---
+
+## Reasonix (DeepSeek-Reasonix)
+
+**Vendor:** ESEngine (community) | **Config format:** TOML (+ JSON for hooks) | **Instruction file:** `AGENTS.md`
+**Sources:** https://github.com/esengine/DeepSeek-Reasonix [github] · http://reasonix.io [official]
+**Note:** live-verified on st3ve 2026-09-10 (install, agentic `-p` runs, MCP substitution).
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.reasonix/config.toml` | Global | Providers, plugins, UI, tools, skills, sandbox, permissions, bot, agent |
+| `~/.reasonix/.env` | Global | Provider credentials (**secrets never in config.toml**) |
+| `~/.reasonix/settings.json` | Global | Hooks |
+| `<workspace>/.reasonix/settings.json` | Project | Hooks (loaded **before** global) |
+| `./reasonix.toml` | Project | Config overrides |
+| `~/.reasonix/skills/`, `~/.reasonix/commands/` | Global | Skills, slash commands |
+
+Resolution: **flag > `./reasonix.toml` > `~/.reasonix/config.toml` > defaults.** `REASONIX_HOME` relocates everything. Provider entries name the credential var in `api_key_env`; saved credential vars are stripped from model-controlled child environments and the global `.env` is hidden from the agent's own file readers.
+
+### Built-in Tools
+`bash` · `read_file` · `write_file` · `use_capability` (all ✅ live-observed) · `edit_file` / `multi_edit` / `move_file` (doc).
+
+### Hooks — 10 events, Claude-Code-shaped JSON
+`SessionStart` · `SessionEnd` · `UserPromptSubmit` ✅ · `PreToolUse` ✅ · `PostToolUse` · `PostLLMCall` ❓ · `PreCompact` ❓ · `Stop` · `SubagentStop` · `Notification`
+
+Project hooks run before global; the first blocking hook stops the rest. ⚠️ Requires a **restart** — `/new` does not re-read hook config. Inspect with `reasonix hook list|status --json`.
+
+### Permissions / Sandbox
+```toml
+[permissions]
+mode = "ask"          # ask|allow|deny — writer fallback; precedence deny > ask > allow > fallback
+[sandbox]
+bash = "enforce"      # enforce|off
+```
+⚠️ **Fails closed**: with `bash = "enforce"` and no usable OS sandbox, bash is refused outright. `bubblewrap` alone is insufficient on Ubuntu 24.04 (`apparmor_restrict_unprivileged_userns=1`). CLI: `--permission-mode ask|acceptEdits|yolo`, `--allowed-tools`.
+
+⚠️ Live-confirmed asymmetry: in `ask` mode an **MCP tool call ran with no prompt** while native `bash` was refused — MCP tools aren't writers for the `mode` fallback. Gate them with explicit `deny`/`ask` rules (matching the **bare** tool name).
+
+### MCP
+`[[plugins]]` entries, `type` = `stdio`/`http`/`sse`, `${VAR}` expansion in `command`/`args`/`env`/`url`/`headers`. No trust gate. Native disablement via `[tools] enabled = [...]` allowlist — ✅ live-confirmed.
+
+---
+
+## MiMo Code
+
+**Vendor:** Xiaomi | **Config format:** JSONC (OpenCode schema) | **Instruction file:** `AGENTS.md` (+ `checkpoint.md`)
+**Sources:** https://github.com/XiaomiMiMo/MiMo-Code [github] · https://mimo.xiaomi.com/mimocode [official]
+**Note:** live-verified on st3ve 2026-09-10. **Confirmed an OpenCode fork** — `mimo mcp list` reports its config source as `opencode:~/.config/mimocode`.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.config/mimocode/mimocode.jsonc` | Global | Main config: `mcp`, `tools`, providers (OpenCode schema) |
+| `~/.config/mimocode/node_modules/` | Global | Plugins, installed as real npm modules |
+| `.mimocode/skills/<name>/SKILL.md` | Project | Project skills (override builtins by name) |
+| `~/.claude/skills/`, `~/.opencode/skills/` | Global | Personal skill dirs discovered from *other* agents |
+
+### Built-in Tools
+`exec` · `exec_command` · `apply_patch` (all ✅ live-observed). ⚠️ **No `read`/`grep` tool** — reads and searches route through shell execution; writes go through `apply_patch`.
+
+### Hooks — none shipped
+npm plugins instead (`mimo plugin <module>`). `--pure` runs without external plugins. The builtin `evolve` skill references internal "behavior hooks" but no external hook config surface is documented.
+
+### Permissions / Tool Control
+OpenCode-style `"tools": {"exec": false, ...}` in `mimocode.jsonc` — ✅ live-confirmed to block shell execution. Skill control via `MIMOCODE_DISABLE_BUILTIN_SKILLS`, `MIMOCODE_DISABLE_OFFICIAL_SKILLS`, `MIMOCODE_DISABLE_SLASH_SKILLS`.
+
+### Agents
+Three primary agents — **build**, **plan**, **compose** — switched with `Tab`. ⚠️ **Mode locks after the first message**; Compose is fully isolated once entered. Subagents are created on demand, share session context, run in parallel.
+
+### MCP
+`mcp` key in `mimocode.jsonc` (`{type:"local", command:[...], enabled}`). `mimo mcp add` is **TUI-interactive only** — no non-interactive flags. OAuth per server: `mcp auth|logout|debug`. No trust gate.
+
+---
+
+## Prime Agent
+
+**Vendor:** Prime Intellect | **Config format:** ❓ (capability packages) | **Instruction file:** `AGENTS.md` / `CLAUDE.md`
+**Sources:** https://github.com/PrimeIntellect-ai/prime-agent [github] · https://app.primeintellect.ai/prime-agent [official]
+**Note:** live-verified on st3ve 2026-09-10 (install, agentic `-p` runs, MCP substitution).
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| ❓ | Global | User MCP servers persist across runs, but no config dir was created by a headless run alone |
+| `AGENTS.md` / `CLAUDE.md` | Project | Instruction files (`-nc` disables discovery) |
+
+### Built-in Tools
+**`ipython` — and only `ipython`.** A persistent Python REPL is the entire tool surface: file ops, shell, MCP calls, subagents (`rlm(...)`), and context management all happen as code inside it. A five-part task emitted exactly one tool name.
+
+⚠️ For an interception layer this means there is no `file_write`/`shell`/`network`/`subagent_spawn` event to gate — all signal lives in the **code string**, and tool-name allowlisting is inert.
+
+### Hooks — none shipped
+Capability packages instead: `prime-agent package <install|remove|list|update>`, providing extensions, skills, prompts, and themes. Per-run: `-e/--extension`, `-ne`, `--skill`, `-ns`, `--prompt-template`, `-np`, `--theme`, `--no-themes`.
+
+### Permissions / Tool Control
+`-t/--tools <list>` allowlist · `-nt` (all tools off) · `-nbt` (built-ins off) — both ✅ live-confirmed **by filesystem side-effect**.
+
+⚠️ **Safety-relevant:** with `-nbt` the agent **falsely claimed success**, reporting a file as created and verified when nothing was written to disk. Verify effects, not narration.
+
+⚠️ Vendor states the worker/kernel processes are **not a security sandbox**; it fails open by design.
+
+### MCP
+`prime-agent mcp <add|list|get|remove>`. Stdio form: `mcp add <name> [--cwd D] [--env C=S] -- <cmd> [args...]` (`--command` is rejected). No trust gate. MCP calls surface inside the `ipython` REPL, not as distinct tool names.
+
+---
+
+## Tau
+
+**Vendor:** Hugging Face | **Config format:** TOML | **Instruction file:** `AGENTS.md` (+ `.tau/`, `.agents/`)
+**Sources:** https://github.com/huggingface/tau [github] · http://twotimespi.dev [official]
+**Note:** live-verified on st3ve 2026-09-10. A Python port of Pi.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.tau/catalog.toml` | Global | Custom provider/model catalog |
+| `~/.tau/sessions/<slug>/` | Global | Durable JSONL sessions with resume + branching |
+| `~/.tau/state/extensions/` | Global | Installed extensions |
+| `.tau/`, `.agents/` | Project | Project resources |
+
+### Built-in Tools
+`bash` · `read` · `write` (all ✅ live-observed). The minimal Pi core — no `grep`/`todo`/`task` layer. ⚠️ Session records carry both `"name"` and `"toolName"` for the same call.
+
+### Hooks — none shipped
+Extensions instead: `tau install SOURCE [--force]` from a local path or Git source, with no documented sandbox or review gate.
+
+### Permissions / Tool Control
+❓ No documented tool-disablement flag. `-t/--thinking <level>` sets reasoning depth per run.
+
+### MCP
+❌ **None** — live-confirmed: no `tau mcp` subcommand, nothing in `--help` as of 0.4.2. Tool substitution is therefore not reachable on this host.

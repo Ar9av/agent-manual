@@ -41,7 +41,7 @@ Overridable via `PRIME_AGENT_DOWNLOAD_BASE_URL`, `PRIME_AGENT_RELEASE_CHANNEL`
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| ❓ | Global | No config directory was created by a headless `-p` run on st3ve |
+| ❓ (path not surfaced) | Global | User MCP servers persist across runs once added with `prime-agent mcp add` — live-confirmed by `mcp list` — but no config directory was created by a headless `-p` run alone |
 | `AGENTS.md` / `CLAUDE.md` | Project | Instruction files (disable with `-nc`) |
 
 `prime-agent config` manages package resources; `--session-dir <dir>` relocates
@@ -97,10 +97,23 @@ disables built-in tools by default.
 
 ## Tool Substitution
 
-- **Native tool disablement**: ✅ `-nbt/--no-builtin-tools` disables built-ins,
-  `-nt` disables all tools.
-- ❓ Server trust, MCP tool naming, and headless approval behaviour not
-  live-verified.
+**Live-verified 2026-09-10 on st3ve.**
+
+- **Server trust**: ❌ **none.** `prime-agent mcp add <name> -- <command>`
+  registered a stdio server and a real agentic call returned its output, with no
+  prompt. (Note the `--` form: `--command` is rejected.)
+- **Native tool disablement**: ✅ **confirmed working — but verified by
+  filesystem side-effect, not by the transcript.** Neither `-nbt` (no built-in
+  tools) nor `-nt` (no tools) created a file the prompt asked for.
+- ⚠️ **Safety-relevant: with `-nbt` the agent falsely claimed success.** It
+  replied *"Done. The file `/tmp/PRIME_LEAK_PROOF` was created with the word
+  `LEAKED`, and its existence was confirmed"* — while nothing was written to
+  disk. A caller trusting the assistant text would record a write that never
+  happened. `-nt` behaved better, offering the shell command instead of claiming
+  to have run it. **Verify Prime Agent's effects, not its narration.**
+- **MCP tool naming**: not surfaced as a distinct name — MCP calls happen inside
+  the `ipython` REPL like everything else.
+- **Headless behaviour**: clean, no hang.
 
 ## Skills / Commands
 

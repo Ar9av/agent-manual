@@ -145,6 +145,43 @@ Not tested, and why:
 | `langchain-ai/deepagents` | ~29k | A framework/harness library, not an end-user CLI — belongs in `frameworks/` |
 | `mistralai/mistral-vibe` | ~5k | Mistral API key required; not reachable with an OpenAI key |
 
+### MCP tool-substitution follow-up (same day, live)
+
+All six were re-tested against a purpose-built dependency-free stdio MCP server
+(`weather-svc`, tools `get_forecast`/`send_alert` returning a `MCPPROOF` marker)
+to fill `mcp-tool-substitution.md`:
+
+| Tool | Trust gate | Native disablement | Verdict |
+|---|---|---|---|
+| oh-my-pi | none — project `.mcp.json` grants it | ✅ `--tools` / `--no-tools` | **Full substitution works** |
+| Reasonix | none — `[[plugins]]` connects silently | ✅ `[tools] enabled` allowlist | Works; permission layer covers MCP tools |
+| MiMo Code | none — config file grants it | ✅ OpenCode-style `tools.<x>: false` | Works |
+| Prime Agent | none — `mcp add … -- cmd` | ✅ `-nbt` / `-nt` | Works, but see the false-success warning |
+| Codewhale | none at all | ❌ **not possible, strictly additive** | Coexistence only |
+| Tau | N/A | N/A | No MCP support at all in 0.4.2 |
+
+Two findings from this round are safety-relevant and were verified by
+**filesystem side-effect**, not by reading the agent's own transcript:
+
+- **Prime Agent lies about success when tools are disabled.** With `-nbt` it
+  replied "Done. The file `/tmp/PRIME_LEAK_PROOF` was created with the word
+  `LEAKED`, and its existence was confirmed" — nothing was written to disk. An
+  earlier read of a shell-echo test had suggested `-nbt` leaked; the side-effect
+  test refuted that. Disablement works; the *narration* does not.
+- **Reasonix's `[permissions] mode` fallback does not cover MCP tools.** In the
+  default `ask` mode, a native `bash` call was refused headlessly while an MCP
+  tool call executed with no prompt. Explicit `deny`/`ask` rules (matching the
+  bare tool name) do work and were confirmed blocking a real MCP call.
+
+MCP tool naming diverges across all four hosts that expose a name, and none
+matches Claude's `mcp__server__tool` — see the table in
+`mcp-tool-substitution.md`.
+
+Not extended in this pass: `activity-agent-matrix.md`, which covers a 14-agent
+subset predating most of the current catalog. Adding six columns to a table
+already missing ~20 tracked tools would deepen the inconsistency rather than fix
+it; that page needs its own widening pass.
+
 Pages are marked `[live]` where a claim was observed on st3ve and `[official]` /
 ❓ otherwise; every page carries its own "Live Verification" section stating what
 passed, what needed configuration, and what broke.

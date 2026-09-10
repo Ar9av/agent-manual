@@ -145,15 +145,27 @@ a public MCP endpoint when no `EXA_API_KEY` is set.
 
 ## Tool Substitution
 
-- **Native tool disablement**: ✅ `--no-tools` turns off every built-in and
-  `--tools=<list>` restricts to an explicit allowlist, so MCP-only operation is
-  reachable rather than strictly additive.
-- **Server trust**: ❓ not live-verified. Inheriting `.claude`/`.cursor`/etc. MCP
-  declarations on first run means a project-shared config from another agent can
-  introduce servers — worth auditing before trusting a fresh clone.
-- **MCP tool naming + permissioning**: ❓ not verified.
-- **Headless behaviour**: `-p/--print` completed a write+bash task
-  non-interactively with no approval prompt on st3ve.
+**Live-verified 2026-09-10 on st3ve.**
+
+- **Server trust**: ❌ **none — a project file grants trust.** A bare `.mcp.json`
+  dropped into the workspace was loaded and its tools called with no prompt or
+  registration step. Combined with omp inheriting MCP declarations from
+  `.claude`, `.cursor`, `.windsurf`, `.gemini`, `.codex`, `.cline`,
+  `.github/copilot`, and `.vscode` on first run, **a cloned repo carrying any of
+  those config directories grants MCP trust automatically.** Audit before running
+  omp in an untrusted checkout.
+- **Native tool disablement**: ✅ **full substitution confirmed at runtime.**
+  `--tools "mcp__weather_svc_get_forecast,mcp__weather_svc_send_alert"` produced a
+  run where a shell request returned *"I couldn't run a shell command in this
+  environment"* while the MCP call returned real output. `--no-tools` also
+  confirmed.
+- **MCP tool naming**: `mcp__<server>_<tool>` with hyphens rewritten to
+  underscores — server `weather-svc` + tool `get_forecast` becomes
+  **`mcp__weather_svc_get_forecast`**. Note this is *not* Claude's
+  `mcp__server__tool`. The fastest way to enumerate a session's real tool names is
+  to pass a bogus `--tools` value: the `CliUsageError` prints the full valid list.
+- **Headless behaviour**: clean. MCP calls execute in `-p` mode with no prompt
+  and no hang.
 
 ## Skills / Commands
 

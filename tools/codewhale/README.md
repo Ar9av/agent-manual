@@ -137,6 +137,7 @@ Observed live in `exec --auto --output-format stream-json` on st3ve:
 | `bash` | Shell execution | ✅ |
 | `read` | Read file contents | ✅ |
 | `write` | Create/overwrite a file | ✅ |
+| `tool_search` | Search the available tool catalog (observed being called before an MCP tool) | ✅ |
 | `exec_shell` | Shell invocation targeted by the `shell_env` hook and `tool_name` conditions | doc |
 
 ❓ The hooks doc references `exec_shell` while the live stream-json run reported
@@ -145,15 +146,58 @@ published.
 
 ## MCP Support
 
-`codewhale mcp` manages MCP servers; `codewhale mcp-server` runs Codewhale
-itself as an MCP server over stdio. Documented at `docs/MCP.md`.
+✅ Full, with the widest MCP CLI of the six tools in this pass.
+
+Config lives in its **own file**, `~/.codewhale/mcp.json` — *not* `config.toml`.
+`codewhale mcp init` writes a template:
+
+```json
+{
+  "timeouts": { "connect_timeout": 10, "execute_timeout": 60, "read_timeout": 120 },
+  "servers": {
+    "example": {
+      "command": "node",
+      "args": ["./path/to/your-mcp-server.js"],
+      "env": {}, "url": null,
+      "connect_timeout": null, "execute_timeout": null, "read_timeout": null,
+      "disabled": true, "enabled": true, "required": false,
+      "enabled_tools": [], "disabled_tools": []
+    }
+  }
+}
+```
+
+```
+codewhale mcp list | init | connect | tools | add | login | logout
+              | remove | enable | disable | validate | add-self
+```
+
+`mcp add` takes flags, not positionals:
+`codewhale mcp add <NAME> --command node --arg /path/server.js`. URL servers
+support `--transport sse`, `--bearer-token-env-var`, `--oauth-client-id`,
+`--oauth-resource`, and `--scope`. `mcp add-self` registers the Codewhale binary
+itself as a local stdio MCP server.
 
 ## Tool Substitution
 
-❓ Not live-verified. `codewhale setup` bootstraps MCP config and/or skills
-directories, and `integrations` connects third-party harnesses (e.g.
-`integrations dsh status` for the DeepSeek Harness), but native tool
-disablement was not confirmed.
+**Live-verified 2026-09-10 on st3ve.**
+
+- **Server trust**: ❌ **none at all.** `codewhale mcp add` → `mcp enable` →
+  `mcp tools` listed both tools, and a real `exec --auto` run called one, with no
+  approval step anywhere in the chain.
+- **Native tool disablement**: ❌ **not possible — MCP is strictly additive.** A
+  binary string search found `disabled_tools` / `enabled_tools` (only in the
+  *per-MCP-server* schema) and `allowed_tools` (the approval allowlist), but zero
+  matches for `disable_builtin`, `available_tools`, `excluded_tools`,
+  `builtin_tools`, or `no_builtin`. Confirmed behaviourally: an `exec --auto` run
+  wrote a real file to `/tmp` with no way to remove the baseline write/shell
+  tools.
+- **MCP tool naming**: `mcp_<server>_<tool>`, hyphens preserved — e.g.
+  **`mcp_weather-svc_get_forecast`**. Single underscore prefix, unlike omp's
+  double.
+- **Headless behaviour**: clean, no hang. But note hooks fire **only in the
+  TUI**, so the headless path has no gating layer at all — no trust gate, no
+  disablement, and no hooks.
 
 ## Skills / Commands
 

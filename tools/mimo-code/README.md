@@ -89,8 +89,42 @@ this repo.
 
 ## Tool Substitution
 
-❓ Not live-verified. Environment variables can disable builtin *skills* (see
-below) but no equivalent for disabling builtin tools was found.
+**Live-verified 2026-09-10 on st3ve.**
+
+- **Server trust**: ❌ **none — the config file grants trust.** `mimo mcp add` is
+  TUI-interactive with no non-interactive flags (invoking it with arguments just
+  prints help), so registration goes through the config file. Once written,
+  `mimo mcp list` reported `✓ weather-svc connected` and a real agentic call
+  succeeded with no prompt.
+- **Native tool disablement**: ✅ **confirmed working.** OpenCode-style
+  `"tools": {"exec": false, "exec_command": false, "bash": false}` in
+  `mimocode.jsonc` live-blocked shell execution — the model reported *"the
+  environment blocks bash execution for this session"* and the trace showed
+  `exec code_error`.
+- **Headless behaviour**: clean, no hang.
+
+### MCP config format
+
+`~/.config/mimocode/mimocode.jsonc` — note the **OpenCode schema**:
+
+```jsonc
+{
+  "$schema": "https://mimo.xiaomi.com/mimocode/config.json",
+  "mcp": {
+    "weather-svc": {
+      "type": "local",
+      "command": ["node", "/path/to/server.js"],
+      "enabled": true
+    }
+  },
+  "tools": { "exec": false }
+}
+```
+
+> **MiMo Code is an OpenCode fork.** `mimo mcp list` reports the config source
+> literally as `opencode:~/.config/mimocode`, and both the `mcp` and `tools` keys
+> follow OpenCode's schema rather than a Xiaomi-specific one. Useful when the
+> MiMo docs are thin — OpenCode's config reference generally applies.
 
 ## Skills / Commands
 
