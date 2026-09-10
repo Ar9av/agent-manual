@@ -43,6 +43,12 @@ see `_shared/mcp-tool-substitution.md`.
 | jcode | ✅ Full | `~/.jcode/mcp.json` (global) / `.jcode/mcp.json` (project) | Accepts both `mcpServers` and legacy `servers` key |
 | Paseo | ✅ Both directions | `~/.paseo/config.json` → `daemon.mcp` (server); `agents.providers` / `agent.create` hook → `mcpServers` (injector) | Orchestrator: serves its own agent/workspace/terminal/schedule tool catalog to launched agents (`injectIntoAgents`, default off); narrow per provider with `paseoTools` |
 | QM | ✅ Full (admin-gated) | Admin-registered via REST API, org-wide | Not per-user; auth modes `none`/`bearer`/`client-credentials` |
+| Codewhale | ✅ Full | ❓ managed via `codewhale mcp`; `codewhale setup` bootstraps MCP config | Also runs as an MCP *server* over stdio (`codewhale mcp-server`) |
+| Reasonix | ✅ Full | `~/.reasonix/config.toml` → `[[plugins]]` | `type` = `stdio` (default) / `http` / `sse`; `${VAR}` and `${VAR:-default}` expansion in `command`/`args`/`env`/`url`/`headers`; per-plugin startup/call/tool timeouts |
+| oh-my-pi | ✅ Full | ❓ own config plus **inherited** MCP declarations from `.claude`, `.cursor`, `.windsurf`, `.gemini`, `.codex`, `.cline`, `.github/copilot`, `.vscode` on first run | Docs cover protocol transports, runtime lifecycle, and server/tool authoring; audit inherited servers before trusting a fresh clone |
+| MiMo Code | ✅ Full | `mimo mcp add` | Strongest OAuth story in this repo: `mcp auth` / `mcp logout` / `mcp debug` per server |
+| Prime Agent | ✅ Full | `prime-agent mcp` (user MCP servers) | ⚠️ MCP tool use is expressed as Python inside the `ipython` REPL, so there is no distinct MCP tool-call event to gate |
+| Tau | ❓ None found | — | No `tau mcp` subcommand and no MCP surface in `--help` as of 0.4.2 |
 
 ## Standard MCP Config Format
 

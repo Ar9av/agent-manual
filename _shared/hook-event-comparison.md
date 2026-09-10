@@ -4,35 +4,35 @@ A unified view of lifecycle hook events across all major agentic tools.
 
 ## Event Matrix
 
-| Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor | Amazon Q Dev CLI | Goose | OpenHands | Continue CLI | Auggie CLI | Qwen Code | Crush | Cline | Junie | Grok Build | jcode | Muse Code |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` | `preToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool` | `PreToolUse` |
-| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` | `postToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | — | `PostToolUse` | — | `PostToolUse` | `post_tool` | `PostToolUse` |
-| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — | `agentSpawn` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | — | — | `SessionStart` | `SessionStart` | `session_start` | `SessionStart` |
-| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `session_end` | — |
-| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` | — | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` |
-| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `PostLLMCall` |
-| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `PreLLMCall` |
-| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — | — | — | — | `PreCompact` | — | `PreCompact` | — | `PreCompact`(❓) | — | `PreCompact` | — | `PreCompact` |
-| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — | — | — | — | `PostCompact`(❓) | — | `PostCompact` | — | — | — | `PostCompact` | — | `PostCompact` |
-| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — | — | — | — | `Notification`(❓) | — | `Notification` | — | — | — | `Notification` | — | — |
-| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — | — | — | — | `SubagentStart`(❓) | — | `SubagentStart` | — | — | — | `SubagentStart` | — | `SubagentStart` |
-| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — | — | — | — | `SubagentStop`(❓) | — | `SubagentStop` | — | — | — | `SubagentStop` | — | `SubagentStop` |
-| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest`(❓) | — | `PermissionRequest` | — | — | `PermissionRequest` | `PermissionDenied` | — | `PermissionRequest` |
-| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` | `stop` | `Stop` | `Stop` | `Stop` | `Stop` | `Stop` | — | `TaskComplete`(❓) | `Stop` | `Stop` | `turn_end` | `Stop` |
-| **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
-| **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — | — | — | — | `TeammateIdle`(❓) | — | — | — | — | — | — | — | — |
-| **Post Tool Use Failure** | — | — | — | — | — | — | — | — | — | — | — | — | `PostToolUseFailure` | — | `PostToolUseFailure`(❓) | — | `PostToolUseFailure`(❓) | — | — | — | `PostToolUseFailure` | — | — |
-| **Before Read File** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeReadFile` | — | — | — | — | — | — | — | — | — | — |
-| **After File Edit** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterFileEdit` | — | — | — | — | — | — | — | — | — | — |
-| **Before Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeShellExecution` | — | — | — | — | — | — | — | — | — | — |
-| **After Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterShellExecution` | — | — | — | — | — | — | — | — | — | — |
-| **Todo Created/Completed** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `TodoCreated` / `TodoCompleted` | — | — | — | — | — | — |
+| Hook Event | Claude Code | Codex CLI | Gemini CLI | Kiro | Kimi Code | Factory Droid | Hermes | Pi Agent | OpenClaw | Devin CLI | Cursor | Amazon Q Dev CLI | Goose | OpenHands | Continue CLI | Auggie CLI | Qwen Code | Crush | Cline | Junie | Grok Build | jcode | Muse Code | Codewhale | Reasonix | oh-my-pi |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **Pre Tool Use** | `PreToolUse` | `PreToolUse` | `BeforeTool` | `preToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool_call` | `tool.before.*` | `preToolUse` | `PreToolUse` | `preToolUse` | `preToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `PreToolUse` | `pre_tool` | `PreToolUse` | `tool_call_before` | `PreToolUse` | `tool_call` |
+| **Post Tool Use** | `PostToolUse` | `PostToolUse` | `AfterTool` | `postToolUse` | `PostToolUse` | `PostToolUse` | `post_tool_call` | `tool.after.*` | `postToolUse` | `PostToolUse` | `postToolUse` | `postToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | `PostToolUse` | — | `PostToolUse` | — | `PostToolUse` | `post_tool` | `PostToolUse` | `tool_call_after` | `PostToolUse` | — |
+| **Session Start** | — | `SessionStart` | `SessionStart` | `agentSpawn` | `SessionStart` | `SessionStart` | `on_session_start` | `session.created` | — | `SessionStart` | — | `agentSpawn` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | `SessionStart` | — | — | `SessionStart` | `SessionStart` | `session_start` | `SessionStart` | `session_start` | `SessionStart` | — |
+| **Session End** | — | — | `SessionEnd` | — | `SessionEnd` | `SessionEnd` | `on_session_end` | `session.deleted` | — | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | `SessionEnd` | — | — | `SessionEnd` | `SessionEnd` | `session_end` | — | `session_end` | `SessionEnd` | — |
+| **Prompt Submit** | — | `UserPromptSubmit` | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `pre_llm_call` | — | — | — | — | `userPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` | — | `UserPromptSubmit` | `UserPromptSubmit` | `UserPromptSubmit` | — | `UserPromptSubmit` | `message_submit` | `UserPromptSubmit` | — |
+| **Post LLM Response** | — | — | `AfterModel` | — | — | — | `post_llm_call` | `after_provider_response` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `PostLLMCall` | — | `PostLLMCall` | — |
+| **Pre LLM Call** | — | — | `BeforeModel` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `PreLLMCall` | — | — | — |
+| **Tool Selection** | — | — | `BeforeToolSelection` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Agent Start** | — | — | `BeforeAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Agent End** | — | — | `AfterAgent` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Context Compact** | `PreCompact` | `PreCompact` | `PreCompress` | — | `PreCompact` | `PreCompact` | — | — | — | `PostCompaction` | — | — | — | — | `PreCompact` | — | `PreCompact` | — | `PreCompact`(❓) | — | `PreCompact` | — | `PreCompact` | — | `PreCompact` | — |
+| **Post Compact** | — | `PostCompact` | — | — | `PostCompact` | — | — | — | — | — | — | — | — | — | `PostCompact`(❓) | — | `PostCompact` | — | — | — | `PostCompact` | — | `PostCompact` | — | — | — |
+| **Notification** | `Notification` | — | `Notification` | — | `Notification` | `Notification` | — | `notify` action | — | — | — | — | — | — | `Notification`(❓) | — | `Notification` | — | — | — | `Notification` | — | — | — | `Notification` | — |
+| **Subagent Start** | — | `SubagentStart` | — | — | `SubagentStart` | — | — | — | — | — | — | — | — | — | `SubagentStart`(❓) | — | `SubagentStart` | — | — | — | `SubagentStart` | — | `SubagentStart` | `subagent_spawn` | — | — |
+| **Subagent Done** | `SubagentStop` | `SubagentStop` | — | — | `SubagentStop` | `SubagentStop` | `subagent_stop` | — | — | — | — | — | — | — | `SubagentStop`(❓) | — | `SubagentStop` | — | — | — | `SubagentStop` | — | `SubagentStop` | `subagent_complete` | `SubagentStop` | — |
+| **Permission Request** | `PermissionRequest` | `PermissionRequest` | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest` | — | — | — | — | `PermissionRequest`(❓) | — | `PermissionRequest` | — | — | `PermissionRequest` | `PermissionDenied` | — | `PermissionRequest` | — | — | — |
+| **Turn End / Stop** | `Stop` | `Stop` | `AfterAgent` | `stop` | `Stop` | `Stop` | `post_llm_call` | — | — | `Stop` | `stop` | `stop` | `Stop` | `Stop` | `Stop` | `Stop` | `Stop` | — | `TaskComplete`(❓) | `Stop` | `Stop` | `turn_end` | `Stop` | `turn_end` | `Stop` | — |
+| **File Changed** | — | — | — | — | — | — | — | `file.changed` | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Session Idle** | — | — | — | — | — | — | — | `session.idle` | — | — | — | — | — | — | `TeammateIdle`(❓) | — | — | — | — | — | — | — | — | `session_idle` | — | — |
+| **Post Tool Use Failure** | — | — | — | — | — | — | — | — | — | — | — | — | `PostToolUseFailure` | — | `PostToolUseFailure`(❓) | — | `PostToolUseFailure`(❓) | — | — | — | `PostToolUseFailure` | — | — | `on_error` | — | — |
+| **Before Read File** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeReadFile` | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **After File Edit** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterFileEdit` | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Before Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `BeforeShellExecution` | — | — | — | — | — | — | — | — | — | — | `shell_env` | — | — |
+| **After Shell Exec** | — | — | — | — | — | — | — | — | — | — | — | — | `AfterShellExecution` | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| **Todo Created/Completed** | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | `TodoCreated` / `TodoCompleted` | — | — | — | — | — | — | — | — | — |
 
-> Amp is excluded from this event-name matrix — it has no declarative hooks table, using a TypeScript Plugin API with lifecycle callbacks (`session.start`, `tool.call`, `tool.result`, `agent.start`, `agent.end`) instead. Warp is excluded — no documented hook/lifecycle-event system was found. Continue CLI's event list is not yet published on its official docs site (three open GitHub issues track the gap); it was reconstructed from CLI source (`[github]`-labeled), so entries marked (❓) are inferred from source rather than confirmed in docs.
+> MiMo Code, Prime Agent, and Tau are excluded — all three ship no hook system at all (npm plugins, capability packages, and `tau install` extensions respectively). Codewhale's column is real but **TUI-scoped**: none of its events fire under `codewhale exec`, the CLI dispatcher, app-server, or ACP. oh-my-pi's column lists the one documented event name — its hooks are in-process TypeScript modules bound to a runtime event bus (`pi.on(...)`), not shell commands with an exit-code contract, and the docs publish no closed event list. Amp is excluded from this event-name matrix — it has no declarative hooks table, using a TypeScript Plugin API with lifecycle callbacks (`session.start`, `tool.call`, `tool.result`, `agent.start`, `agent.end`) instead. Warp is excluded — no documented hook/lifecycle-event system was found. Continue CLI's event list is not yet published on its official docs site (three open GitHub issues track the gap); it was reconstructed from CLI source (`[github]`-labeled), so entries marked (❓) are inferred from source rather than confirmed in docs.
 
 ## OpenCode Event Matrix
 
@@ -76,6 +76,12 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Qwen Code | stdout JSON `permissionDecision` in `PreToolUse` | `{"permissionDecision": "deny"}` |
 | Crush | Exit codes `2` (deny) / `49` (halt turn) in `PreToolUse` | `exit 2` or `exit 49` |
 | Warp | ❌ No hook system | N/A (use Agent Profiles/Permissions instead) |
+| Codewhale | stdout decision on `tool_call_before` / `message_submit` | allow / deny / ask, or rewrite input; ⚠️ **TUI only** — `exec`, ACP, and app-server fire no hooks, and `background = true` makes a gate silently inert |
+| Reasonix | Claude-Code-shaped JSON in `settings.json` (`PreToolUse`, `UserPromptSubmit`) | first blocking hook stops the rest; project hooks run before global |
+| oh-my-pi | Returned object from a TS/JS `pi.on("tool_call")` handler | `return { block: true, reason }` — no exit-code contract |
+| MiMo Code | ❌ No hook system | N/A (npm plugins; `--pure` runs without external plugins) |
+| Prime Agent | ❌ No hook system | N/A (capability packages: extensions/skills/prompts/themes) |
+| Tau | ❌ No hook system | N/A (`tau install SOURCE` extensions) |
 
 ## Hook Input Format Comparison
 

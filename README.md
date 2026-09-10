@@ -8,7 +8,7 @@
 
 # Agentic Tools Almanac ☤
 
-**The ultimate developer's index for AI coding agents.** A community-driven reference for configuring, extending, and intercepting every major agentic development tool. Easily compare lifecycle hooks (e.g., `PreToolUse` and `PostToolUse`), built-in capabilities, Model Context Protocol (MCP) servers, system instruction file paths, and customized skills across 26+ different developer agents.
+**The ultimate developer's index for AI coding agents.** A community-driven reference for configuring, extending, and intercepting every major agentic development tool. Easily compare lifecycle hooks (e.g., `PreToolUse` and `PostToolUse`), built-in capabilities, Model Context Protocol (MCP) servers, system instruction file paths, and customized skills across 40+ different developer agents.
 
 <table>
 <tr><td><b>Universal Hooks Index</b></td><td>Standardized naming, exit-code blocking rules, and in-depth event execution behaviors for intercepting actions.</td></tr>
@@ -58,10 +58,16 @@
 | [jcode](tools/jcode/) | Solo Systems | TOML | ✅ Full (5 events, 1 blocking) | ✅ | [jcode.sh/docs](https://jcode.sh/docs) |
 | [Paseo](tools/paseo/) | Paseo (getpaseo) | JSON | ✅ Full (11 hooks via TypeScript plugins — agent-lifecycle, not per-tool) | ✅ (server + injector) | [paseo.sh/docs](https://paseo.sh/docs) |
 | [QM](tools/qm/) | Y Combinator (yc-software) | JSONC + env (self-hosted) | ❌ Not shipped (security postures instead) | ✅ (admin-gated) | [qm.ycombinator.com](https://qm.ycombinator.com) |
+| [Codewhale](tools/codewhale/) | Hmbown (community) | TOML | ✅ Full (13 events, **TUI-only**) | ✅ | [github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale) |
+| [Reasonix](tools/reasonix/) | ESEngine (community) | TOML + JSON (hooks) | ✅ Full (10 events) | ✅ | [reasonix.io](http://reasonix.io/) |
+| [oh-my-pi](tools/oh-my-pi/) | can1357 (community) | YAML | ✅ Via TS/JS extension modules (blocking) | ✅ | [omp.sh](https://omp.sh) |
+| [MiMo Code](tools/mimo-code/) | Xiaomi | npm plugins | ❌ Not shipped (plugins instead) | ✅ (OAuth-capable) | [mimo.xiaomi.com/mimocode](https://mimo.xiaomi.com/mimocode) |
+| [Prime Agent](tools/prime-agent/) | Prime Intellect | ❓ (packages) | ❌ Not shipped (capability packages instead) | ✅ | [github.com/PrimeIntellect-ai/prime-agent](https://github.com/PrimeIntellect-ai/prime-agent) |
+| [Tau](tools/tau/) | Hugging Face | TOML | ❌ Not shipped (extensions instead) | ❓ | [twotimespi.dev](http://twotimespi.dev/) |
 
 **Legend:** ✅ Full = shipped, documented hook system with blocking · ⚠️ = partial or workaround · ❌ = not available · ❓ = unknown
 
-> **Notes:** Warp is primarily a GUI terminal app with an embedded agent (plus a separate `oz` CLI for headless/cloud use) — included here as a borderline entry, not a pure install-anywhere CLI like the others. Amazon Q Developer CLI is marked unmaintained by AWS as of this writing, with development moved to the closed-source Kiro CLI. Continue was acquired by Cursor/Anysphere in June 2026; its GitHub repo is now read-only. Goose was donated by Block to the Agentic AI Foundation (Linux Foundation) in 2026. Cline, Kilo Code, Junie, Grok Build, Muse Code, DeepSeek Harness, jcode, and QM were added 2026-08-15 as a **doc-only pass** (sourced from official docs/GitHub, not yet sandbox live-verified like the earlier entries) — several are brand-new (DeepSeek Harness shipped 2 days prior as a v0.1 preview) so expect more ❓s than the older pages; see `_shared/source-audit.md`. Paseo (added 2026-09-10, doc-only) is an **orchestrator**, not a coding agent — it launches and supervises other agent CLIs, and is listed here because it has its own config file, lifecycle hooks, MCP server, and skills.
+> **Notes:** Warp is primarily a GUI terminal app with an embedded agent (plus a separate `oz` CLI for headless/cloud use) — included here as a borderline entry, not a pure install-anywhere CLI like the others. Amazon Q Developer CLI is marked unmaintained by AWS as of this writing, with development moved to the closed-source Kiro CLI. Continue was acquired by Cursor/Anysphere in June 2026; its GitHub repo is now read-only. Goose was donated by Block to the Agentic AI Foundation (Linux Foundation) in 2026. Cline, Kilo Code, Junie, Grok Build, Muse Code, DeepSeek Harness, jcode, and QM were added 2026-08-15 as a **doc-only pass** (sourced from official docs/GitHub, not yet sandbox live-verified like the earlier entries) — several are brand-new (DeepSeek Harness shipped 2 days prior as a v0.1 preview) so expect more ❓s than the older pages; see `_shared/source-audit.md`. Paseo (added 2026-09-10, doc-only) is an **orchestrator**, not a coding agent — it launches and supervises other agent CLIs, and is listed here because it has its own config file, lifecycle hooks, MCP server, and skills. Codewhale, Reasonix, oh-my-pi, MiMo Code, Prime Agent, and Tau were added 2026-09-10 as a **live-verified pass** — all six were installed on the st3ve sandbox (Ubuntu 24.04) and driven through a real multi-step task against the OpenAI API; see each page's "Live Verification" section for what passed, what needed configuration, and what broke.
 
 ---
 

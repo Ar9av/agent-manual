@@ -19,7 +19,7 @@ Modeled on the normalized event schema used by adapters like `_normalize_claude`
 
 Tools whose *only* function is control-flow inside the harness (ask-user, plan-mode toggles, background-job polling) are still listed under `other` for completeness, tagged with what they actually do, since a security/audit layer usually still wants visibility into them even though they aren't file/shell/network primitives.
 
-**Adapter status** — of the 26 tools tracked in this repo, Prismor's `runtime/hooks.py` currently ships live adapters for **Claude Code, Codex CLI, Gemini CLI, GitHub Copilot, Cursor, OpenClaw, and Hermes** (7/26 — plus Windsurf and Grok CLI, which aren't tracked in this repo). The other 19 rows below are unmapped in Prismor today; this table is the input for scoping those adapters the way PR #247 scoped Gemini.
+**Adapter status** — of the 41 tools tracked in this repo, Prismor's `runtime/hooks.py` currently ships live adapters for **Claude Code, Codex CLI, Gemini CLI, GitHub Copilot, Cursor, OpenClaw, and Hermes** (7/41 — plus Windsurf and Grok CLI, which aren't tracked in this repo). The other 34 rows below are unmapped in Prismor today; this table is the input for scoping those adapters the way PR #247 scoped Gemini.
 
 ---
 
@@ -441,31 +441,286 @@ Docs describe categories rather than exhaustive tool ids; individual `read_file`
 
 **Could not fully install/inspect on st3ve.** Warp is a GUI-first Electron-style desktop app (`brew install --cask warp` on macOS; Linux `.deb`/`.rpm`/AppImage per the docs, but no anonymous downloadable Linux artifact was found from the box). The headless `oz` CLI is documented as "bundled alongside the Warp app install" or via `brew install --cask oz` on macOS, with only a vague "Linux: apt/yum/pacman packages available" and no actual repo URL or package name given — `apt-cache search warp`/`which oz` on Ubuntu 24.04 found nothing installable. Left as doc-only; this matches the task's expectation that Warp is one of the GUI-first/enterprise products without a freely reachable headless CLI path.
 
+## Cline — adapter: ❌
+
+Two naming generations coexist: the classic XML-style extension tools, and the newer `ClineCore` SDK names. Both map to the same canonical types.
+
+| Native tool (classic) | SDK equivalent | Type | Notes |
+|---|---|---|---|
+| `execute_command` | `bash` | `shell` | |
+| `read_file` | `read_files` | `file_read` | |
+| `write_to_file` | `apply_patch` | `file_write` | create/overwrite |
+| `replace_in_file` | `apply_patch` | `file_write` | diff-style edit — docs say `apply_patch` supersedes both classic write tools |
+| — | `editor` | `file_write` | SDK-only; no documented classic equivalent |
+| `search_files` | `search` | `other:search` | regex across files |
+| `list_files` | ❓ (`search`?) | `other:search` | |
+| `list_code_definition_names` | ❓ | `other:search` | top-level symbol listing |
+| — | `fetch_web` | `network` | no classic XML equivalent documented |
+| `use_mcp_tool` / `access_mcp_resource` | — | `other:mcp_passthrough` | |
+| `ask_followup_question` | `ask_question` | `other:elicitation` | |
+| `use_skill` | — | `other:skill_invoke` | |
+| `use_subagents` | — | `subagent_spawn` | parallel read-only research agents |
+
+❓ The docs confirm `read_files`/`apply_patch`/`bash` supersede the classic names, but never publish a full 1:1 map for the search/list family — a normalizer should accept both spellings.
+
+## Junie — adapter: ❌
+
+Claude-Code-shaped names (assembled from the subagent tool-groups reference, not a single canonical table).
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `Bash` | `shell` | approval-gated by the Action Allowlist |
+| `Read` | `file_read` | |
+| `Write` | `file_write` | |
+| `Edit` | `file_write` | search/replace + patches |
+| `Glob` | `other:search` | |
+| `Grep` | `other:search` | |
+| `WebSearch` | `network` | |
+| `AskUserQuestion` | `other:elicitation` | |
+| MCP server tools | `other:mcp_passthrough` | |
+
+❓ No official enumerated tool table; names above are inferred from the tool-groups docs.
+
+## Grok Build — adapter: ❌
+
+No enumerated tool names published — only capability categories. Map by category until names are sourced.
+
+| Native capability | Type | Notes |
+|---|---|---|
+| Terminal / shell execution | `shell` | |
+| File edit (read/write/patch) | `file_read` + `file_write` | |
+| Search | `other:search` | |
+| Workspace ops (filesystem, git, checkpoints) | `other:vcs` | |
+| MCP tools (`<server>__<tool>`) | `other:mcp_passthrough` | double-underscore namespacing is the reliable discriminator |
+
+❓ Whether the built-ins are literally named `Read`/`Edit`/`Bash` (Claude-Code style) is unconfirmed.
+
+## jcode — adapter: ❌
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash` / shell execution | `shell` | |
+| `run_in_background` | `other:job_control` | long-running processes with progress monitoring |
+| File read/write/edit | `file_read` + `file_write` | exact tool names ❓ |
+| Agent grep | `other:search` | grep + file-structure info, adaptive truncation |
+| Todo management | `other:todo` | includes confidence / "hill-climbability" scoring |
+| `browser` | `other:browser` | Firefox Agent Bridge; `open`/`click`/`type`/`fill_form`/`screenshot`/`eval`/… |
+| Memory tools | `memory` | store/retrieve/search over the semantic memory graph |
+| Session search (RAG over past sessions) | `other:search` | |
+| Swarm tool | `subagent_spawn` | spawn workers + DM/broadcast/channels — also `other:messaging` |
+| `request_permission` | `other:elicitation` | ambient-mode Tier-2 approval |
+| Image generation / rendering | `other:media_gen` | |
+| LaTeX / Mermaid rendering | `other:media_gen` | display-only, no side effects |
+
+❓ No canonical tool-list page exists; table assembled from README + scattered docs pages.
+
+## Muse Code — adapter: ❌
+
+Capability-level only — Meta's docs describe behavior, not a tool schema.
+
+| Native capability | Type | Notes |
+|---|---|---|
+| Shell/command execution | `shell` | sandboxed (Seatbelt/bubblewrap); approval modes `on-request`/`untrusted`/`never` |
+| File edit/write | `file_write` | exact name(s) ❓ |
+| Search grounding | `network` | live web access |
+| Computer use | `other:browser` | scope ❓ |
+| Subagent fan-out | `subagent_spawn` | isolated git worktrees under `.muse/worktrees/` |
+| MCP tools (`mcp_servers` block) | `other:mcp_passthrough` | |
+
+❓ No page enumerates a discrete tool list — treat every row as inferred from prose.
+
+## DeepSeek Harness — adapter: ❌
+
+The only agent here that publishes a generated tool-schema catalog (`en/reference/tool-catalog`), so names are high-confidence.
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash`, `pwsh` | `shell` | PowerShell variant has local + sandboxed configs |
+| `terminal_open` / `terminal_close` / `terminal_list` / `terminal_read` / `terminal_send` / `terminal_signal` | `shell` | persistent PTY sessions, owner-scoped |
+| `read`, `read_image` | `file_read` | |
+| `write`, `edit`, `str_replace_editor` | `file_write` | |
+| `glob`, `grep` | `other:search` | |
+| `web_search`, `web_fetch` | `network` | |
+| `run_code` | `shell` | sandboxed worker-thread execution |
+| `lsp` | `other:diagnostics` | |
+| `job_list` / `job_output` / `job_kill` | `other:job_control` | |
+| `subagent`, `subagent_fork` | `subagent_spawn` | |
+| `send_message`, `interrupt_agent`, `list_agents`, `report` | `other:messaging` | multi-agent coordination |
+| `workflow`, `ralph` | `other:workflow` | worker-thread workflow engine |
+| `session_search` / `session_trace` / `session_event_read` / `session_event_search` / `session_event_trace` | `other:session_meta` | introspects prior sessions |
+| `create_goal` / `get_goal` / `update_goal` / `todo_write` | `other:todo` | |
+| `schedule_create` / `schedule_delete` / `schedule_list` | `other:scheduling` | |
+| `skill` | `other:skill_invoke` | |
+| `ask_user_question`, `exit_plan_mode` | `other:elicitation` / `other:planning` | |
+| `cordis_define` / `cordis_undefine` / `cordis_run` / `cordis_stop` / `cordis_inspect_*` | `other:dynamic_tooling` | creator-mode: defines/runs new tools at runtime — the highest-risk bucket for a policy layer |
+| MCP client tools | `other:mcp_passthrough` | registered into `ctx.tools` |
+
+**Mode matters:** in **Minimal** mode only `bash` + `str_replace_editor` exist; **Code Mode** exposes tools via an SDK rather than model tool-calls, so a hook adapter sees a different (or empty) tool stream.
+
+## Kilo Code — adapter: ❌
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash` | `shell` | configurable timeout/directory |
+| `read` | `file_read` | with line numbers |
+| `write` | `file_write` | create / full replace |
+| `edit` | `file_write` | targeted replacement |
+| `apply_patch` | `file_write` | unified diff |
+| `glob`, `grep` | `other:search` | |
+| `webfetch`, `websearch` | `network` | search via Exa or Parallel |
+| `kilo-playwright_browser_navigate` / `_click` / `_type` / `_screenshot` / `_snapshot` | `other:browser` | |
+| `question` | `other:elicitation` | selectable response options |
+| `task` | `subagent_spawn` | |
+| `todowrite` / `todoread` | `other:todo` | |
+| `plan` | `other:planning` | |
+| `skill` | `other:skill_invoke` | |
+| `agent_manager` | `other:session_meta` | VS Code sessions/worktrees |
+| `{server}_{tool}` | `other:mcp_passthrough` | single-underscore namespacing |
+
+## QM — adapter: ❌ (no hook system; security postures instead)
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `execute` | `shell` | **the only fixed tool** — runs commands in the scope's durable sandbox |
+| Sandbox tools (`sandbox/tools/<id>/tool.json`) | `shell` | advertised as installed CLIs, invoked *through* `execute` |
+| Connectors / skills (Slack, Drive, GitHub, Linear, cloud CLIs…) | `other:third_party_api` | |
+| MCP tools (org-admin registered) | `other:mcp_passthrough` | |
+
+QM deliberately collapses the whole toolset into one `shell` event — everything else is a CLI inside the sandbox. For a policy layer this inverts the usual problem: there is nothing to normalize at the tool-name level, and all the signal lives in the *command string* passed to `execute`. Note also that QM runs Claude Code / Codex / OpenCode / Pi as its underlying harness (`HARNESS` in `.env`), so the inner harness's own tool names may surface one layer down.
+
+## oh-my-pi (omp) — adapter: ❌
+
+✅ = observed live on st3ve in a `--mode json` run (2026-09-10); the rest are from the documented tool listing.
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash` | `shell` | ✅ PTY-based interactive by default; `--no-pty` disables |
+| `read` | `file_read` | ✅ also resolves 16 internal schemes (`pr://`, `issue://`, `agent://`, `skill://`, `ssh://`, …) through the same FS-shaped tool |
+| `write` | `file_write` | ✅ |
+| `grep` | `other:search` | ✅ also walks a diff like a directory |
+| `todo` | `other:todo` | ✅ |
+| `task` | `subagent_spawn` | parallel fan-out, optionally workspace-isolated |
+| `web_search` | `network` | one query across configured providers, returns answer plus citations |
+| `learn` | `memory` | capture a reusable lesson; can promote it into a managed skill |
+| `manage_skill` | `other:skill_invoke` | create/update/delete an isolated managed skill |
+| `orchestrate` | `subagent_spawn` | parallel subagents with per-phase verification |
+| `workflowz` | `subagent_spawn` | deterministic multi-subagent workflow over `task` |
+| LSP ops (14) | `other:lsp` | disabled together with `--no-lsp` |
+| DAP ops (28) | `other:debug` | debug-adapter operations — **unique to omp in this repo** |
+
+❓ The README advertises 31 built-in tools but publishes no closed table; the 11 named above plus the LSP/DAP families are what is documented. `--tools=<list>` allowlists, `--no-tools` disables all built-ins.
+
+## Codewhale — adapter: ❌
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash` | `shell` | ✅ observed live in `exec --auto --output-format stream-json` |
+| `read` | `file_read` | ✅ |
+| `write` | `file_write` | ✅ |
+| `exec_shell` | `shell` | named in the hooks doc as the target of the `shell_env` hook and `tool_name` conditions |
+
+❓ **Two spellings for the shell tool.** The hooks documentation gates on `exec_shell`; the live stream-json run reported `bash`. A normalizer should accept both until a canonical tool table is published — and a hook condition written as `{ type = "tool_name", name = "exec_shell" }` may not match what the engine actually emits.
+
+Note for adapter authors: Codewhale hooks fire **only in the interactive TUI**. `codewhale exec`, the CLI dispatcher, app-server, and ACP fire nothing, so a hook-based adapter gets zero coverage of the headless path.
+
+## Reasonix — adapter: ❌
+
+✅ = observed live in session JSONL on st3ve (2026-09-10).
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash` | `shell` | ✅ refused entirely when `[sandbox] bash = "enforce"` and no OS sandbox is available |
+| `read_file` | `file_read` | ✅ |
+| `write_file` | `file_write` | ✅ |
+| `use_capability` | `other:skill_invoke` | ✅ capability/skill dispatch |
+| `edit_file` | `file_write` | named in the sandbox docs as part of the file-writer set |
+| `multi_edit` | `file_write` | as above |
+| `move_file` | `file_write` | as above |
+| MCP plugin tools | `other:mcp_passthrough` | `[[plugins]]` entries contribute tools, prompts, and resources |
+
+Permission rules are Claude-Code-shaped (`Tool` / `Tool(specifier)`, e.g. `Bash(go test:*)`, `Edit(src/**)`) with precedence **deny > ask > allow > fallback** — note the rule names are capitalized (`Bash`, `Edit`) while the emitted tool names are snake_case (`bash`, `write_file`).
+
+⚠️ `reasonix run --events-jsonl` did **not** expose tool-name fields in the live run; the redacted event stream omitted what the session JSONL recorded. An adapter should read sessions, not the events stream, for tool identity.
+
+## MiMo Code — adapter: ❌
+
+✅ = observed live via `mimo export <session-id>` on st3ve (2026-09-10).
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `exec` | `shell` | ✅ |
+| `exec_command` | `shell` | ✅ command form |
+| `apply_patch` | `file_write` | ✅ patch/diff apply |
+| MCP server tools | `other:mcp_passthrough` | OAuth-capable servers via `mimo mcp auth` |
+
+❓ No enumerated tool table is published. Notably, a five-part task (list dir, grep, read, write, shell) emitted **only these three names** — MiMo routes file reads and searches through shell execution and performs writes through `apply_patch`, rather than exposing distinct `read`/`grep` tools. There is no `file_read` event to gate; reads surface as `shell`.
+
+## Prime Agent — adapter: ❌
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `ipython` | `shell` | ✅ **the only tool** — a persistent Python REPL |
+
+> ⚠️ **This row breaks the premise of the table.** Prime Agent's built-in tool *is* a persistent Python REPL. File operations, shell commands, MCP tool use, subagent spawning (`rlm(...)`), and context management all happen as Python code inside it. A five-part task that in every other harness emitted 4–5 distinct tool names emitted exactly one here.
+
+For an interception layer this means:
+
+- there is no `file_write`, `file_read`, `network`, or `subagent_spawn` event to gate;
+- the entire signal lives in the **code string** passed to `ipython`, which must be parsed (not pattern-matched on a tool name) to recover intent;
+- tool-name allowlisting is effectively inert — `-t/--tools ipython` permits everything.
+
+This is the same inversion as QM (which collapses everything into `execute`), but at the language level rather than the CLI level, and it is harder: a shell command string is far easier to classify than arbitrary Python. Pair it with the vendor's own warning that the worker/kernel processes are **not** a security sandbox.
+
+## Tau — adapter: ❌
+
+✅ = observed live in session JSONL on st3ve (2026-09-10).
+
+| Native tool | Type | Notes |
+|---|---|---|
+| `bash` | `shell` | ✅ |
+| `read` | `file_read` | ✅ |
+| `write` | `file_write` | ✅ |
+
+The minimal Pi-lineage core — the same three primitives as omp without the `grep`/`todo`/`task` layer. ❓ No MCP surface exists in 0.4.2, so there is no `other:mcp_passthrough` row.
+
+⚠️ Session records carry both `"name"` and `"toolName"` spellings for the same call; a normalizer should read either.
+
 ---
 
 ## Cross-agent frequency (how common is each `other:*` sub-tag)
 
-Rough count of distinct tools falling into each `other:*` bucket across all 26 agents — useful for prioritizing which sub-categories deserve their own top-level normalized type if this taxonomy gets extended:
+Counted mechanically from the sections above — how many of the 34 agents have at least one tool in each `other:*` bucket. Useful for prioritizing which sub-categories deserve their own top-level normalized type if this taxonomy gets extended.
 
 | Sub-tag | Agents where it appears |
 |---|---|
-| `other:search` (glob/grep/list/semantic search) | nearly all 26 — the single most common non-canonical bucket |
-| `other:todo` | Claude Code, Codex, Gemini CLI, Factory Droid, Kiro, Kimi Code, Amazon Q, Amp, Goose, OpenHands, Crush, Continue CLI, Qwen Code, Warp |
-| `other:mcp_passthrough` | Factory Droid, Kiro, Amp, OpenHands, Crush, Auggie, Qwen Code, Warp |
-| `other:browser` | Codex, Cursor, Hermes, Goose (Computer Controller), OpenHands, Warp |
-| `other:elicitation` (ask-user) | Claude Code, Gemini CLI, Cursor, Hermes, Kimi Code, Crush, Continue CLI |
-| `other:job_control` (background tasks) | Kiro, Kimi Code, Crush, Continue CLI |
-| `other:diagnostics` (LSP/editor) | GitHub Copilot, Kiro, Amp, Crush |
-| `other:skill_invoke` | Claude Code, Gemini CLI, Devin CLI, Kimi Code (via `Agent`), Warp |
-| `other:cloud_api` (AWS etc.) | Kiro, Amazon Q |
-| `other:media_gen` | Codex, Cursor, Hermes |
-| `other:reasoning` | Kiro, Kimi Code, Amazon Q |
-| `other:vcs` | Aider, Continue CLI |
-| `other:messaging` | Hermes, Amazon Q, Amp, Continue CLI, Kimi Code |
-| `other:home_automation` | Hermes only |
-| `other:third_party_api` (Spotify/Kanban/Yuanbao) | Hermes only |
+| `other:search` (glob/grep/list/semantic search) | **24** — Claude Code, GitHub Copilot CLI / VS Code, Gemini CLI, Cursor, OpenClaw, Hermes Agent, Factory Droid, Kiro IDE / CLI, Kimi Code CLI, Aider, Google Antigravity, Amp, Goose, Crush, Continue CLI, Auggie CLI, Warp (Agent Mode), Cline, Junie, Grok Build, jcode, DeepSeek Harness, Kilo Code, oh-my-pi |
+| `other:todo` (task lists) | **18** — Claude Code, Codex CLI, Hermes Agent, Factory Droid, Kiro IDE / CLI, Kimi Code CLI, Amazon Q Developer CLI, Amp, Goose, OpenHands, Crush, Continue CLI, Auggie CLI, Qwen Code, jcode, DeepSeek Harness, Kilo Code, oh-my-pi |
+| `other:mcp_passthrough` (MCP server tools) | **15** — Factory Droid, Kiro IDE / CLI, Amp, OpenHands, Crush, Auggie CLI, Qwen Code, Warp (Agent Mode), Cline, Junie, Grok Build, Muse Code, DeepSeek Harness, Kilo Code, QM |
+| `other:elicitation` (ask-user) | **12** — Claude Code, Gemini CLI, Cursor, Hermes Agent, Kimi Code CLI, Crush, Continue CLI, Cline, Junie, jcode, DeepSeek Harness, Kilo Code |
+| `other:browser` (browser / computer use) | **9** — Codex CLI, Cursor, Hermes Agent, Goose, OpenHands, Warp (Agent Mode), jcode, Muse Code, Kilo Code |
+| `other:session_meta` (session & workspace introspection) | **8** — Gemini CLI, Kiro IDE / CLI, Aider, Continue CLI, Auggie CLI, Warp (Agent Mode), DeepSeek Harness, Kilo Code |
+| `other:skill_invoke` (load/run a skill) | **8** — Claude Code, Gemini CLI, Hermes Agent, Devin CLI, Warp (Agent Mode), Cline, DeepSeek Harness, Kilo Code |
+| `other:messaging` (send messages to humans/agents) | **7** — Hermes Agent, Kiro IDE / CLI, Kimi Code CLI, Amazon Q Developer CLI, Continue CLI, jcode, DeepSeek Harness |
+| `other:job_control` (background tasks) | **6** — Gemini CLI, Kimi Code CLI, Crush, Continue CLI, jcode, DeepSeek Harness |
+| `other:diagnostics` (LSP/editor errors) | **5** — GitHub Copilot CLI / VS Code, Kiro IDE / CLI, Amp, Crush, DeepSeek Harness |
+| `other:planning` (plan mode) | **5** — Gemini CLI, Kimi Code CLI, Warp (Agent Mode), DeepSeek Harness, Kilo Code |
+| `other:media_gen` (image/video/audio generation) | **4** — Codex CLI, Cursor, Hermes Agent, jcode |
+| `other:reasoning` (explicit think/reason tool) | **3** — Kiro IDE / CLI, Kimi Code CLI, Amazon Q Developer CLI |
+| `other:self_query` (agent introspects its own config) | **3** — Kiro IDE / CLI, Amazon Q Developer CLI, Crush |
+| `other:vcs` (git operations) | **3** — Aider, Continue CLI, Grok Build |
+| `other:cloud_api` (AWS etc.) | **2** — Kiro IDE / CLI, Amazon Q Developer CLI |
+| `other:scheduling` (cron/scheduled runs) | **2** — Hermes Agent, DeepSeek Harness |
+| `other:third_party_api` (Spotify/Kanban/connectors) | **2** — Hermes Agent, QM |
+| `other:context_inject` (pulls rules/context files) | **1** — Cursor |
+| `other:context_manage` (add/drop files from context) | **1** — Aider |
+| `other:dynamic_tooling` (defines new tools at runtime) | **1** — DeepSeek Harness |
+| `other:home_automation` (Home Assistant) | **1** — Hermes Agent |
+| `other:review` (code review / design feedback) | **1** — Amp |
+| `other:workflow` (workflow engine) | **1** — DeepSeek Harness |
 
-`other:search` and `other:todo` are the strongest candidates for promotion to first-class canonical types if the taxonomy is revisited — they show up in almost every agent and currently get flattened into the catch-all bucket.
+`other:search` and `other:todo` are the strongest candidates for promotion to first-class canonical types — they show up in 24 and 18 of the 41 agents respectively and currently get flattened into the catch-all bucket. `other:mcp_passthrough` is a close third, but it's a passthrough wrapper rather than a distinct action, so it arguably belongs as a *flag* on the inner tool's event rather than a type of its own.
+
+Counts exclude agents whose docs publish no enumerated tool list at all (OpenCode, Trae/Trae CN, Pi Agent), so a bucket's real reach is a floor, not a ceiling. The six agents added 2026-09-10 (Codewhale, Reasonix, oh-my-pi, MiMo Code, Prime Agent, Tau) contribute observed-live names rather than published tables, so their rows are a floor too — a task that never needed a given tool never revealed its name.
 
 ---
 

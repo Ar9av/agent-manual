@@ -40,6 +40,12 @@ Quick reference for where each agentic tool stores its configuration.
 | jcode | `~/.jcode/config.toml` |
 | Paseo | `~/.paseo/config.json` (daemon; `PASEO_HOME` relocates it) |
 | QM | `qm.config.jsonc` (self-hosted deployment, not per-user) |
+| Codewhale | `~/.codewhale/config.toml` (+ `~/.codewhale/secrets/secrets.json`) |
+| Reasonix | `~/.reasonix/config.toml` (+ `~/.reasonix/.env` for credentials, `~/.reasonix/settings.json` for hooks); `REASONIX_HOME` relocates it |
+| oh-my-pi | `~/.omp/agent/config.yml` (+ `~/.omp/agent/models.yml` for providers) |
+| MiMo Code | `~/.config/mimocode/` (plugins installed as npm modules into this root) |
+| Prime Agent | ❓ not created by a headless run; likely materialized on first interactive `/login` |
+| Tau | `~/.tau/catalog.toml` (custom provider/model catalog) |
 
 ## Project-Level Config
 
@@ -77,6 +83,12 @@ Quick reference for where each agentic tool stores its configuration.
 | DeepSeek Harness | `<profile>/cordis.patch.yml` |
 | jcode | `.jcode/mcp.json` (MCP only; ❓ no separate project settings file confirmed) |
 | QM | `deploy/layers/<org>/` (org customization layer) |
+| Codewhale | `AGENTS.md` (`codewhale init` scaffolds it); ❓ no project config file confirmed |
+| Reasonix | `./reasonix.toml` (overrides global) + `<workspace>/.reasonix/settings.json` (hooks, loaded **before** global) |
+| oh-my-pi | `.omp/hooks/pre/*.ts` (hook/extension factories); inherits `.claude`, `.cursor`, `.windsurf`, `.gemini`, `.codex`, `.cline`, `.github/copilot`, `.vscode` on first run |
+| MiMo Code | `.mimocode/skills/<name>/SKILL.md` (+ `checkpoint.md` session state) |
+| Prime Agent | `AGENTS.md` / `CLAUDE.md` (disable discovery with `-nc`) |
+| Tau | `.tau/` and `.agents/` resources (+ `AGENTS.md`) |
 
 ## MCP Config Locations
 

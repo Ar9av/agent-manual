@@ -85,6 +85,70 @@ These remain intentionally marked rather than guessed:
 | `_shared/activity-agent-matrix.md` not yet extended to the 9 tools added 2026-07-23 | N/A | Adding accurate per-activity columns (file ops, shell, browser, etc.) for Amazon Q Dev CLI, Amp, Goose, OpenHands, Crush, Continue CLI, Auggie, Qwen Code, Warp requires deeper per-tool verification than the initial pass did; each new tool's own README already documents its built-in tools |
 | `_shared/agent-tools-hooks-config.md` not yet extended to the 9 tools added 2026-07-23 | N/A | Same reason — the unified per-tool spec table is large (1150+ lines) and wasn't backfilled in this pass; each tool's own `tools/<name>/README.md` is the authoritative source in the meantime |
 
+## 2026-09-10 Addendum: 6 new tools, **live-verified** pass
+
+Selected by live GitHub star/activity data (not blog rankings) from a ~120-entry
+survey of currently-trending CLI harnesses, filtered to those installable
+headlessly on Linux and drivable with an OpenAI API key. All six were installed
+on the **st3ve** sandbox (Ubuntu 24.04.4, kernel 6.17) and driven through two
+real tasks against `gpt-5.4-mini` (or `gpt-4.1-mini` where GPT-5 was rejected):
+a write+execute task, and a five-part task exercising list / search / read /
+write / shell.
+
+| Tool | Version tested | Task 1 | Task 2 | Configuration required |
+|------|---------------|--------|--------|------------------------|
+| [oh-my-pi](../tools/oh-my-pi/) | 18.1.16 | ✅ | ✅ | none — `OPENAI_API_KEY` only |
+| [Tau](../tools/tau/) | 0.4.2 | ✅ | ✅ | none — `OPENAI_API_KEY` only |
+| [Prime Agent](../tools/prime-agent/) | 0.9.4 | ✅ | ✅ | none — `OPENAI_API_KEY` only |
+| [MiMo Code](../tools/mimo-code/) | 0.1.14 | ✅ | ✅ | none — `OPENAI_API_KEY` only |
+| [Reasonix](../tools/reasonix/) | 1.38.3 | ✅ | ✅ | provider TOML + `.env`, `[sandbox] bash = "off"`, `--permission-mode yolo` |
+| [Codewhale](../tools/codewhale/) | 0.9.12 | ✅ | ✅ | `config set provider`, `auth set`, `exec --auto`, and a **non-GPT-5 model** |
+
+Findings that only a live run produced — none of these are in any vendor's docs:
+
+- **Codewhale cannot talk to GPT-5-family models.** 0.9.12 sends `max_tokens` on
+  the OpenAI chat-completions wire; GPT-5 rejects it with
+  `Unsupported parameter: 'max_tokens' ... Use 'max_completion_tokens' instead`.
+  `gpt-4.1-mini` works. The run receipt reports
+  `codewhale_max_output_tokens_source: "uncatalogued"`, i.e. the model catalog
+  does not know the GPT-5 family.
+- **Codewhale's `exec` is not agentic by default.** Plain `exec` returns a
+  one-shot model response and *describes* the commands it would run; `--auto` is
+  required for tool use. Easy to mistake for a broken agent.
+- **Codewhale hooks never fire headlessly.** Documented, but load-bearing: an
+  interception layer built on its hooks covers the TUI only.
+- **Reasonix fails closed on shell execution.** With the default
+  `[sandbox] bash = "enforce"` and no usable OS sandbox, bash is refused
+  outright. Installing `bubblewrap` was **not** enough on Ubuntu 24.04 —
+  `kernel.apparmor_restrict_unprivileged_userns=1` makes `bwrap` fail with
+  `setting up uid map: Permission denied`. This will bite anyone running
+  Reasonix in a container or hardened host.
+- **Reasonix rewrites hand-edited configs.** A minimal `config.toml` was
+  normalized into a ~250-line annotated file, and an appended `[sandbox]` table
+  was ignored until it was placed ahead of `[[providers]]`.
+- **Reasonix `--events-jsonl` hides tool names** that the session JSONL records.
+  Adapters should read sessions, not the redacted event stream.
+- **Prime Agent has exactly one tool: `ipython`.** Every file read, write,
+  search, shell call, and subagent spawn is Python inside one persistent REPL.
+  Tool-name-based policy is inert against it — see the normalization map.
+- **MiMo Code has no `read`/`grep` tool.** Reads and searches route through
+  `exec`/`exec_command`; writes go through `apply_patch`.
+- **Prime Agent is not on the public npm registry** under `prime-agent`, and its
+  install script inherits the ambient npm prefix (fails `EACCES` on a
+  root-owned default).
+
+Not tested, and why:
+
+| Candidate | Stars | Reason |
+|---|---|---|
+| `ultraworkers/claw-code` | ~195k | Requires a Rust source build (crates.io `claw-code` is a deprecated stub); Anthropic-key-oriented; sandbox disk did not permit it |
+| `langchain-ai/deepagents` | ~29k | A framework/harness library, not an end-user CLI — belongs in `frameworks/` |
+| `mistralai/mistral-vibe` | ~5k | Mistral API key required; not reachable with an OpenAI key |
+
+Pages are marked `[live]` where a claim was observed on st3ve and `[official]` /
+❓ otherwise; every page carries its own "Live Verification" section stating what
+passed, what needed configuration, and what broke.
+
 ## 2026-09-10 Addendum: Paseo (orchestrator), doc-only pass
 
 Added `tools/paseo/`. **Doc-only** — sourced from https://paseo.sh/docs and the `getpaseo/paseo` repo at `v0.8.0` (2026-09-10); no install, no isolated `$HOME` run, no `## Testing Status` section.
