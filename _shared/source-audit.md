@@ -85,6 +85,16 @@ These remain intentionally marked rather than guessed:
 | `_shared/activity-agent-matrix.md` not yet extended to the 9 tools added 2026-07-23 | N/A | Adding accurate per-activity columns (file ops, shell, browser, etc.) for Amazon Q Dev CLI, Amp, Goose, OpenHands, Crush, Continue CLI, Auggie, Qwen Code, Warp requires deeper per-tool verification than the initial pass did; each new tool's own README already documents its built-in tools |
 | `_shared/agent-tools-hooks-config.md` not yet extended to the 9 tools added 2026-07-23 | N/A | Same reason — the unified per-tool spec table is large (1150+ lines) and wasn't backfilled in this pass; each tool's own `tools/<name>/README.md` is the authoritative source in the meantime |
 
+## 2026-09-10 Addendum: Paseo (orchestrator), doc-only pass
+
+Added `tools/paseo/`. **Doc-only** — sourced from https://paseo.sh/docs and the `getpaseo/paseo` repo at `v0.8.0` (2026-09-10); no install, no isolated `$HOME` run, no `## Testing Status` section.
+
+| Page | Status | Notes |
+|---|---|---|
+| `tools/paseo/README.md` | `official` + `github` | Full public docs (`public-docs/` in-repo mirrors paseo.sh/docs) and Apache-2.0 source; hook names/payloads taken from the v0.8 plugin reference — the plugin API is versioned and v0.7 differs |
+
+Category caveat: Paseo is **not a coding agent**. It is a daemon that launches other agent CLIs, so its hooks are agent-lifecycle (turn started/ended, permission requested, agent/workspace create) rather than `PreToolUse`-style per-tool gates. For that reason it was **not** added to `_shared/hook-event-comparison.md`, `_shared/activity-agent-matrix.md`, or `_shared/tool-normalization-map.md` — it has no built-in file/shell tool surface to normalize and no per-tool-call hook to line up in those matrices. Rows were added to the master `README.md` Tools Covered table, `_shared/agent-tools-hooks-config.md`, `_shared/mcp-support.md`, and `_shared/config-file-locations.md`.
+
 ## 2026-08-15 Addendum: 8 new tools + 1 framework, doc-only pass
 
 Added `tools/cline/`, `tools/kilo-code/`, `tools/junie/`, `tools/grok-build/`, `tools/muse-code/`, `tools/deepseek-harness/`, `tools/jcode/`, `tools/qm/`, plus a `Microsoft Agent Framework` section in `frameworks/README.md`. This was an explicit **doc-only pass** at the user's direction — none of these 9 entries have been sandbox live-verified (no real install, no isolated `$HOME` test run, no `## Testing Status` section), unlike `tools/claude-code/` or `tools/openclaw/`. Master `README.md` (Tools Covered table, Frameworks & SDKs table, Hook Event Cross-Reference) and `_shared/agent-tools-hooks-config.md`, `_shared/hook-event-comparison.md`, `_shared/mcp-support.md`, `_shared/config-file-locations.md` were all updated with rows/columns for the 8 new tools.

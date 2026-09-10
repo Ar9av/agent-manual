@@ -41,6 +41,7 @@ see `_shared/mcp-tool-substitution.md`.
 | Muse Code | ✅ Full | `~/.config/muse/settings.json` → `mcp_servers` | Transports: `stdio`, `streamable_http` (no `sse`) |
 | DeepSeek Harness | ✅ Full | `cordis.yml` via `@deepseek-ai/dsh-mcp-client` plugin | One plugin instance = one server; stdio + streamable-http |
 | jcode | ✅ Full | `~/.jcode/mcp.json` (global) / `.jcode/mcp.json` (project) | Accepts both `mcpServers` and legacy `servers` key |
+| Paseo | ✅ Both directions | `~/.paseo/config.json` → `daemon.mcp` (server); `agents.providers` / `agent.create` hook → `mcpServers` (injector) | Orchestrator: serves its own agent/workspace/terminal/schedule tool catalog to launched agents (`injectIntoAgents`, default off); narrow per provider with `paseoTools` |
 | QM | ✅ Full (admin-gated) | Admin-registered via REST API, org-wide | Not per-user; auth modes `none`/`bearer`/`client-credentials` |
 
 ## Standard MCP Config Format
@@ -146,4 +147,5 @@ In Cursor, use **Settings > Tools & MCP** to see all loaded servers and toggle i
 | Muse Code | https://dev.meta.ai/docs/muse-code/configuration.md | 2026-08-15 | [official] |
 | DeepSeek Harness | https://github.com/deepseek-ai/deepseek-harness | 2026-08-15 | [github] |
 | jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
+| Paseo | https://paseo.sh/docs/mcp | 2026-09-10 | [official] |
 | QM | https://github.com/yc-software/qm | 2026-08-15 | [github] |

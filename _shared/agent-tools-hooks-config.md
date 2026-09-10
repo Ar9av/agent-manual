@@ -1359,6 +1359,41 @@ Hooks run external commands directly (not through a shell), communicating via en
 
 ---
 
+## Paseo
+
+**Vendor:** Paseo (getpaseo) | **Config format:** JSON | **Instruction file:** none of its own (each launched agent reads its own `CLAUDE.md`/`AGENTS.md`)
+**Sources:** https://paseo.sh/docs [official] · https://paseo.sh/docs/plugins/v0.8 [official] · https://github.com/getpaseo/paseo [github]
+**Note:** doc-only pass (2026-09-10), v0.8.0 — not yet sandbox live-verified. **Orchestrator, not an agent:** a daemon that launches Claude Code, Codex, Copilot, OpenCode, Pi natively plus 35+ ACP agents; no model or file/shell tools of its own.
+
+### Config Files
+| File | Scope | Purpose |
+|------|-------|---------|
+| `~/.paseo/config.json` | Global (daemon) | Listen address, hostnames, MCP, `agents.providers`, worktrees, features, logging, voice |
+| `$PASEO_HOME/worktrees/` | Global | Default root for Paseo-managed git worktrees |
+
+Precedence: defaults → `config.json` → env vars → CLI flags; list fields append. `paseo reload` applies runtime-safe changes, `paseo daemon restart` for the rest.
+
+### Hook Events (TypeScript plugins, `index.server.ts`)
+Registered with `server.on()` / `server.before()` on the daemon — **agent-lifecycle granularity, not per-tool-call**. Individual tool calls must still be intercepted with the underlying agent's own hooks.
+
+| Event | Kind | When | Can Block |
+|-------|------|------|-----------|
+| `agent.create` | before | Agent creation request | ✅ (throw; can rewrite config/env, not `cwd`) |
+| `agent.session_open` | before | Provider session opens | ✅ (throw; `env` only) |
+| `workspace.create` | before | Workspace creation request | ✅ (throw; whole request editable) |
+| `agent.created` | event | Ordinary creation finishes | ❌ |
+| `agent.turn_started` / `agent.turn_ended` | event | Live turn start / completion, failure, cancel | ❌ |
+| `agent.permission_requested` / `agent.permission_resolved` | event | Permission pending / answered | ❌ (answerable via SDK) |
+| `agent.archived` | event | Archive saved | ❌ |
+| `workspace.created` / `workspace.archived` | event | Workspace record created / archived | ❌ |
+
+Eleven hooks total. 30 s timeout aborts `context.signal`; a failing before hook fails the operation, a failing event handler is logged only. Plugin server code runs **unsandboxed as the daemon user**.
+
+### MCP
+Both directions. The daemon **serves** an orchestration catalog (`daemon.mcp.enabled`, default `true`; `injectIntoAgents`, default `false`) covering agents, workspaces, workspace scripts, terminals, schedules/heartbeats, profiles, providers, permissions, voice. Narrow it per provider with `agents.providers.<id>.paseoTools` (`enabled: false` or `disabledTools`). It also **injects** `mcpServers` into launched agents' own configs via config, profiles, or the `agent.create` hook.
+
+---
+
 ## QM (Quartermaster)
 
 **Vendor:** Y Combinator (yc-software) | **Config format:** JSONC + env | **Instruction file:** ❓ not confirmed for deployed agents (repo's own `AGENTS.md`/`CLAUDE.md` is contributor-facing only)

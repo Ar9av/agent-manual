@@ -38,6 +38,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Muse Code | `~/.config/muse/settings.json` |
 | DeepSeek Harness | ❓ no single global file (Cordis profile/bundle/patch composition) |
 | jcode | `~/.jcode/config.toml` |
+| Paseo | `~/.paseo/config.json` (daemon; `PASEO_HOME` relocates it) |
 | QM | `qm.config.jsonc` (self-hosted deployment, not per-user) |
 
 ## Project-Level Config
@@ -107,6 +108,7 @@ Quick reference for where each agentic tool stores its configuration.
 | Muse Code | `~/.config/muse/settings.json` → `mcp_servers` |
 | DeepSeek Harness | `cordis.yml` via `@deepseek-ai/dsh-mcp-client` plugin |
 | jcode | `~/.jcode/mcp.json` (global) / `.jcode/mcp.json` (project) |
+| Paseo | `~/.paseo/config.json` → `daemon.mcp` (server) / `agents.providers.*.mcpServers` (injected into launched agents) |
 | QM | Admin-registered via REST API (org-wide, not a file) |
 
 ## Skills Directories
@@ -143,6 +145,7 @@ These paths are sourced directly from installer scripts and verified directories
 | Muse Code | `$XDG_CONFIG_HOME/muse/skills` / `~/.agents/skills` | `<repo>/.agents/skills/<id>/SKILL.md` (also scans `.codex/skills`/`.claude/skills`) |
 | DeepSeek Harness | ❓ user/bundled roots not fully confirmed | `.dsh/skills/` and `.agents/skills/` |
 | jcode | `~/.jcode/skills/` | ❓ not confirmed |
+| Paseo | installed onto the host's agents via `npx skills add getpaseo/paseo` | n/a — skills live in the underlying agent's own skills dir |
 | QM | n/a (self-hosted, org-scoped) | `sandbox/skills/<id>/SKILL.md` (deployed) |
 
 **Key finding:** Antigravity and Codex both use `.agents/skills/` — they share the same skill registration convention.
@@ -176,6 +179,7 @@ These paths are sourced directly from installer scripts and verified directories
 | Muse Code | `.muse/hooks.json` (project) or `settings.json` → `hooks` (user) | JSON config, 12 confirmed events |
 | DeepSeek Harness | `packages/hooks/` (bridge plugins: `hooks-claude-code`, `hooks-codex`) | Cordis TypeScript plugins |
 | jcode | Configured under `[hooks]` in `~/.jcode/config.toml` | External commands via env vars + JSON |
+| Paseo | TypeScript plugins installed with `paseo plugin add/install` (per daemon) | `server.on()` / `server.before()` in `index.server.ts`; 11 agent-lifecycle hooks |
 
 ## Git-Ignored / Personal Override Files
 
@@ -222,4 +226,5 @@ Files meant for personal settings that shouldn't be committed:
 | Muse Code | https://dev.meta.ai/docs/muse-code/configuration.md | 2026-08-15 | [official] |
 | DeepSeek Harness | https://github.com/deepseek-ai/deepseek-harness | 2026-08-15 | [github] |
 | jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
+| Paseo | https://paseo.sh/docs/configuration | 2026-09-10 | [official] |
 | QM | https://github.com/yc-software/qm | 2026-08-15 | [github] |
