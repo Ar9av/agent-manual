@@ -4,6 +4,30 @@ Sourced catalog for agent frameworks and SDKs that are adjacent to the coding-ag
 
 > Naming note: a few labels in the screenshot map to slightly different official product names. "Anthropic Agent SDK" is documented by Anthropic as the **Claude Code Agent SDK**. "Google ADK" is the **Agent Development Kit (ADK)**. "AutoGen 2.0" is listed below as **AutoGen (stable)** because the official docs I verified do not currently brand the stable line as "2.0".
 
+## Governance capabilities — live-verified
+
+Ratings for Guardrails / Identity / Audit / Sandbox are usually assembled from
+docs. [`governance-verification.md`](governance-verification.md) instead installs
+six of these frameworks and **tries to falsify** each rating against a real
+OpenAI-driven run (st3ve sandbox, 2026-09-10).
+
+| Framework | Version | Guardrails | Identity | Audit | Sandbox |
+|---|---|:---:|:---:|:---:|:---:|
+| OpenAI Agents SDK | 0.22.2 | ✅ confirmed | — | ✅ confirmed | 🟡 → **✅ understated** |
+| CrewAI | 1.15.21 | ✅ confirmed | — | ✅ holds, **stale link** | 🟡 fair |
+| smolagents | 1.26.0 | 🟡 fair | — | ✅ confirmed | ✅ **on by default** |
+| Pydantic AI | 2.42.0 | 🟡 fair | — | ✅ confirmed | — correct |
+| Google ADK | 2.9.0 | ✅ confirmed | 🟡 → **arguably ✅** | ✅ confirmed | ✅ confirmed |
+| LangGraph | 1.2.11 | 🟡 fair | — | ✅ confirmed | — correct |
+
+Headlines: **no rating was overstated** — every ✅ survived a real attempt to break
+it. Three should be revised *upward*. CrewAI's tracing **defaults to disabled** and
+the upstream citation points at a module that no longer exists. smolagents blocks
+`import os` in its *default* executor, without opting into a container.
+
+Claim set and column definitions come from
+[`prayagupa/agent-frameworks`](https://github.com/prayagupa/agent-frameworks).
+
 ## Coverage
 
 | Project | Official name | Vendor | Category | Primary languages | Install / package |
