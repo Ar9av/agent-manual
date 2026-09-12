@@ -82,6 +82,7 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | MiMo Code | ❌ No hook system | N/A (npm plugins; `--pure` runs without external plugins) |
 | Prime Agent | ❌ No hook system | N/A (capability packages: extensions/skills/prompts/themes) |
 | Tau | ❌ No hook system | N/A (`tau install SOURCE` extensions) |
+| Azure SRE Agent | Exit code `2` or `{"decision":"block"}` stdout (`PostToolUse`); reject in `Stop` | `exit 2` (stderr = reason) or `{"decision":"block","reason":"..."}` / `{"ok":false,"reason":"..."}` |
 
 ## Hook Input Format Comparison
 
@@ -106,6 +107,7 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Auggie CLI | JSON | stdin |
 | Qwen Code | JSON | stdin |
 | Crush | JSON | stdin |
+| Azure SRE Agent | JSON | stdin (command hooks) / `$ARGUMENTS` (prompt hooks) |
 
 ## Config File Format Comparison
 
@@ -135,6 +137,7 @@ OpenCode uses dot-namespaced event names in its plugin SDK:
 | Qwen Code | JSON | `settings.json` |
 | Crush | JSON | `crush.json` |
 | Warp | — | ❌ No hooks |
+| Azure SRE Agent | YAML | portal / REST API v2 (`ExtendedAgent`, no local file) |
 
 ## Tool Instruction Files
 
@@ -191,3 +194,4 @@ Files you place in a repo to give the agent persistent natural-language instruct
 | Junie | https://junie.jetbrains.com/docs/ | 2026-08-15 | [official] |
 | Grok Build | https://docs.x.ai/build/overview | 2026-08-15 | [official] |
 | jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
+| Azure SRE Agent | https://learn.microsoft.com/en-us/azure/sre-agent/agent-hooks | 2026-09-12 | [official] |

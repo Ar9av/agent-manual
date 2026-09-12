@@ -59,6 +59,7 @@ No changes were needed for `tools/aider`, `tools/kiro`, `tools/amazon-q-dev-cli`
 | `tools/auggie` | `official-only` | All claims traced to docs.augmentcode.com and official npm/GitHub pages; license string flagged ❓ as unpublished |
 | `tools/qwen-code` | `mixed` | Core claims from official docs/GitHub; fork-lineage narrative and some tool-id specifics rely on community reviews |
 | `tools/warp` | `official-only` | All claims from docs.warp.dev; `rules_enabled` flag flagged ❓ as unverified; classified as a borderline terminal-app entry, not a pure CLI |
+| `tools/azure-sre-agent` | `official-only` | All claims from Microsoft Learn agent-hooks docs; built-in tool list marked ❓ (not enumerated on that page) |
 
 ## Shared Pages
 
