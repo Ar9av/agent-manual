@@ -1625,3 +1625,62 @@ Extensions instead: `tau install SOURCE [--force]` from a local path or Git sour
 
 ### MCP
 ❌ **None** — live-confirmed: no `tau mcp` subcommand, nothing in `--help` as of 0.4.2. Tool substitution is therefore not reachable on this host.
+
+---
+
+## Azure SRE Agent
+
+**Vendor:** Microsoft (Azure) | **Config format:** YAML (portal / REST API v2) | **Instruction file:** `spec.instructions` field (no repo file)
+**Sources:** https://learn.microsoft.com/en-us/azure/sre-agent/agent-hooks [official] · https://learn.microsoft.com/en-us/azure/sre-agent/create-manage-hooks-ui [official] · https://learn.microsoft.com/en-us/azure/sre-agent/tutorial-agent-hooks [official]
+
+Hosted cloud service — **no local config file**. Hooks are edited in the portal (**Builder → Hooks** at agent level, or **Agent Canvas → Custom agent → Manage Hooks** at custom-agent level) or via REST API v2 (`PUT /api/v2/extendedAgent/agents/{agentName}`). Agent-level and custom-agent-level hooks can coexist; when both match an event, both run and **agent-level fires first**.
+
+### Hook Events
+| Event | When | Can Block |
+|-------|------|-----------|
+| `Stop` | Agent is about to return its final response | ✅ — reject (with `reason`) to force continuation |
+| `PostToolUse` | A tool finishes executing successfully | ✅ — block result or inject `additionalContext` |
+
+**Hook types:** `prompt` (LLM evaluation, uses `$ARGUMENTS` for context injection) or `command` (bash/Python in a sandboxed code interpreter).
+**Input format:** JSON — prompt hooks via `$ARGUMENTS`, command hooks via stdin. `execution_summary` is a file path to the transcript (prompt hooks additionally get `ReadFile`/`GrepSearch` tools).
+**Universal stdin fields:** `hook_event_name`, `agent_name`, `current_turn`, `max_turns`, `execution_summary`
+**Stop adds:** `final_output`, `stop_hook_active`, `stop_rejection_count`
+**PostToolUse adds:** `tool_name`, `tool_input`, `tool_result`, `tool_succeeded`
+**Exit codes (command hooks):** `0` no output = allow | `0` + JSON = parse decision | `2` = block (stderr = reason) | other = falls back to `failMode`
+
+**stdout response (simple / expanded):**
+```json
+{"ok": false, "reason": "Please include more details."}
+{"decision": "block", "reason": "Dangerous command detected."}
+{"decision": "allow", "hookSpecificOutput": {"additionalContext": "Tool audit logged."}}
+```
+> For `Stop` hooks, a rejection without a `reason` is treated as approval.
+
+**Config options:** `type` (default `prompt`), `prompt`, `command`, `script`, `matcher` (regex, required for `PostToolUse`; anchored `^(pattern)$`, case-sensitive; `*` = all), `timeout` (default `30`, max `300`), `failMode` (default `allow`), `model` (default `ReasoningFast`), `maxRejections` (1–25, default `3`; prompt-type `Stop` hooks only).
+
+### Hook Config Format (YAML)
+```yaml
+api_version: azuresre.ai/v2
+kind: ExtendedAgent
+metadata:
+  name: my_hooked_agent
+spec:
+  hooks:
+    Stop:
+      - type: prompt
+        prompt: |
+          Check the response is complete. $ARGUMENTS
+        timeout: 30
+    PostToolUse:
+      - type: command
+        matcher: "Bash|ExecuteShellCommand"
+        failMode: block
+        script: |
+          #!/usr/bin/env python3
+          import sys, json
+          ctx = json.load(sys.stdin)
+          print(json.dumps({"decision": "allow"}))
+```
+
+**Model tiers (prompt hooks):** Reasoning · Fast Reasoning (default) · General Purpose · Fast · Long Context
+**Limits:** script ≤ 64 KB · timeout 1–300 s · shebangs `#!/bin/bash`, `#!/usr/bin/env python3` · sandboxed code interpreter

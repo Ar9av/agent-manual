@@ -46,6 +46,7 @@ Quick reference for where each agentic tool stores its configuration.
 | MiMo Code | `~/.config/mimocode/` (plugins installed as npm modules into this root) |
 | Prime Agent | ❓ not created by a headless run; likely materialized on first interactive `/login` |
 | Tau | `~/.tau/catalog.toml` (custom provider/model catalog) |
+| Azure SRE Agent | _cloud service_ — portal (**Builder → Hooks**) or REST API v2 (no local file) |
 
 ## Project-Level Config
 
@@ -240,3 +241,4 @@ Files meant for personal settings that shouldn't be committed:
 | jcode | https://jcode.sh/docs | 2026-08-15 | [official] |
 | Paseo | https://paseo.sh/docs/configuration | 2026-09-10 | [official] |
 | QM | https://github.com/yc-software/qm | 2026-08-15 | [github] |
+| Azure SRE Agent | https://learn.microsoft.com/en-us/azure/sre-agent/agent-hooks | 2026-09-12 | [official] |

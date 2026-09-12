@@ -64,10 +64,13 @@
 | [MiMo Code](tools/mimo-code/) | Xiaomi | npm plugins | ❌ Not shipped (plugins instead) | ✅ (OAuth-capable) | [mimo.xiaomi.com/mimocode](https://mimo.xiaomi.com/mimocode) |
 | [Prime Agent](tools/prime-agent/) | Prime Intellect | ❓ (packages) | ❌ Not shipped (capability packages instead) | ✅ | [github.com/PrimeIntellect-ai/prime-agent](https://github.com/PrimeIntellect-ai/prime-agent) |
 | [Tau](tools/tau/) | Hugging Face | TOML | ❌ Not shipped (extensions instead) | ❓ | [twotimespi.dev](http://twotimespi.dev/) |
+| [Azure SRE Agent](tools/azure-sre-agent/) | Microsoft | YAML (portal / REST v2) | ✅ Full (2 events) | ❓ | [learn.microsoft.com/azure/sre-agent](https://learn.microsoft.com/en-us/azure/sre-agent/agent-hooks) |
 
 **Legend:** ✅ Full = shipped, documented hook system with blocking · ⚠️ = partial or workaround · ❌ = not available · ❓ = unknown
 
 > **Notes:** Warp is primarily a GUI terminal app with an embedded agent (plus a separate `oz` CLI for headless/cloud use) — included here as a borderline entry, not a pure install-anywhere CLI like the others. Amazon Q Developer CLI is marked unmaintained by AWS as of this writing, with development moved to the closed-source Kiro CLI. Continue was acquired by Cursor/Anysphere in June 2026; its GitHub repo is now read-only. Goose was donated by Block to the Agentic AI Foundation (Linux Foundation) in 2026. Cline, Kilo Code, Junie, Grok Build, Muse Code, DeepSeek Harness, jcode, and QM were added 2026-08-15 as a **doc-only pass** (sourced from official docs/GitHub, not yet sandbox live-verified like the earlier entries) — several are brand-new (DeepSeek Harness shipped 2 days prior as a v0.1 preview) so expect more ❓s than the older pages; see `_shared/source-audit.md`. Paseo (added 2026-09-10, doc-only) is an **orchestrator**, not a coding agent — it launches and supervises other agent CLIs, and is listed here because it has its own config file, lifecycle hooks, MCP server, and skills. Codewhale, Reasonix, oh-my-pi, MiMo Code, Prime Agent, and Tau were added 2026-09-10 as a **live-verified pass** — all six were installed on the st3ve sandbox (Ubuntu 24.04) and driven through a real multi-step task against the OpenAI API; see each page's "Live Verification" section for what passed, what needed configuration, and what broke.
+>
+> **Azure SRE Agent** is a hosted Azure service (configured via the portal or REST API v2), not a local CLI — the "Config format" column reflects its YAML hook schema, and it has no local config file or terminal binary. Its hook surface is limited to `Stop` and `PostToolUse`.
 
 ---
 
@@ -164,6 +167,7 @@ How each tool's `PreToolUse`-equivalent blocks a tool call:
 | Devin CLI | Exit 2 or `{"decision":"block"}` stdout | LLM |
 | Kiro | Exit 2 | LLM |
 | Pi Agent | Exit 2 | LLM |
+| Azure SRE Agent | Exit 2 or `{"decision":"block"}` stdout (`PostToolUse`); reject with `reason` (`Stop`) | LLM (via `reason` / `additionalContext`) |
 
 ---
 
