@@ -4,7 +4,7 @@
 question: can you **turn off** an agent's built-in tools and replace them with MCP-provided ones — not
 just add MCP alongside the built-ins — and what does this specific host require before that substitution
 actually takes effect (server trust, native-tool disablement, MCP tool naming/permissioning, headless
-behaviour)? See also `tool-normalization-map.md` for what the built-ins are called in the first place.
+behaviour)? See also `tool-normalization-map.md` for what the built-ins are called in the first place. Disabling tools is also the main lever on per-turn cost — see `token-cost-accounting.md`.
 
 ## How to read this
 

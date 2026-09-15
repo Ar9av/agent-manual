@@ -84,6 +84,7 @@
 | Where does Tool Y store its config and skills? | [`_shared/config-file-locations.md`](_shared/config-file-locations.md) |
 | Which pages still rely on community or inferred sources? | [`_shared/source-audit.md`](_shared/source-audit.md) |
 | How do agent-specific tool names (`Bash` vs `run_shell_command` vs `execute_bash`...) map to a common taxonomy? | [`_shared/tool-normalization-map.md`](_shared/tool-normalization-map.md) |
+| What did a session cost, and can I trust the tool's own number? | [`_shared/token-cost-accounting.md`](_shared/token-cost-accounting.md) |
 | Do we track orchestration frameworks and SDKs too? | [`frameworks/README.md`](frameworks/README.md) |
 
 ---
