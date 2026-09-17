@@ -159,6 +159,8 @@ Skills can also ship supporting `scripts/`, `references/`, and `assets/` subdire
 
 ## Hooks
 
+> **OpenHands Cloud shape, live-verified 2026-09-17 (CLI 1.16.0, headless, `gpt-4o-mini`):** a committed `.openhands/hooks.json` whose command locates its binary at run time blocked a setuid `chmod` in a fresh `$HOME` once a setup script had installed the binary, and let it run (warning on stderr only, not surfaced to the agent) when the binary was missing. See [`_shared/cloud-agent-environments.md`](../../_shared/cloud-agent-environments.md).
+
 OpenHands has a dedicated, documented hooks system, configured per-repository via `.openhands/hooks.json` plus a `.openhands/hooks/` directory of scripts.
 
 ### Supported Events

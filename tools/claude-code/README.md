@@ -75,6 +75,8 @@ Most settings hot-reload on file change without a session restart (including `pe
 
 ## Hooks
 
+> **Claude Code on the web:** the cloud sandbox loads hooks from the repo's `.claude/settings.json` and from server-managed settings only; user-level settings stay on your machine. A committed hook command must therefore contain no machine-specific paths. Pattern and live verification: [`_shared/cloud-agent-environments.md`](../../_shared/cloud-agent-environments.md).
+
 Hook events are defined in `settings.json` under the `hooks` key.
 
 ### Supported Events

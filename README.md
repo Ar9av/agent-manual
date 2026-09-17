@@ -85,6 +85,7 @@
 | Which pages still rely on community or inferred sources? | [`_shared/source-audit.md`](_shared/source-audit.md) |
 | How do agent-specific tool names (`Bash` vs `run_shell_command` vs `execute_bash`...) map to a common taxonomy? | [`_shared/tool-normalization-map.md`](_shared/tool-normalization-map.md) |
 | What did a session cost, and can I trust the tool's own number? | [`_shared/token-cost-accounting.md`](_shared/token-cost-accounting.md) |
+| The agent runs in a hosted VM (Codex cloud, Claude Code on the web, Cursor cloud agents, Copilot, Replicas...) — what runs at boot, and which hook config does it load? | [`_shared/cloud-agent-environments.md`](_shared/cloud-agent-environments.md) |
 | Do we track orchestration frameworks and SDKs too? | [`frameworks/README.md`](frameworks/README.md) |
 
 ---
@@ -123,6 +124,7 @@ These are tracked separately from the coding-agent matrices because they are dev
 │   ├── source-audit.md               # Source coverage audit and unresolved gaps
 │   ├── hook-event-comparison.md      # Cross-agent hook event name lookup
 │   ├── mcp-support.md                # MCP client capabilities & transport settings
+│   ├── cloud-agent-environments.md   # Hosted platforms: boot scripts + which hook config the cloud agent loads
 │   └── config-file-locations.md      # Global/local paths & git-ignored overrides
 └── _templates/
     └── tool-template.md              # Blueprint for documenting new developer tools

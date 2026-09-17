@@ -38,6 +38,8 @@ gh extension install github/gh-copilot
 
 ## Hooks
 
+> **Copilot coding agent (cloud):** reads only `.github/hooks/*.json` from the cloned repo; user-level and policy hooks are CLI-only, and `ask` is treated as deny. Install binaries in `.github/workflows/copilot-setup-steps.yml`, which runs outside the agent firewall. Doc-only; see [`_shared/cloud-agent-environments.md`](../../_shared/cloud-agent-environments.md).
+
 Copilot has a fully-documented official hook system ([docs](https://docs.github.com/en/copilot/reference/hooks-reference)) with **14 events**. Both camelCase (`preToolUse`) and PascalCase (`PreToolUse`) naming are supported; they differ in field naming conventions (see stdin schema below).
 
 ### Hook Events
