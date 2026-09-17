@@ -70,6 +70,8 @@ Additional rule locations: **User Rules** (global Cursor settings), **Team Rules
 
 ## Hooks
 
+> **Cursor Cloud Agents:** cloud agents run command hooks from the repo's `.cursor/hooks.json` (plus dashboard team hooks), not from `~/.cursor/hooks.json`, and not during early read-only exploration turns. Boot commands live in `.cursor/environment.json`. Doc-only; see [`_shared/cloud-agent-environments.md`](../../_shared/cloud-agent-environments.md).
+
 Cursor has **21 hook events** (18 agent + 2 Tab + 1 App Lifecycle) across two config files (`.cursor/hooks.json` project, `~/.cursor/hooks.json` global). All hooks receive JSON via stdin.
 
 **Env vars available to all hooks:** `CURSOR_PROJECT_DIR`, `CURSOR_VERSION`, `CURSOR_USER_EMAIL`, `CURSOR_TRANSCRIPT_PATH`, `CURSOR_CODE_REMOTE`, `CLAUDE_PROJECT_DIR` (alias for `CURSOR_PROJECT_DIR`)

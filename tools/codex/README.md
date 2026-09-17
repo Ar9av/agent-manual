@@ -53,6 +53,8 @@ If a single config layer has both `hooks.json` and inline `[hooks]` in `config.t
 
 ## Hooks
 
+> **Hosted / cloud VMs:** Codex runs a hook only when `~/.codex/config.toml` holds a per-hook trust record (`[hooks.state."<abs hooks.json path>:<event>:0:0"]` with a `trusted_hash`), written by accepting an interactive prompt. Live-verified 2026-09-17 on `codex-cli 0.154.0`: with repo hooks, `[features] hooks = true` and a trusted project, `codex exec` still ran a command the hook would block; only `--dangerously-bypass-hook-trust` made the hook fire. In a hosted VM nobody can accept the prompt, so hooks do not gate Codex there. See [`_shared/cloud-agent-environments.md`](../../_shared/cloud-agent-environments.md).
+
 Hooks are an extensibility framework for injecting scripts into the agentic loop.
 
 ### Enabling/Disabling
